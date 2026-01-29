@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fan Yuanhe | Frontend Engineer</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React & ReactDOM (production) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #FAFBFC;
+      --text-primary: #1a1a2e;
+      --accent: #0ea5e9;
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(0, 0, 0, 0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    .noise-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.02;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    .custom-cursor {
+      position: fixed;
+      width: 20px; height: 20px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      mix-blend-mode: difference;
+      transition: transform 0.1s ease-out, width 0.2s ease, height 0.2s ease;
+      transform: translate(-50%, -50%);
+    }
+
+    .custom-cursor.hover {
+      width: 50px; height: 50px;
+      background: rgba(14, 165, 233, 0.15);
+    }
+
+    .cursor-dot {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10001;
+      transform: translate(-50%, -50%);
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+    }
+
+    .liquid-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .liquid-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #e0f2fe 0%, transparent 70%);
+      top: -200px; right: -200px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #f0f9ff 0%, transparent 70%);
+      bottom: -150px; left: -150px;
+      animation-delay: -5s;
+    }
+
+    .blob-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #bae6fd 0%, transparent 70%);
+      top: 50%; left: 50%;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(50px, -50px) scale(1.1); }
+      50% { transform: translate(-30px, 30px) scale(0.9); }
+      75% { transform: translate(30px, 50px) scale(1.05); }
+    }
+
+    .timeline-item { transition: all 0.4s ease; }
+    .timeline-item:hover { opacity: 1 !important; }
+    .timeline-container:hover .timeline-item:not(:hover) { opacity: 0.3; }
+
+    .magnetic-btn { position: relative; transition: transform 0.3s ease; }
+    .accent-glow { box-shadow: 0 0 30px rgba(14, 165, 233, 0.25); }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #1a1a2e 0%, #475569 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .bento-item {
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.4s ease;
+    }
+
+    .bento-item:hover {
+      transform: translateY(-5px);
+      border-color: rgba(14, 165, 233, 0.35);
+    }
+
+    .bento-item.large { grid-column: span 2; grid-row: span 2; }
+    .bento-item.wide { grid-column: span 2; }
+
+    ::-webkit-scrollbar { width: 0; background: transparent; }
+
+    .link-underline { position: relative; }
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .link-underline:hover::after { width: 100%; }
+
+    .hero-photo-wrap {
+      position: relative;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      aspect-ratio: 4 / 5;
+      max-height:  min(85vh, 520px);
+    }
+    .hero-photo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: inherit;
+      padding: 3px;
+      background: linear-gradient(135deg, var(--accent) 0%, transparent 50%, var(--accent) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.4;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #e0f2fe 0%, #f0f9ff 50%, #bae6fd 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    .skill-pill {
+      position: relative;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    }
+    .skill-pill:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
+    }
+    .skill-pill::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      border-radius: 2px;
+      background: var(--skill-color, var(--accent));
+      opacity: 0.7;
+      transition: opacity 0.25s ease, height 0.25s ease;
+    }
+    .skill-pill:hover::before {
+      height: 80%;
+      opacity: 1;
+    }
+    .skills-group-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      box-shadow: 0 4px 24px -4px rgba(14, 165, 233, 0.08);
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .skills-group-card:hover {
+      box-shadow: 0 12px 40px -8px rgba(14, 165, 233, 0.15);
+      border-color: rgba(14, 165, 233, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-item.large, .bento-item.wide { grid-column: span 1; grid-row: span 1; }
+      body { cursor: auto; }
+      .custom-cursor, .cursor-dot { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ============================================
+    // PROFILE DATA - Easy Configuration
+    // ============================================
+    const profileData = {
+      // Personal Info
+      name: "Fan Yuanhe",
+      nameChinese: "范园贺",
+      title: "Senior Frontend Engineer",
+      location: "Auckland, New Zealand",
+
+      // Hero 职业照（留空则显示占位图，可填相对路径如 "avatar.jpg" 或完整 URL）
+      heroImage: "https://ncstatic.clewm.net/rsrc/2026/0129/20/520ea8090e9717c1c5366970db8ecb3e.png",
+
+      // Hero 区一句话（与 About 不重复，仅作首屏 hook）
+      heroSubline: "10 years building web products · Open to opportunities in NZ & globally",
+
+      // IMPORTANT: split years vs list to avoid React child error
+      experienceYears: "10+ Years",
+      birthYear: 1992,
+
+      // Contact
+      email: "fyh1477596895@gmail.com",
+      phone: "15910269280",
+      wechat: "15910269280",
+
+      // Education
+      education: {
+        school: "Beihua University",
+        major: "Network Engineering",
+        period: "2011 - 2015"
+      },
+
+      // About Me 模块完整介绍（仅在此处展示，Hero 不重复）
+      aboutIntro: "I'm a passionate Web Front-End / Full-Stack Developer with 10 years of experience based in Beijing, China. Now relocating to New Zealand and open to global tech opportunities.",
+      aboutHighlights: [
+        { icon: "code", text: "Focused on building performant, maintainable web applications using modern JavaScript frameworks" },
+        { icon: "brain", text: "Strong background in front-end architecture, full-stack development (Node.js), and UI/UX collaboration" },
+        { icon: "building-2", text: "Work experience at leading technology companies in China" }
+      ],
+      aboutCompanies: [
+        { name: "Baidu", url: "https://www.baidu.com", desc: "Leading AI and internet services company, well known for search, cloud, and deep learning technologies." },
+        { name: "Alibaba Group", url: "https://www.alibabagroup.com", desc: "Global leader in e-commerce, cloud computing, and digital infrastructure." },
+        { name: "Meituan", url: "https://www.meituan.com/en-US/about-us", desc: "Major platform for food delivery, local services, and on-demand consumer technology." },
+        { name: "KE Holdings (Beike)", url: "https://investors.ke.com", desc: "Technology-driven real estate platform integrating online and offline brokerage services." }
+      ],
+      acsAssessment: [
+        { code: "261212", title: "Web Developer" },
+        { code: "261312", title: "Developer Programmer" },
+        { code: "261313", title: "Software Engineer" }
+      ],
+      aboutRelocating: "Currently moving to New Zealand for postgraduate study and job-seeking.",
+      aboutClosing: "I love clean code, smart UI interactions, and turning designs into delightful user experiences.",
+
+      // Work Experience
+      experienceList: [
+        {
+          company: "Meituan",
+          position: "Senior Frontend Engineer",
+          period: "Jul 2021 - Present",
+          description:
+            "Core developer for Meituan Youxuan leader mini program. Led component library development, UI standardization, and security enhancements including ID obfuscation to prevent horizontal privilege escalation.",
+          highlights: ["Component Library", "Security", "Performance"]
+        },
+        {
+          company: "Baidu",
+          position: "Frontend Tech Lead",
+          period: "Jul 2020 - Jul 2021",
+          description:
+            "Led the intelligent customer service project serving Fengchao/feed advertising platforms. Developed H5 customer service, onboarded 10+ platforms, and increased daily issue resolution from 200-300 to 1000.",
+          highlights: ["Team Lead", "H5 Development", "Platform Integration"]
+        },
+        {
+          company: "Beike (KE Holdings)",
+          position: "Frontend Tech Lead",
+          period: "Feb 2018 - Mar 2020",
+          description:
+            "Built a low-code marketing campaign platform enabling visual page creation. Reduced campaign launch time from 4-5 days to under 30 minutes, decoupling operations from development.",
+          highlights: ["Low-code Platform", "Visualization", "Efficiency"]
+        },
+        {
+          company: "Chunyuyisheng",
+          position: "Frontend Engineer",
+          period: "Aug 2016 - Feb 2018",
+          description:
+            "Developed and maintained mobile and web applications for the healthcare platform, focusing on user experience and performance optimization.",
+          highlights: ["Mobile Dev", "Healthcare", "UX"]
+        }
+      ],
+
+      // Skills（分组静态展示，可选品牌色）
+      skillsGroups: [
+        {
+          title: "Languages & Frameworks",
+          items: [
+            "HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Vue",
+            "Node.js", "MongoDB", "Koa"
+          ]
+        },
+        {
+          title: "Tools & Platforms",
+          items: [
+            "Webpack", "Git", "VS Code", "Ant Design", "Chrome DevTools",
+            "Postman", "Fiddler", "Charles Proxy", "Thunder Client"
+          ]
+        }
+      ],
+      // 技能品牌色（用于标签高亮与悬停光效）
+      skillColors: {
+        "HTML5": "#E34F26", "CSS3": "#1572B6", "JavaScript": "#F7DF1E", "TypeScript": "#3178C6",
+        "React": "#61DAFB", "Vue": "#4FC08D", "Node.js": "#339933", "MongoDB": "#47A248", "Koa": "#333333",
+        "Webpack": "#8DD6F9", "Git": "#F05032", "VS Code": "#007ACC", "Ant Design": "#0170FE",
+        "Chrome DevTools": "#4285F4", "Postman": "#FF6C37", "Fiddler": "#006400", "Charles Proxy": "#00A9E0", "Thunder Client": "#FFCC00"
+      },
+
+      // Social Links
+      social: {
+        github: "https://github.com/FANYUANHE",
+        linkedin: "https://linkedin.com",
+        twitter: "https://twitter.com"
+      },
+
+      // Colors
+      colors: {
+        background: "#FAFBFC",
+        text: "#1a1a2e",
+        accent: "#0ea5e9"
+      }
+    };
+
+    // ============================================
+    // COMPONENTS
+    // ============================================
+
+    const CustomCursor = () => {
+      const cursorRef = useRef(null);
+      const dotRef = useRef(null);
+
+      useEffect(() => {
+        const cursor = cursorRef.current;
+        const dot = dotRef.current;
+
+        const moveCursor = (e) => {
+          gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" });
+          gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.05, ease: "power2.out" });
+        };
+
+        const handleMouseEnter = () => cursor.classList.add("hover");
+        const handleMouseLeave = () => cursor.classList.remove("hover");
+
+        document.addEventListener("mousemove", moveCursor);
+
+        const interactiveElements = document.querySelectorAll("a, button, .magnetic-btn");
+        interactiveElements.forEach((el) => {
+          el.addEventListener("mouseenter", handleMouseEnter);
+          el.addEventListener("mouseleave", handleMouseLeave);
+        });
+
+        return () => {
+          document.removeEventListener("mousemove", moveCursor);
+          interactiveElements.forEach((el) => {
+            el.removeEventListener("mouseenter", handleMouseEnter);
+            el.removeEventListener("mouseleave", handleMouseLeave);
+          });
+        };
+      }, []);
+
+      return (
+        <>
+          <div ref={cursorRef} className="custom-cursor hidden md:block" />
+          <div ref={dotRef} className="cursor-dot hidden md:block" />
+        </>
+      );
+    };
+
+    const LiquidBackground = () => (
+      <div className="liquid-bg">
+        <div className="liquid-blob blob-1" />
+        <div className="liquid-blob blob-2" />
+        <div className="liquid-blob blob-3" />
+      </div>
+    );
+
+    const Navigation = () => {
+      const [scrolled, setScrolled] = useState(false);
+
+      useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 100);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+      }, []);
+
+      return (
+        <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? "glass py-4" : "py-6"}`}>
+          <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="#" className="text-xl font-bold tracking-tight">
+              <span style={{ color: profileData.colors.accent }}>FY</span>H
+            </a>
+            <div className="hidden md:flex gap-8 text-sm font-medium">
+              <a href="#about" className="link-underline hover:text-[#0ea5e9] transition-colors">About</a>
+              <a href="#experience" className="link-underline hover:text-[#0ea5e9] transition-colors">Experience</a>
+              <a href="#skills" className="link-underline hover:text-[#0ea5e9] transition-colors">Skills</a>
+              <a href="#contact" className="link-underline hover:text-[#0ea5e9] transition-colors">Contact</a>
+            </div>
+          </div>
+        </nav>
+      );
+    };
+
+    const Hero = () => {
+      const heroRef = useRef(null);
+      const nameRef = useRef(null);
+      const titleRef = useRef(null);
+      const taglineRef = useRef(null);
+      const photoRef = useRef(null);
+      const textBlockRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+          tl.from(taglineRef.current, { y: 24, opacity: 0, duration: 0.8, delay: 0.2 })
+            .from(nameRef.current, { y: 60, opacity: 0, duration: 1 }, "-=0.5")
+            .from(titleRef.current, { y: 30, opacity: 0, duration: 0.9 }, "-=0.6")
+            .from(photoRef.current, { scale: 0.92, opacity: 0, duration: 1.1, ease: "power3.out" }, "-=1");
+        }, heroRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      const [firstName, lastName] = profileData.name.split(" ");
+      const hasHeroImage = profileData.heroImage && profileData.heroImage.trim() !== "";
+
+      return (
+        <section ref={heroRef} className="min-h-screen flex flex-col justify-center items-center relative px-6 pt-24 pb-20 md:pt-28 md:pb-24">
+          <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-12 md:gap-16 lg:gap-20">
+            <div ref={textBlockRef} className="flex-1 text-center md:text-left order-2 md:order-1">
+              <p ref={taglineRef} className="text-sm md:text-base tracking-[0.25em] uppercase mb-5 opacity-80">
+                <span className="opacity-60">Frontend Engineer · </span><span className="opacity-100">{profileData.location}</span>
+              </p>
+              <h1 ref={nameRef} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-black tracking-tighter leading-none mb-4">
+                <span className="text-gradient">{firstName}</span>
+                <span style={{ color: profileData.colors.accent }} className="ml-1 md:ml-3">{lastName}</span>
+              </h1>
+              <p ref={titleRef} className="text-lg md:text-2xl lg:text-3xl font-light tracking-wide opacity-90">
+                {profileData.title}
+              </p>
+              <p className="mt-6 md:mt-8 text-base md:text-lg opacity-80 max-w-md md:max-w-none md:pr-4 text-[var(--text-primary)]">
+                {profileData.heroSubline}
+              </p>
+            </div>
+
+            <div ref={photoRef} className="flex-shrink-0 w-full md:w-[42%] lg:w-[38%] max-w-[320px] md:max-w-none mx-auto order-1 md:order-2">
+              <div className="hero-photo-wrap">
+                {hasHeroImage ? (
+                  <img src={profileData.heroImage} alt={profileData.name} />
+                ) : (
+                  <div className="hero-photo-placeholder">
+                    <i data-lucide="user" className="w-24 h-24 md:w-32 md:h-32 opacity-40" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+          </div>
+        </section>
+      );
+    };
+
+    const About = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          gsap.from(".bento-item", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none none",
+              once: true
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            clearProps: "opacity,transform"
+          });
+        }, sectionRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      return (
+        <section id="about" ref={sectionRef} className="py-24 md:py-32 px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm tracking-[0.3em] uppercase mb-12 text-[var(--text-primary)]">About Me</h2>
+
+            <div className="bento-grid">
+              {/* 主介绍区：intro + highlights + companies + ACS + 结语 */}
+              <div className="bento-item large glass">
+                <h3 className="text-2xl md:text-3xl font-semibold mb-4 text-[var(--text-primary)]">Hello, I'm {profileData.name}</h3>
+                <p className="text-base md:text-lg leading-relaxed text-[var(--text-primary)] mb-6">
+                  {profileData.aboutIntro}
+                </p>
+
+                <div className="space-y-4 mb-6">
+                  {profileData.aboutHighlights.map((item, i) => (
+                    <div key={i} className="flex gap-3 items-start">
+                      <span className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(14,165,233,0.12)", color: profileData.colors.accent }}>
+                        <i data-lucide={item.icon} className="w-4 h-4" />
+                      </span>
+                      <p className="text-[var(--text-primary)] text-sm md:text-base leading-relaxed pt-0.5">{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <h4 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: profileData.colors.accent }}>
+                  Work experience at leading companies
+                </h4>
+                <ul className="space-y-2 mb-6">
+                  {profileData.aboutCompanies.map((c, i) => (
+                    <li key={i} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+                      <span className="font-semibold text-[var(--text-primary)] min-w-[8rem] shrink-0">
+                        {c.url ? (
+                          <a href={c.url} target="_blank" rel="noopener noreferrer" className="link-underline hover:opacity-80 transition-opacity" style={{ color: profileData.colors.accent }}>{c.name}</a>
+                        ) : (
+                          c.name
+                        )}
+                      </span>
+                      <span className="text-sm text-[var(--text-primary)]">{c.desc}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <h4 className="text-sm font-semibold uppercase tracking-wider mb-2" style={{ color: profileData.colors.accent }}>
+                  ACS Skills Assessment
+                </h4>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {profileData.acsAssessment.map((a, i) => (
+                    <span key={i} className="px-3 py-1.5 rounded-lg text-xs font-medium border" style={{ background: "rgba(14,165,233,0.08)", borderColor: "rgba(14,165,233,0.25)", color: profileData.colors.accent }}>
+                      {a.code} – {a.title}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="text-sm text-[var(--text-primary)] mb-4">{profileData.aboutRelocating}</p>
+                <p className="text-base font-medium text-[var(--text-primary)]" style={{ color: profileData.colors.accent }}>
+                  {profileData.aboutClosing}
+                </p>
+              </div>
+
+              <div className="bento-item glass flex flex-col justify-center items-center text-center">
+                <span className="text-5xl md:text-6xl font-black" style={{ color: profileData.colors.accent }}>
+                  {profileData.experienceYears}
+                </span>
+                <span className="text-sm mt-2 text-[var(--text-primary)]">Experience</span>
+              </div>
+
+              <div className="bento-item glass flex flex-col justify-center items-center text-center">
+                <i data-lucide="map-pin" className="w-8 h-8 mb-3 text-[var(--text-primary)]" />
+                <span className="text-lg font-medium text-[var(--text-primary)]">{profileData.location}</span>
+                <span className="text-sm mt-1 text-[var(--text-primary)]">Relocating to</span>
+              </div>
+
+              <div className="bento-item wide glass">
+                <h4 className="text-lg font-semibold mb-3 flex items-center gap-2 text-[var(--text-primary)]">
+                  <i data-lucide="graduation-cap" className="w-5 h-5" style={{ color: profileData.colors.accent }} />
+                  Education
+                </h4>
+                <p className="text-base text-[var(--text-primary)]">{profileData.education.school}</p>
+                <p className="text-sm text-[var(--text-primary)]">{profileData.education.major} · {profileData.education.period}</p>
+              </div>
+
+              <div className="bento-item glass flex flex-col justify-center items-center text-center">
+                <i data-lucide="briefcase" className="w-8 h-8 mb-3 text-[var(--text-primary)]" />
+                <span className="text-3xl font-bold text-[var(--text-primary)]">{profileData.experienceList.length}</span>
+                <span className="text-sm mt-1 text-[var(--text-primary)]">Companies</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const Experience = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const section = sectionRef.current;
+        if (!section) return;
+
+        const items = section.querySelectorAll(".timeline-item");
+        gsap.set(items, { x: -50, opacity: 0 });
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                gsap.to(items, {
+                  x: 0,
+                  opacity: 1,
+                  duration: 0.8,
+                  stagger: 0.2,
+                  ease: "power3.out"
+                });
+                observer.unobserve(section);
+              }
+            });
+          },
+          { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0 }
+        );
+
+        observer.observe(section);
+        return () => {
+          observer.disconnect();
+          gsap.set(items, { clearProps: "all" });
+        };
+      }, []);
+
+      return (
+        <section id="experience" ref={sectionRef} className="py-24 md:py-32 px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Experience</h2>
+
+            <div className="timeline-container relative">
+              <div className="absolute left-0 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-[#0ea5e9] via-black/10 to-transparent" />
+
+              {profileData.experienceList.map((exp, index) => (
+                <div key={index} className="timeline-item relative pl-8 md:pl-20 pb-16 last:pb-0">
+                  <div
+                    className="absolute left-0 md:left-8 top-2 w-4 h-4 rounded-full -translate-x-1/2 border-2 transition-all duration-300"
+                    style={{ borderColor: profileData.colors.accent, background: profileData.colors.background }}
+                  />
+
+                  <div className="glass rounded-2xl p-6 md:p-8 transition-all duration-400 hover:border-[#0ea5e9]/30">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                      <h3 className="text-xl md:text-2xl font-bold">{exp.company}</h3>
+                      <span className="text-sm opacity-60 mt-1 md:mt-0">{exp.period}</span>
+                    </div>
+                    <p className="text-base font-medium mb-4" style={{ color: profileData.colors.accent }}>
+                      {exp.position}
+                    </p>
+                    <p className="text-sm md:text-base opacity-70 leading-relaxed mb-4">
+                      {exp.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {exp.highlights.map((highlight, i) => (
+                        <span key={i} className="px-3 py-1 rounded-full text-xs bg-black/5 border border-black/10">
+                          {highlight}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+      );
+    };
+
+    const Skills = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          gsap.from(".skills-title", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+            y: 24,
+            opacity: 0,
+            duration: 0.7,
+            ease: "power3.out"
+          });
+          gsap.from(".skills-group", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            },
+            y: 32,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 0.1
+          });
+        }, sectionRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      const getSkillColor = (name) => profileData.skillColors?.[name] || profileData.colors.accent;
+
+      return (
+        <section id="skills" ref={sectionRef} className="py-24 md:py-32 px-6 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none opacity-30" style={{
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 60%)'
+          }} />
+          <div className="max-w-6xl mx-auto relative">
+            <h2 className="skills-title text-sm tracking-[0.3em] uppercase opacity-60 mb-14">
+              Technical Skills
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-10 md:gap-12">
+              {profileData.skillsGroups.map((group, gIndex) => (
+                <div key={gIndex} className="skills-group skills-group-card">
+                  <h3 className="text-base font-semibold tracking-wide mb-6 flex items-center gap-2">
+                    <span className="w-1.5 h-6 rounded-full" style={{ background: profileData.colors.accent }} />
+                    <span style={{ color: profileData.colors.accent }}>{group.title}</span>
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {group.items.map((item, i) => {
+                      const color = getSkillColor(item);
+                      const lightBg = ['#F7DF1E', '#61DAFB', '#FFCC00', '#8DD6F9', '#4FC08D'].includes(color);
+                      return (
+                        <span
+                          key={i}
+                          className="skill-pill inline-flex items-center pl-5 pr-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-250"
+                          style={{
+                            '--skill-color': color,
+                            background: `linear-gradient(90deg, ${color}18 0%, ${color}08 100%)`,
+                            color: lightBg ? '#1a1a2e' : 'var(--text-primary)',
+                            borderColor: `${color}25`
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = `0 8px 28px -6px ${color}50`;
+                            e.currentTarget.style.borderColor = `${color}60`;
+                            e.currentTarget.style.background = `linear-gradient(90deg, ${color}22 0%, ${color}12 100%)`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = '';
+                            e.currentTarget.style.borderColor = `${color}30`;
+                            e.currentTarget.style.background = `linear-gradient(90deg, ${color}18 0%, ${color}08 100%)`;
+                          }}
+                        >
+                          <span className="relative z-10">{item}</span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const Footer = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          gsap.from(".footer-content > *", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+              toggleActions: "play none none reverse"
+            },
+            y: 60,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power3.out"
+          });
+        }, sectionRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      return (
+        <footer id="contact" ref={sectionRef} className="min-h-[70vh] flex flex-col justify-center py-24 md:py-32 px-6 relative">
+          <div className="footer-content max-w-6xl mx-auto text-center">
+            <p className="text-sm tracking-[0.3em] uppercase opacity-60 mb-8">Let's Connect</p>
+
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-12">
+              Get In <span style={{ color: profileData.colors.accent }}>Touch</span>
+            </h2>
+
+            <a
+              href={`mailto:${profileData.email}`}
+              className="magnetic-btn inline-block text-xl md:text-3xl font-medium mb-16 link-underline hover:text-[#0ea5e9] transition-colors"
+            >
+              {profileData.email}
+            </a>
+
+            <div className="flex justify-center gap-8 mb-16">
+              <a href={profileData.social.github} target="_blank" rel="noopener noreferrer"
+                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[#0ea5e9]/50 transition-all">
+                <i data-lucide="github" className="w-6 h-6" />
+              </a>
+              <a href={profileData.social.linkedin} target="_blank" rel="noopener noreferrer"
+                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[#0ea5e9]/50 transition-all">
+                <i data-lucide="linkedin" className="w-6 h-6" />
+              </a>
+              <a href={profileData.social.twitter} target="_blank" rel="noopener noreferrer"
+                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[#0ea5e9]/50 transition-all">
+                <i data-lucide="twitter" className="w-6 h-6" />
+              </a>
+              <a href={`mailto:${profileData.email}`}
+                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[#0ea5e9]/50 transition-all">
+                <i data-lucide="mail" className="w-6 h-6" />
+              </a>
+            </div>
+
+            <div className="pt-8 border-t border-black/10">
+              <p className="text-sm opacity-60">© {new Date().getFullYear()} {profileData.name}. All rights reserved.</p>
+              <p className="text-xs opacity-50 mt-2">Crafted with React + GSAP + Tailwind CSS</p>
+            </div>
+          </div>
+        </footer>
+      );
+    };
+
+    const App = () => {
+      useEffect(() => {
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.refresh();
+        return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+      }, []);
+
+      return (
+        <>
+          <CustomCursor />
+          <LiquidBackground />
+          <div className="noise-overlay" />
+          <Navigation />
+          <main>
+            <Hero />
+            <About />
+            <Experience />
+            <Skills />
+            <Footer />
+          </main>
+        </>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
