@@ -186,11 +186,15 @@
     .project-carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s, transform 0.2s; }
     .project-carousel-dot.active { background: var(--accent); transform: scale(1.2); }
     .project-carousel-dot:hover { background: var(--accent-muted); }
+    .project-carousel-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.75rem 0.5rem;
+      margin-top: 0.5rem;
+    }
     .project-carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%) scale(1);
-      z-index: 10;
       width: 32px;
       height: 32px;
       min-width: 32px;
@@ -199,32 +203,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.75);
-      border: 1px solid var(--glass-border);
-      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
       cursor: pointer;
-      opacity: 0.9;
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, border-color 0.25s ease, color 0.25s ease, opacity 0.25s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
-    [data-theme="dark"] .project-carousel-btn {
-      background: rgba(17, 24, 39, 0.85);
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
     }
     .project-carousel-btn:hover:not(:disabled) {
-      background: var(--accent-soft);
-      border-color: var(--accent);
       color: var(--accent);
-      opacity: 1;
-      transform: translateY(-50%) scale(1.12);
-      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.2);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      transform: scale(1.05);
     }
-    .project-carousel-btn:active:not(:disabled) {
-      transform: translateY(-50%) scale(0.96);
-      transition-duration: 0.1s;
-    }
-    .project-carousel-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: translateY(-50%) scale(1); }
-    .project-carousel-btn.prev { left: 10px; }
-    .project-carousel-btn.next { right: 10px; }
+    .project-carousel-btn:active:not(:disabled) { transform: scale(0.98); }
+    .project-carousel-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .timeline-item { transition: all 0.4s ease; }
     .timeline-item:hover { opacity: 1 !important; }
     .timeline-container:hover .timeline-item:not(:hover) { opacity: 0.3; }
@@ -1060,54 +1052,50 @@
 
                 const slidePct = images.length > 0 ? 100 / images.length : 100;
                 const carouselArea = (
-                  <div className={isMobile ? "flex-shrink-0 flex flex-col items-center md:order-1" : "w-full " + (hasCarousel ? "pb-3" : "")}>
-                    <div className="relative">
-                      {hasCarousel && (
-                        <>
-                          <button
-                            type="button"
-                            aria-label="Previous image"
-                            className="project-carousel-btn prev"
-                            disabled={currentSlide === 0}
-                            onClick={() => setSlide(index, Math.max(0, currentSlide - 1))}
-                          >
-                            <i data-lucide="chevron-left" className="w-4 h-4" />
-                          </button>
-                          <button
-                            type="button"
-                            aria-label="Next image"
-                            className="project-carousel-btn next"
-                            disabled={currentSlide === images.length - 1}
-                            onClick={() => setSlide(index, Math.min(images.length - 1, currentSlide + 1))}
-                          >
-                            <i data-lucide="chevron-right" className="w-4 h-4" />
-                          </button>
-                        </>
-                      )}
-                      <div className={isMobile ? "project-phone-frame mx-auto md:mx-0 overflow-hidden" : "project-web-fullbleed w-full overflow-hidden"}>
-                        <div
-                          className="project-carousel-track h-full"
-                          style={{ width: `${images.length * 100}%`, transform: `translateX(-${currentSlide * slidePct}%)` }}
-                        >
-                          {images.map((src, i) => (
-                            <div key={i} className="h-full flex-shrink-0" style={{ width: `${slidePct}%` }}>
-                              <img src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full object-cover block" />
-                            </div>
-                          ))}
-                        </div>
+                  <div className={isMobile ? "flex-shrink-0 flex flex-col items-center md:order-1" : "w-full"}>
+                    <div className={"overflow-hidden rounded-2xl " + (isMobile ? "project-phone-frame mx-auto md:mx-0" : "project-web-fullbleed w-full")}>
+                      <div
+                        className="project-carousel-track h-full"
+                        style={{ width: `${images.length * 100}%`, transform: `translateX(-${currentSlide * slidePct}%)` }}
+                      >
+                        {images.map((src, i) => (
+                          <div key={i} className="h-full flex-shrink-0" style={{ width: `${slidePct}%` }}>
+                            <img src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full object-cover block" />
+                          </div>
+                        ))}
                       </div>
                     </div>
                     {hasCarousel && (
-                      <div className="flex justify-center gap-2 mt-3">
-                        {images.map((_, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            aria-label={`Go to slide ${i + 1}`}
-                            className={`project-carousel-dot ${i === currentSlide ? "active" : ""}`}
-                            onClick={() => setSlide(index, i)}
-                          />
-                        ))}
+                      <div className="project-carousel-bar">
+                        <button
+                          type="button"
+                          aria-label="Previous image"
+                          className="project-carousel-btn"
+                          disabled={currentSlide === 0}
+                          onClick={() => setSlide(index, Math.max(0, currentSlide - 1))}
+                        >
+                          <i data-lucide="chevron-left" className="w-4 h-4" />
+                        </button>
+                        <div className="flex items-center gap-2">
+                          {images.map((_, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              aria-label={`Go to slide ${i + 1}`}
+                              className={`project-carousel-dot ${i === currentSlide ? "active" : ""}`}
+                              onClick={() => setSlide(index, i)}
+                            />
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          aria-label="Next image"
+                          className="project-carousel-btn"
+                          disabled={currentSlide === images.length - 1}
+                          onClick={() => setSlide(index, Math.min(images.length - 1, currentSlide + 1))}
+                        >
+                          <i data-lucide="chevron-right" className="w-4 h-4" />
+                        </button>
                       </div>
                     )}
                   </div>
