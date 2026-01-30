@@ -186,6 +186,45 @@
     .project-carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s, transform 0.2s; }
     .project-carousel-dot.active { background: var(--accent); transform: scale(1.2); }
     .project-carousel-dot:hover { background: var(--accent-muted); }
+    .project-carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%) scale(1);
+      z-index: 10;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      cursor: pointer;
+      opacity: 0.9;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, border-color 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    [data-theme="dark"] .project-carousel-btn {
+      background: rgba(17, 24, 39, 0.85);
+    }
+    .project-carousel-btn:hover:not(:disabled) {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      opacity: 1;
+      transform: translateY(-50%) scale(1.12);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.2);
+    }
+    .project-carousel-btn:active:not(:disabled) {
+      transform: translateY(-50%) scale(0.96);
+      transition-duration: 0.1s;
+    }
+    .project-carousel-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: translateY(-50%) scale(1); }
+    .project-carousel-btn.prev { left: 10px; }
+    .project-carousel-btn.next { right: 10px; }
     .timeline-item { transition: all 0.4s ease; }
     .timeline-item:hover { opacity: 1 !important; }
     .timeline-container:hover .timeline-item:not(:hover) { opacity: 0.3; }
@@ -1022,16 +1061,40 @@
                 const slidePct = images.length > 0 ? 100 / images.length : 100;
                 const carouselArea = (
                   <div className={isMobile ? "flex-shrink-0 flex flex-col items-center md:order-1" : "w-full " + (hasCarousel ? "pb-3" : "")}>
-                    <div className={isMobile ? "project-phone-frame mx-auto md:mx-0 overflow-hidden" : "project-web-fullbleed w-full overflow-hidden"}>
-                      <div
-                        className="project-carousel-track h-full"
-                        style={{ width: `${images.length * 100}%`, transform: `translateX(-${currentSlide * slidePct}%)` }}
-                      >
-                        {images.map((src, i) => (
-                          <div key={i} className="h-full flex-shrink-0" style={{ width: `${slidePct}%` }}>
-                            <img src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full object-cover block" />
-                          </div>
-                        ))}
+                    <div className="relative">
+                      {hasCarousel && (
+                        <>
+                          <button
+                            type="button"
+                            aria-label="Previous image"
+                            className="project-carousel-btn prev"
+                            disabled={currentSlide === 0}
+                            onClick={() => setSlide(index, Math.max(0, currentSlide - 1))}
+                          >
+                            <i data-lucide="chevron-left" className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="Next image"
+                            className="project-carousel-btn next"
+                            disabled={currentSlide === images.length - 1}
+                            onClick={() => setSlide(index, Math.min(images.length - 1, currentSlide + 1))}
+                          >
+                            <i data-lucide="chevron-right" className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                      <div className={isMobile ? "project-phone-frame mx-auto md:mx-0 overflow-hidden" : "project-web-fullbleed w-full overflow-hidden"}>
+                        <div
+                          className="project-carousel-track h-full"
+                          style={{ width: `${images.length * 100}%`, transform: `translateX(-${currentSlide * slidePct}%)` }}
+                        >
+                          {images.map((src, i) => (
+                            <div key={i} className="h-full flex-shrink-0" style={{ width: `${slidePct}%` }}>
+                              <img src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full object-cover block" />
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     {hasCarousel && (
@@ -1059,23 +1122,23 @@
                           <div className="flex-1 min-w-0 md:order-2">
                             <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
                             <div className="mb-6">
-                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Background</h4>
-                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.background}</p>
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Results</h4>
+                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
+                                {project.results.map((item, i) => (<li key={i}>{item}</li>))}
+                              </ul>
                             </div>
                             <div className="mb-6">
                               <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">My Role</h4>
                               <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.role}</p>
                             </div>
                             <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Background</h4>
+                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.background}</p>
+                            </div>
+                            <div>
                               <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Problems Solved</h4>
                               <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
                                 {project.problemsSolved.map((item, i) => (<li key={i}>{item}</li>))}
-                              </ul>
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Results</h4>
-                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
-                                {project.results.map((item, i) => (<li key={i}>{item}</li>))}
                               </ul>
                             </div>
                           </div>
@@ -1086,23 +1149,23 @@
                           <div className="p-6 md:p-8">
                             <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
                             <div className="mb-6">
-                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Background</h4>
-                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.background}</p>
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Results</h4>
+                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
+                                {project.results.map((item, i) => (<li key={i}>{item}</li>))}
+                              </ul>
                             </div>
                             <div className="mb-6">
                               <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">My Role</h4>
                               <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.role}</p>
                             </div>
                             <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Background</h4>
+                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.background}</p>
+                            </div>
+                            <div>
                               <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Problems Solved</h4>
                               <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
                                 {project.problemsSolved.map((item, i) => (<li key={i}>{item}</li>))}
-                              </ul>
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Results</h4>
-                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
-                                {project.results.map((item, i) => (<li key={i}>{item}</li>))}
                               </ul>
                             </div>
                           </div>
