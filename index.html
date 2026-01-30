@@ -162,6 +162,30 @@
     }
 
     .experience-card-hover:hover { border-color: var(--accent); }
+    .project-card-hover:hover { border-color: var(--accent); }
+    .project-screenshot { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .project-phone-frame {
+      border-radius: 28px;
+      overflow: hidden;
+      border: 3px solid var(--border);
+      box-shadow: 0 20px 50px -12px rgba(0,0,0,0.15), inset 0 0 0 1px var(--border);
+      aspect-ratio: 9 / 19.5;
+      max-width: 280px;
+      background: var(--bg-secondary);
+    }
+    [data-theme="dark"] .project-phone-frame {
+      box-shadow: 0 20px 50px -12px rgba(0,0,0,0.4), inset 0 0 0 1px var(--border);
+    }
+    .project-phone-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .project-web-preview { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 16 / 10; }
+    .project-web-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .project-web-fullbleed { width: 100%; aspect-ratio: 16 / 8; overflow: hidden; background: var(--bg-secondary); }
+    .project-web-fullbleed img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .project-carousel-track { display: flex; transition: transform 0.35s ease-out; will-change: transform; }
+    .project-carousel-track > * { flex: 0 0 100%; min-width: 0; }
+    .project-carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s, transform 0.2s; }
+    .project-carousel-dot.active { background: var(--accent); transform: scale(1.2); }
+    .project-carousel-dot:hover { background: var(--accent-muted); }
     .timeline-item { transition: all 0.4s ease; }
     .timeline-item:hover { opacity: 1 !important; }
     .timeline-container:hover .timeline-item:not(:hover) { opacity: 0.3; }
@@ -438,6 +462,73 @@
         }
       ],
 
+      // Project Showcase (type: 'mobile' | 'web'). Use screenshots[] for carousel; single screenshot still supported.
+      projectList: [
+        {
+          title: "Smart Customer Service H5",
+          type: "web",
+          screenshots: [
+            "https://picsum.photos/1200/600?random=1",
+            "https://picsum.photos/1200/600?random=1b",
+            "https://picsum.photos/1200/600?random=1c"
+          ],
+          background: "Multiple business lines (Fengchao, feed ads, etc.) needed a unified entry and ticket flow for customer issues. The existing PC-only support could not serve field and mobile scenarios, so we built an H5 smart customer service to improve resolution efficiency and experience.",
+          role: "Frontend tech lead: H5 architecture design, onboarding 10+ business platforms, and development of smart Q&A and ticket components.",
+          problemsSolved: [
+            "Inconsistent UI and experience across platforms, high maintenance cost",
+            "Unstable network in field scenarios led to slow loads and failed submissions",
+            "Disconnected experience between smart Q&A and human ticket handoff"
+          ],
+          results: [
+            "Onboarded 10+ business platforms; daily issue resolution increased from 200–300 to 1000+",
+            "Offline and retry strategies for first screen and critical APIs significantly improved success rate on weak networks",
+            "Unified Q&A-to-ticket flow and UI, with a clear improvement in user satisfaction"
+          ]
+        },
+        {
+          title: "Low-code Marketing Campaign Builder",
+          type: "mobile",
+          screenshots: [
+            "https://picsum.photos/400/700?random=2",
+            "https://picsum.photos/400/700?random=2b",
+            "https://picsum.photos/400/700?random=2c"
+          ],
+          background: "Operations needed to ship campaign pages (promos, seasonal themes) frequently. Each launch took 4–5 days and depended on frontend capacity and releases, which became a bottleneck.",
+          role: "Frontend tech lead: owned the builder’s frontend architecture, visual editor, component library, and publish/rollback capabilities.",
+          problemsSolved: [
+            "Long campaign launch cycles, unable to respond quickly to ops needs",
+            "Tight coupling between dev and ops, frequent release conflicts",
+            "Historical campaign pages were hard to reuse and manage in one place"
+          ],
+          results: [
+            "Reduced launch time from 4–5 days to under 30 minutes; ops can build and publish themselves",
+            "Decoupled dev and ops, fewer release conflicts; frontend focused on components and platform",
+            "Reusable campaign component library and templates; reuse rate for new campaigns over 60%"
+          ]
+        },
+        {
+          title: "Meituan Preferred Leader Mini Program",
+          type: "mobile",
+          screenshots: [
+            "https://picsum.photos/400/700?random=3",
+            "https://picsum.photos/400/700?random=3b",
+            "https://picsum.photos/400/700?random=3c"
+          ],
+          background: "The leader app powers orders, commissions, products, and fulfillment. We had to iterate quickly while keeping it stable and secure, with consistent experience across mini program and H5.",
+          role: "Core frontend developer: component library, UI standards adoption, and security (e.g. ID obfuscation) design and implementation.",
+          problemsSolved: [
+            "Duplicate work across business lines, inconsistent components and styles",
+            "Sensitive data (e.g. user IDs) at risk of leakage and privilege escalation",
+            "Bundle size and first-screen performance degrading as features grew"
+          ],
+          results: [
+            "Unified component library and design system; consistent UI and interaction across clients; ~30% dev efficiency gain",
+            "ID obfuscation and permission checks in place, reducing horizontal privilege escalation and data leakage",
+            "Subpackaging and lazy loading; main bundle and first-screen metrics under control and monitored"
+          ]
+        }
+      ],
+
       // Skills（分组静态展示，可选品牌色）
       skillsGroups: [
         {
@@ -580,6 +671,7 @@
               <div className="hidden md:flex gap-8 text-sm font-medium">
                 <a href="#about" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>About</a>
                 <a href="#experience" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Experience</a>
+                <a href="#projects" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Projects</a>
                 <a href="#skills" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Skills</a>
                 <a href="#contact" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Contact</a>
               </div>
@@ -846,6 +938,186 @@
       );
     };
 
+    const Projects = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const section = sectionRef.current;
+        if (!section) return;
+
+        const items = section.querySelectorAll(".project-item");
+        gsap.set(items, { y: 40, opacity: 0 });
+
+        let hasAnimated = false;
+        const runAnimation = () => {
+          if (hasAnimated) return;
+          hasAnimated = true;
+          gsap.to(items, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: "power3.out"
+          });
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) runAnimation();
+            });
+          },
+          { root: null, rootMargin: "80px 0px 80px 0px", threshold: [0, 0.05, 0.1] }
+        );
+
+        observer.observe(section);
+
+        // Fallback: on mobile, IntersectionObserver can miss during scroll. Re-check when section is near viewport.
+        const fallbackCheck = () => {
+          if (hasAnimated) return;
+          const rect = section.getBoundingClientRect();
+          const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+          const inView = rect.top < windowHeight * 0.85 && rect.bottom > 0;
+          if (inView && items.length > 0) {
+            const first = items[0];
+            const style = window.getComputedStyle(first);
+            if (parseFloat(style.opacity) < 0.1) runAnimation();
+          }
+        };
+        const scrollHandler = () => requestAnimationFrame(fallbackCheck);
+        window.addEventListener("scroll", scrollHandler, { passive: true });
+        setTimeout(fallbackCheck, 500);
+
+        return () => {
+          observer.disconnect();
+          window.removeEventListener("scroll", scrollHandler);
+          gsap.set(items, { clearProps: "all" });
+        };
+      }, []);
+
+      const [slideByProject, setSlideByProject] = useState({});
+
+      const getImages = (project) => {
+        if (project.screenshots && project.screenshots.length > 0) return project.screenshots;
+        if (project.screenshot) return [project.screenshot];
+        return [];
+      };
+
+      const setSlide = (projectIndex, slideIndex) => {
+        setSlideByProject((prev) => ({ ...prev, [projectIndex]: slideIndex }));
+      };
+
+      return (
+        <section id="projects" ref={sectionRef} className="py-24 md:py-32 px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Projects</h2>
+
+            <div className="space-y-16 md:space-y-20">
+              {profileData.projectList.map((project, index) => {
+                const isMobile = project.type === "mobile";
+                const images = getImages(project);
+                const currentSlide = Math.min(slideByProject[index] ?? 0, Math.max(0, images.length - 1));
+                const hasCarousel = images.length > 1;
+
+                const slidePct = images.length > 0 ? 100 / images.length : 100;
+                const carouselArea = (
+                  <div className={isMobile ? "flex-shrink-0 flex flex-col items-center md:order-1" : "w-full " + (hasCarousel ? "pb-3" : "")}>
+                    <div className={isMobile ? "project-phone-frame mx-auto md:mx-0 overflow-hidden" : "project-web-fullbleed w-full overflow-hidden"}>
+                      <div
+                        className="project-carousel-track h-full"
+                        style={{ width: `${images.length * 100}%`, transform: `translateX(-${currentSlide * slidePct}%)` }}
+                      >
+                        {images.map((src, i) => (
+                          <div key={i} className="h-full flex-shrink-0" style={{ width: `${slidePct}%` }}>
+                            <img src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full object-cover block" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {hasCarousel && (
+                      <div className="flex justify-center gap-2 mt-3">
+                        {images.map((_, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            aria-label={`Go to slide ${i + 1}`}
+                            className={`project-carousel-dot ${i === currentSlide ? "active" : ""}`}
+                            onClick={() => setSlide(index, i)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+
+                return (
+                  <article key={index} className="project-item">
+                    <div className={`glass rounded-2xl transition-all duration-400 project-card-hover border border-transparent overflow-hidden ${isMobile ? "p-6 md:p-8" : ""}`}>
+                      {isMobile ? (
+                        <div className="flex flex-col md:flex-row md:items-start md:gap-10 lg:gap-12 gap-8">
+                          {carouselArea}
+                          <div className="flex-1 min-w-0 md:order-2">
+                            <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Background</h4>
+                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.background}</p>
+                            </div>
+                            <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">My Role</h4>
+                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.role}</p>
+                            </div>
+                            <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Problems Solved</h4>
+                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
+                                {project.problemsSolved.map((item, i) => (<li key={i}>{item}</li>))}
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Results</h4>
+                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
+                                {project.results.map((item, i) => (<li key={i}>{item}</li>))}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {carouselArea}
+                          <div className="p-6 md:p-8">
+                            <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Background</h4>
+                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.background}</p>
+                            </div>
+                            <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">My Role</h4>
+                              <p className="text-sm md:text-base opacity-80 leading-relaxed">{project.role}</p>
+                            </div>
+                            <div className="mb-6">
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Problems Solved</h4>
+                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
+                                {project.problemsSolved.map((item, i) => (<li key={i}>{item}</li>))}
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">Results</h4>
+                              <ul className="list-disc list-inside space-y-1 text-sm md:text-base opacity-80 leading-relaxed">
+                                {project.results.map((item, i) => (<li key={i}>{item}</li>))}
+                              </ul>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
     const Skills = ({ theme }) => {
       const sectionRef = useRef(null);
 
@@ -1032,6 +1304,7 @@
             <Hero />
             <About />
             <Experience />
+            <Projects />
             <Skills theme={theme} />
             <Footer />
           </main>
