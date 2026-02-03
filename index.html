@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   <title>Euan Fan | Frontend Engineer</title>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -501,7 +502,7 @@
       location: "Auckland, New Zealand",
 
       // Hero 职业照（留空则显示占位图，可填相对路径如 "avatar.jpg" 或完整 URL）
-      heroImage: "https://ncstatic.clewm.net/rsrc/2026/0130/21/c72d23c4c1d58c70a969aeec1a9c9112.png",
+      heroImage: "images/hero/hero_photo.jpg",
 
       // Hero 区一句话（与 About 不重复，仅作首屏 hook）
       heroSubline: "10 years building web products · Open to opportunities in NZ & globally",
@@ -1047,7 +1048,7 @@
                   />
 
                   <div className="glass rounded-2xl p-5 md:p-8 transition-all duration-400 experience-card-hover">
-                    <div className="flex flex-wrap items-start gap-3 md:gap-4 mb-2">
+                    <div className="flex flex-wrap items-start gap-3 md:gap-4 mb-1.5 md:mb-2">
                       <div className="experience-company-logo-wrap">
                         {exp.companyLogo ? (
                           <img
@@ -1076,17 +1077,17 @@
                           <span className="text-sm opacity-60">{exp.period}</span>
                         </div>
                         {exp.companyBrief && (
-                          <p className="hidden md:block text-sm opacity-60 mt-1 leading-relaxed">{exp.companyBrief}</p>
+                          <p className="hidden md:block text-sm opacity-60 leading-relaxed">{exp.companyBrief}</p>
                         )}
                       </div>
                       {exp.companyBrief && (
-                        <p className="w-full md:hidden text-xs md:text-sm opacity-60 mt-2 leading-relaxed order-3">{exp.companyBrief}</p>
+                        <p className="w-full md:hidden text-xs md:text-sm opacity-60 leading-relaxed order-3">{exp.companyBrief}</p>
                       )}
                     </div>
-                    <p className="text-base font-medium mb-4" style={{ color: 'var(--accent)' }}>
+                    <p className="text-base font-medium mb-2 md:mb-4" style={{ color: 'var(--accent)' }}>
                       {exp.position}
                     </p>
-                    <p className="text-sm md:text-base opacity-70 leading-relaxed mb-4">
+                    <p className="text-sm md:text-base opacity-70 leading-relaxed mb-2 md:mb-4">
                       {exp.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
