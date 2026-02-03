@@ -180,13 +180,21 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      padding: 4px;
+      object-position: center;
+      padding: 6px;
+      box-sizing: border-box;
+      border-radius: 8px;
     }
     .experience-company-logo-fallback {
       font-size: 1.25rem;
       font-weight: 700;
       color: var(--accent);
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
     }
     .project-card-hover:hover { border-color: var(--accent); }
     .project-screenshot { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
@@ -525,7 +533,7 @@
       experienceList: [
         {
           company: "Beike (KE Holdings)",
-          companyLogo: "https://logo.clearbit.com/ke.com",
+          companyLogo: "images/company_logo/beike.png",
           companyBrief: "Technology-driven real estate platform integrating online and offline brokerage services.",
           companyUrl: "https://investors.ke.com",
           position: "Frontend Tech Lead",
@@ -547,7 +555,7 @@
         },
         {
           company: "Baidu",
-          companyLogo: "https://logo.clearbit.com/baidu.com",
+          companyLogo: "images/company_logo/baidu.png",
           companyBrief: "Leading AI and internet services company, well known for search, cloud, and deep learning technologies.",
           companyUrl: "https://ir.baidu.com/",
           position: "Frontend Tech Lead",
@@ -558,7 +566,7 @@
         },
         {
           company: "Meituan",
-          companyLogo: "https://logo.clearbit.com/meituan.com",
+          companyLogo: "images/company_logo/meituan.png",
           companyBrief: "Major platform for food delivery, local services, and on-demand consumer technology.",
           companyUrl: "https://www.meituan.com/en-US/about-us",
           position: "Senior Frontend Engineer",
