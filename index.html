@@ -181,22 +181,29 @@
     }
     .project-card-hover:hover { border-color: var(--accent); }
     .project-screenshot { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .project-phone-frame,
+    .project-web-fullbleed {
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+    [data-theme="dark"] .project-phone-frame,
+    [data-theme="dark"] .project-web-fullbleed {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    }
     .project-phone-frame {
       border-radius: 28px;
-      overflow: hidden;
-      border: 3px solid var(--border);
-      box-shadow: 0 20px 50px -12px rgba(0,0,0,0.15), inset 0 0 0 1px var(--border);
       aspect-ratio: 9 / 19.5;
       max-width: 280px;
-      background: var(--bg-secondary);
-    }
-    [data-theme="dark"] .project-phone-frame {
-      box-shadow: 0 20px 50px -12px rgba(0,0,0,0.4), inset 0 0 0 1px var(--border);
     }
     .project-phone-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .project-web-preview { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 16 / 10; }
     .project-web-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .project-web-fullbleed { width: 100%; aspect-ratio: 16 / 8; overflow: hidden; background: var(--bg-secondary); }
+    .project-web-fullbleed {
+      width: 100%;
+      aspect-ratio: 16 / 8;
+    }
     .project-web-fullbleed img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .project-carousel-track { display: flex; transition: transform 0.35s ease-out; will-change: transform; flex-wrap: nowrap; }
     .project-carousel-track .project-carousel-slide { flex: 0 0 auto; min-width: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); }
@@ -204,7 +211,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: left top;
+      object-position: left -2px;
       display: block;
       image-rendering: auto;
       image-rendering: -webkit-optimize-contrast;
@@ -347,26 +354,151 @@
       justify-content: center;
       color: var(--accent);
     }
-    .hero-tagline { color: var(--text-muted); letter-spacing: 0.15em; }
-    .hero-title { color: var(--accent); font-weight: 600; letter-spacing: 0.02em; }
-    .hero-subline { color: var(--text-primary); opacity: 0.85; }
-    .hero-visa {
+    /* Hero 模块：层级 + 特色样式（无竖线） */
+    .hero-text-block { position: relative; }
+    .hero-location {
       display: inline-flex;
       align-items: center;
-      gap: 0.375rem;
-      padding: 0.375rem 0.75rem;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
       border-radius: 9999px;
-      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+    .hero-location:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-name-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .hero-name-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.25));
+    }
+    .hero-name-primary { color: var(--text-primary); }
+    .hero-title-wrap { position: relative; display: inline-block; }
+    .hero-title {
       color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    /* Hero 三组 section 标题统一：11–12px, 700, 0.12em, 中灰 */
+    .hero-section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-section-label i { opacity: 0.85; }
+    .hero-previously-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .hero-company-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.7rem;
       font-size: 0.75rem;
       font-weight: 600;
+      color: var(--text-primary);
+      background: #F5F7FA;
+      border: 1px solid #E6EDF5;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .hero-company-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .hero-company-pill .hero-company-pill-icon {
+      opacity: 0;
+      width: 0.75rem;
+      height: 0.75rem;
+      transition: opacity 0.2s ease;
+    }
+    .hero-company-pill:hover .hero-company-pill-icon { opacity: 1; }
+    [data-theme="dark"] .hero-company-pill {
+      background: var(--bg-secondary);
+      border-color: var(--border);
+    }
+    .hero-subline-wrap { opacity: 0.95; }
+    .hero-subline {
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    .hero-tech-stack-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.75rem;
+      align-items: center;
+    }
+    .hero-tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
       border: 1px solid var(--border);
-      line-height: 1.35;
+      border-radius: 0.75rem;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .hero-tech-pill .hero-tech-pill-check {
+      flex-shrink: 0;
+      width: 0.75rem;
+      height: 0.75rem;
+      color: var(--accent);
+    }
+    .hero-tech-pill:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .hero-tech-pill:hover .hero-tech-pill-check { color: var(--accent); }
+    /* Work Rights：紧凑 info badge，主 CTA 感 */
+    .hero-visa {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.75rem;
+      background: rgba(14, 165, 233, 0.06);
+      color: var(--accent);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border: 1px solid rgba(14, 165, 233, 0.2);
+      line-height: 1.4;
       max-width: 100%;
     }
+    .hero-visa .hero-visa-icon {
+      flex-shrink: 0;
+      width: 0.75rem;
+      height: 0.75rem;
+      vertical-align: -0.2em;
+    }
     .hero-visa span { word-break: break-word; }
-    @media (min-width: 768px) {
-      .hero-visa { padding: 0.5rem 1rem; font-size: 0.875rem; gap: 0.5rem; }
+    [data-theme="dark"] .hero-visa {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: rgba(56, 189, 248, 0.25);
     }
 
     .skill-pill {
@@ -564,16 +696,26 @@
       // Personal Info
       name: "Euan Fan",
       nameChinese: "范园贺",
-      title: "Senior Frontend Engineer",
+      title: "Senior Frontend / Platform Engineer",
       location: "Auckland, New Zealand",
 
       // Hero 职业照（留空则显示占位图，可填相对路径如 "avatar.jpg" 或完整 URL）
       heroImage: "images/hero/hero_photo.jpg",
 
       // Hero 区一句话（与 About 不重复，仅作首屏 hook）
-      heroSubline: "10 years building web products · Open to opportunities in NZ & globally",
+      heroSubline: "Specializing in scalable platforms and complex web applications.",
       // Hero 签证/工作权限（首屏突出展示）
       heroVisa: "Eligible to work in New Zealand (Open Work Visa)",
+      heroVisaShort: "Eligible to work in NZ — Open Work Visa (no sponsorship required)",
+      // Hero 曾就职公司（name + url，点击跳转官网）
+      heroPreviouslyAt: [
+        { name: "Beike", url: "https://investors.ke.com" },
+        { name: "Alibaba", url: "https://www.alibabagroup.com/en-US/" },
+        { name: "Baidu", url: "https://ir.baidu.com/" },
+        { name: "Meituan", url: "https://www.meituan.com/en-US/about-us" }
+      ],
+      // Hero 技术栈（单行展示）
+      heroTechStack: ["React", "TypeScript", "Node.js", "Platform Engineering"],
 
       // IMPORTANT: split years vs list to avoid React child error
       experienceYears: "10+ Years",
@@ -864,26 +1006,72 @@
       return (
         <section ref={heroRef} className="min-h-screen flex flex-col justify-center items-center relative px-6 pt-24 pb-20 md:pt-28 md:pb-24">
           <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-12 md:gap-16 lg:gap-20">
-            <div ref={textBlockRef} className="flex-1 text-center md:text-left order-2 md:order-1">
-              <p ref={taglineRef} className="hero-tagline text-sm md:text-base uppercase mb-4">
-                <span className="opacity-70">Frontend Engineer · </span><span>{profileData.location}</span>
+            <div ref={textBlockRef} className="flex-1 text-center md:text-left order-2 md:order-1 hero-text-block">
+              <p ref={taglineRef} className="hero-location mb-5 md:mb-6 inline-flex">
+                <i data-lucide="map-pin" className="w-3.5 h-3.5 flex-shrink-0 opacity-80" />
+                <span>{profileData.location}</span>
               </p>
-              <h1 ref={nameRef} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-black tracking-tighter leading-none mb-3">
-                <span style={{ color: 'var(--accent)' }} className="ml-1 md:ml-3">{firstName}</span>
-                {lastName && <span className="ml-1 md:ml-2" style={{ color: 'var(--text-primary)' }}>{lastName}</span>}
+              <h1 ref={nameRef} className="hero-name-wrap text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-black tracking-tighter leading-none mb-5">
+                <span className="hero-name-accent ml-1 md:ml-0">{firstName}</span>
+                {lastName && <span className="hero-name-primary ml-1 md:ml-2">{lastName}</span>}
               </h1>
-              <p ref={titleRef} className="hero-title text-lg md:text-2xl lg:text-3xl tracking-wide mb-5">
-                {profileData.title}
-              </p>
-              <p className="hero-subline text-base md:text-lg max-w-md md:max-w-none md:pr-4">
-                {profileData.heroSubline}
-              </p>
-              {profileData.heroVisa && (
-                <div className="flex justify-center md:justify-start mt-4 md:mt-5">
-                  <p className="hero-visa">
-                    <i data-lucide="check-circle" className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
-                    <span>{profileData.heroVisa}</span>
+              <div ref={titleRef} className="hero-title-wrap mb-5">
+                <p className="hero-title text-lg md:text-2xl lg:text-3xl tracking-wide">
+                  {profileData.title}
+                </p>
+              </div>
+              <div className="hero-subline-wrap mb-5 max-w-md md:max-w-none md:pr-4">
+                <p className="hero-subline text-base md:text-lg">
+                  {profileData.heroSubline}
+                </p>
+              </div>
+              {profileData.heroPreviouslyAt && profileData.heroPreviouslyAt.length > 0 && (
+                <div className="mb-4">
+                  <p className="hero-section-label justify-center md:justify-start">
+                    <i data-lucide="building-2" className="w-3.5 h-3.5" />
+                    <span>Worked at</span>
                   </p>
+                  <div className="hero-previously-pills justify-center md:justify-start">
+                    {profileData.heroPreviouslyAt.map((company, i) => (
+                      typeof company === 'string' ? (
+                        <span key={i} className="hero-company-pill">{company}</span>
+                      ) : (
+                        <a key={i} href={company.url} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${company.name}`}>
+                          {company.name}
+                          <i data-lucide="external-link" className="hero-company-pill-icon" aria-hidden />
+                        </a>
+                      )
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profileData.heroTechStack && profileData.heroTechStack.length > 0 && (
+                <div className="mb-4">
+                  <p className="hero-section-label justify-center md:justify-start">
+                    <i data-lucide="code-2" className="w-3.5 h-3.5" />
+                    <span>Tech Stack</span>
+                  </p>
+                  <div className="hero-tech-stack-wrap justify-center md:justify-start">
+                    {profileData.heroTechStack.map((tech, i) => (
+                      <span key={i} className="hero-tech-pill">
+                        <i data-lucide="check" className="hero-tech-pill-check" aria-hidden />
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profileData.heroVisa && (
+                <div>
+                  <p className="hero-section-label justify-center md:justify-start mb-2">
+                    <i data-lucide="badge-check" className="w-3.5 h-3.5" />
+                    <span>Work Rights</span>
+                  </p>
+                  <div className="flex justify-center md:justify-start">
+                    <p className="hero-visa">
+                      <span>{profileData.heroVisa}</span>
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -1001,7 +1189,7 @@
               <div className="bento-item glass flex flex-col justify-center items-center text-center">
                 <i data-lucide="map-pin" className="w-8 h-8 mb-3 about-body-muted" style={{ color: 'var(--text-muted)' }} />
                 <span className="text-lg font-medium about-body">{profileData.location}</span>
-                <span className="text-sm mt-1 about-body-muted">Relocating to</span>
+                <span className="text-sm mt-1 about-body-muted">Based in</span>
               </div>
 
               <div className="bento-item wide glass">
