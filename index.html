@@ -441,6 +441,71 @@
     .skills-section-title { color: var(--text-muted); }
 
     .footer-border { border-color: var(--border); }
+    .footer-label {
+      color: var(--text-muted);
+      letter-spacing: 0.25em;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .footer-title {
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 0.95;
+      font-weight: 800;
+    }
+    .footer-title .footer-title-accent { color: var(--accent); }
+    .footer-tagline {
+      color: var(--text-muted);
+      font-size: 0.9375rem;
+      font-weight: 400;
+      line-height: 1.5;
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .footer-connect-label {
+      color: var(--text-muted);
+      font-size: 0.6875rem;
+      letter-spacing: 0.2em;
+      font-weight: 500;
+    }
+    .footer-copy { color: var(--text-muted); opacity: 0.8; }
+    .footer-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .footer-cta:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      box-shadow: 0 4px 20px -4px rgba(14, 165, 233, 0.25);
+    }
+    .footer-social-link {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .footer-social-link:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
 
     .experience-highlight-tag {
       background: var(--accent-soft);
@@ -1357,41 +1422,46 @@
       return (
         <footer id="contact" ref={sectionRef} className="min-h-[70vh] flex flex-col justify-center py-24 md:py-32 px-6 relative">
           <div className="footer-content max-w-6xl mx-auto text-center">
-            <p className="text-sm tracking-[0.3em] uppercase opacity-60 mb-8">Let's Connect</p>
+            <p className="footer-label uppercase mb-6">Let's Connect</p>
 
-            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-12">
-              Get In <span style={{ color: 'var(--accent)' }}>Touch</span>
+            <h2 className="footer-title text-4xl sm:text-5xl md:text-7xl lg:text-8xl tracking-tighter mb-4">
+              Get In <span className="footer-title-accent">Touch</span>
             </h2>
+            <p className="footer-tagline mb-10 md:mb-12">
+              Open to opportunities. Feel free to reach out.
+            </p>
 
             <a
               href={`mailto:${profileData.email}`}
-              className="magnetic-btn inline-block text-xl md:text-3xl font-medium mb-16 link-underline transition-colors"
+              className="footer-cta mb-12 md:mb-14 inline-flex items-center gap-2 text-base md:text-lg"
             >
-              {profileData.email}
+              <i data-lucide="mail" className="w-5 h-5 flex-shrink-0" />
+              <span>{profileData.email}</span>
             </a>
 
-            <div className="flex justify-center gap-8 mb-16">
-              <a href={profileData.social.github} target="_blank" rel="noopener noreferrer"
-                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[var(--accent)] transition-all">
-                <i data-lucide="github" className="w-6 h-6" />
+            <p className="footer-connect-label uppercase mb-6">Connect</p>
+            <div className="flex justify-center gap-4 md:gap-6 mb-16">
+              <a href={profileData.social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                 className="footer-social-link">
+                <i data-lucide="github" className="w-5 h-5" />
               </a>
-              <a href={profileData.social.linkedin} target="_blank" rel="noopener noreferrer"
-                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[var(--accent)] transition-all">
-                <i data-lucide="linkedin" className="w-6 h-6" />
+              <a href={profileData.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                 className="footer-social-link">
+                <i data-lucide="linkedin" className="w-5 h-5" />
               </a>
-              <a href={profileData.social.twitter} target="_blank" rel="noopener noreferrer"
-                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[var(--accent)] transition-all">
-                <i data-lucide="twitter" className="w-6 h-6" />
+              <a href={profileData.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter"
+                 className="footer-social-link">
+                <i data-lucide="twitter" className="w-5 h-5" />
               </a>
-              <a href={`mailto:${profileData.email}`}
-                 className="magnetic-btn w-14 h-14 rounded-full glass flex items-center justify-center hover:border-[var(--accent)] transition-all">
-                <i data-lucide="mail" className="w-6 h-6" />
+              <a href={`mailto:${profileData.email}`} aria-label="Email"
+                 className="footer-social-link">
+                <i data-lucide="mail" className="w-5 h-5" />
               </a>
             </div>
 
             <div className="pt-8 border-t footer-border">
-              <p className="text-sm opacity-60" style={{ color: 'var(--text-muted)' }}>© {new Date().getFullYear()} {profileData.name}. All rights reserved.</p>
-              <p className="text-xs opacity-50 mt-2" style={{ color: 'var(--text-muted)' }}>Crafted with React + GSAP + Tailwind CSS</p>
+              <p className="footer-copy text-sm">© {new Date().getFullYear()} {profileData.name}. All rights reserved.</p>
+              <p className="footer-copy text-xs mt-2">Built with React, GSAP & Tailwind CSS</p>
             </div>
           </div>
         </footer>
