@@ -70,7 +70,6 @@
       background-color: var(--bg-primary);
       color: var(--text-primary);
       overflow-x: hidden;
-      cursor: none;
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
@@ -82,33 +81,6 @@
       z-index: 9999;
       opacity: 0.02;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    }
-
-    .custom-cursor {
-      position: fixed;
-      width: 20px; height: 20px;
-      border: 1px solid var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10000;
-      mix-blend-mode: difference;
-      transition: transform 0.1s ease-out, width 0.2s ease, height 0.2s ease;
-      transform: translate(-50%, -50%);
-    }
-
-    .custom-cursor.hover {
-      width: 50px; height: 50px;
-      background: var(--accent-soft);
-    }
-
-    .cursor-dot {
-      position: fixed;
-      width: 6px; height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10001;
-      transform: translate(-50%, -50%);
     }
 
     .glass {
@@ -479,8 +451,6 @@
     @media (max-width: 768px) {
       .bento-grid { grid-template-columns: 1fr; }
       .bento-item.large, .bento-item.wide { grid-column: span 1; grid-row: span 1; }
-      body { cursor: auto; }
-      .custom-cursor, .cursor-dot { display: none; }
     }
   </style>
 </head>
@@ -728,47 +698,6 @@
         >
           <i data-lucide={theme === 'light' ? 'moon' : 'sun'} className="w-5 h-5" />
         </button>
-      );
-    };
-
-    const CustomCursor = () => {
-      const cursorRef = useRef(null);
-      const dotRef = useRef(null);
-
-      useEffect(() => {
-        const cursor = cursorRef.current;
-        const dot = dotRef.current;
-
-        const moveCursor = (e) => {
-          gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" });
-          gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.05, ease: "power2.out" });
-        };
-
-        const handleMouseEnter = () => cursor.classList.add("hover");
-        const handleMouseLeave = () => cursor.classList.remove("hover");
-
-        document.addEventListener("mousemove", moveCursor);
-
-        const interactiveElements = document.querySelectorAll("a, button, .magnetic-btn");
-        interactiveElements.forEach((el) => {
-          el.addEventListener("mouseenter", handleMouseEnter);
-          el.addEventListener("mouseleave", handleMouseLeave);
-        });
-
-        return () => {
-          document.removeEventListener("mousemove", moveCursor);
-          interactiveElements.forEach((el) => {
-            el.removeEventListener("mouseenter", handleMouseEnter);
-            el.removeEventListener("mouseleave", handleMouseLeave);
-          });
-        };
-      }, []);
-
-      return (
-        <>
-          <div ref={cursorRef} className="custom-cursor hidden md:block" />
-          <div ref={dotRef} className="cursor-dot hidden md:block" />
-        </>
       );
     };
 
@@ -1489,7 +1418,6 @@
 
       return (
         <>
-          <CustomCursor />
           <LiquidBackground />
           <div className="noise-overlay" />
           <Navigation theme={theme} setTheme={setTheme} />
