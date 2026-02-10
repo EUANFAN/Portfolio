@@ -304,6 +304,13 @@
     .about-subtitle { color: var(--accent); font-weight: 600; padding-left: 0.75rem; border-left: 3px solid var(--accent); }
     .about-body { color: var(--text-primary); }
     .about-body-muted { color: var(--text-muted); }
+    .about-intro-lead {
+      color: var(--text-primary);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      padding-left: 0.75rem;
+      border-left: 3px solid var(--accent);
+    }
     .about-quote { color: var(--accent); font-weight: 600; }
 
     .about-company-link {
@@ -768,13 +775,6 @@
       heroSubline: "Building scalable platforms used by millions.",
       // Hero 签证/工作权限（首屏突出展示）
       heroVisa: "Eligible to work in New Zealand (Open Work Visa)",
-      // Hero 曾就职公司（name + url，点击跳转官网）
-      heroPreviouslyAt: [
-        { name: "Beike", url: "https://investors.ke.com" },
-        { name: "Alibaba", url: "https://www.alibabagroup.com/en-US/" },
-        { name: "Baidu", url: "https://ir.baidu.com/" },
-        { name: "Meituan", url: "https://www.meituan.com/en-US/about-us" }
-      ],
       // Hero 技术栈（单行展示）
       heroTechStack: ["React", "TypeScript", "Node.js", "Platform Engineering"],
 
@@ -795,11 +795,11 @@
       },
 
       // About Me 模块完整介绍（仅在此处展示，Hero 不重复）
-      aboutIntro: "I'm a passionate Web Front-End / Full-Stack Developer with 10 years of experience based in Beijing, China. Now relocating to New Zealand and open to global tech opportunities.",
+      aboutIntro: "Senior Frontend / Full-Stack Engineer with 10+ years of experience building scalable platforms used by millions of users.",
       aboutHighlights: [
-        { icon: "code", text: "Focused on building performant, maintainable web applications using modern JavaScript frameworks" },
-        { icon: "brain", text: "Strong background in front-end architecture, full-stack development (Node.js), and UI/UX collaboration" },
-        { icon: "building-2", text: "Work experience at leading technology companies in China" }
+        { icon: "code", text: "Previously at leading tech companies such as Alibaba and Baidu, where I drove the design of company-wide platforms — including design systems, component libraries, and low-code infrastructure." },
+        { icon: "brain", text: "I specialize in simplifying complex problems into clean, scalable solutions and collaborate closely with cross-functional teams to deliver meaningful impact." },
+        { icon: "building-2", text: "Now based in Auckland with full work rights in New Zealand, seeking to contribute to high-performing engineering teams." }
       ],
       acsAssessment: [
         { code: "261212", title: "Web Developer" },
@@ -812,7 +812,7 @@
       // Work Experience (companyLogo optional: logo URL; companyBrief optional)
       experienceList: [
         {
-          company: "Beike (KE Holdings)",
+          company: "Beike",
           companyLogo: "images/company_logo/beike.png",
           companyBrief: "Technology-driven real estate platform integrating online and offline brokerage services.",
           companyUrl: "https://investors.ke.com",
@@ -823,7 +823,7 @@
           highlights: ["Low-code Platform", "Visualization", "Efficiency"]
         },
         {
-          company: "Alibaba Group",
+          company: "Alibaba",
           companyLogo: "images/company_logo/alibaba.png",
           companyBrief: "Global leader in e-commerce, cloud computing, and digital infrastructure.",
           companyUrl: "https://www.alibabagroup.com/en-US/",
@@ -1087,21 +1087,21 @@
                   {profileData.heroSubline}
                 </p>
               </div>
-              {profileData.heroPreviouslyAt && profileData.heroPreviouslyAt.length > 0 && (
+              {profileData.experienceList && profileData.experienceList.length > 0 && (
                 <div className="mb-4">
                   <p className="hero-section-label justify-center md:justify-start">
                     <i data-lucide="building-2" className="w-3.5 h-3.5" />
-                    <span>Worked at</span>
+                    <span>Career Highlights</span>
                   </p>
                   <div className="hero-previously-pills justify-center md:justify-start">
-                    {profileData.heroPreviouslyAt.map((company, i) => (
-                      typeof company === 'string' ? (
-                        <span key={i} className="hero-company-pill">{company}</span>
-                      ) : (
-                        <a key={i} href={company.url} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${company.name}`}>
-                          {company.name}
+                    {profileData.experienceList.map((exp, i) => (
+                      exp.companyUrl ? (
+                        <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
+                          {exp.company}
                           <i data-lucide="external-link" className="hero-company-pill-icon" aria-hidden />
                         </a>
+                      ) : (
+                        <span key={i} className="hero-company-pill">{exp.company}</span>
                       )
                     ))}
                   </div>
@@ -1111,7 +1111,7 @@
                 <div className="mb-4">
                   <p className="hero-section-label justify-center md:justify-start">
                     <i data-lucide="code-2" className="w-3.5 h-3.5" />
-                    <span>Tech Stack</span>
+                    <span>Technical Expertise</span>
                   </p>
                   <div className="hero-tech-stack-wrap justify-center md:justify-start">
                     {profileData.heroTechStack.map((tech, i) => (
@@ -1127,7 +1127,7 @@
                 <div>
                   <p className="hero-section-label justify-center md:justify-start mb-2">
                     <i data-lucide="shield-check" className="w-3.5 h-3.5" />
-                    <span>Work Rights</span>
+                    <span>Work Authorization</span>
                   </p>
                   <div className="flex justify-center md:justify-start">
                     <p className="hero-visa">
@@ -1191,7 +1191,7 @@
               {/* 主介绍区：intro + highlights + companies + ACS + 结语 */}
               <div className="bento-item large glass">
                 <h3 className="text-2xl md:text-3xl font-semibold mb-4 about-body">Hello, I'm {profileData.name}</h3>
-                <p className="text-base md:text-lg leading-relaxed about-body-muted mb-6">
+                <p className="text-base md:text-lg leading-relaxed about-intro-lead mb-6">
                   {profileData.aboutIntro}
                 </p>
 
@@ -1201,13 +1201,13 @@
                       <span className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                         <i data-lucide={item.icon} className="w-4 h-4" />
                       </span>
-                      <p className="about-body text-sm md:text-base leading-relaxed pt-0.5">{item.text}</p>
+                      <p className="about-body text-sm md:text-base leading-relaxed flex-1 min-w-0">{item.text}</p>
                     </div>
                   ))}
                 </div>
 
                 <h4 className="about-subtitle text-sm uppercase tracking-wider mb-2">
-                  Work experience at leading companies
+                  Career Highlights
                 </h4>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {profileData.experienceList.map((exp, i) => (
