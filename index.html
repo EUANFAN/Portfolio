@@ -285,6 +285,52 @@
 
     .bento-item.large { grid-column: span 2; grid-row: span 2; }
     .bento-item.wide { grid-column: span 2; }
+    .bento-item.full-width { grid-column: 1 / -1; }
+    .bento-item.about-primary {
+      border-color: rgba(14, 165, 233, 0.2);
+      box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.08);
+    }
+    .bento-item.about-primary:hover { border-color: var(--accent); }
+    [data-theme="dark"] .bento-item.about-primary {
+      border-color: rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.06);
+    }
+    .about-card-compact { padding: 1.25rem; }
+    .about-card-compact .about-module-title { margin-bottom: 0.75rem; }
+
+    /* 右侧三块：统一留白与标题间距（PC + 移动端一致） */
+    .about-right-card {
+      padding: 1.25rem;
+      border-radius: 20px;
+      transition: all 0.4s ease;
+    }
+    .about-right-card .about-module-title { margin-bottom: 0.75rem; }
+    .about-right-card p + p { margin-top: 0.25rem; }
+
+    /* About：左侧大卡 + 右侧一列（同高，底部对齐） */
+    #about .bento-grid { grid-template-rows: auto auto; align-items: stretch; }
+    #about .bento-item.about-large { grid-column: 1 / 3; grid-row: 1 / 3; }
+    #about .about-right-col {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      min-height: 0;
+    }
+    /* 中间卡片伸缩填充，使三块间距均为 gap，底部仍与左侧对齐 */
+    #about .about-right-col .about-right-middle { flex: 1; min-height: 0; }
+    @media (max-width: 768px) {
+      #about .bento-item.about-large { grid-column: auto; grid-row: auto; }
+      #about .about-right-col {
+        grid-column: auto;
+        grid-row: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      #about .about-right-col .about-right-middle { flex: none; min-height: 0; }
+    }
 
     ::-webkit-scrollbar { width: 0; background: transparent; }
 
@@ -770,6 +816,7 @@
       .bento-grid { grid-template-columns: 1fr; }
       .bento-item.large, .bento-item.wide { grid-column: span 1; grid-row: span 1; }
     }
+
   </style>
 </head>
 
@@ -1212,13 +1259,12 @@
             <h2 className="text-sm tracking-[0.3em] uppercase mb-12 about-section-label">About Me</h2>
 
             <div className="bento-grid">
-              {/* 主介绍区：intro + highlights + companies + ACS + 结语 */}
-              <div className="bento-item large glass">
+              {/* 左侧大卡片：简介 + Key Strengths + Selected Experience */}
+              <div className="bento-item large glass about-large">
                 <h3 className="text-2xl md:text-3xl font-bold mb-4 about-emphasis-title">Hello, I'm {profileData.name}</h3>
                 <p className="about-intro-lead mb-6">
                   {profileData.aboutIntro}
                 </p>
-
                 <div className="space-y-4 mb-6">
                   {profileData.aboutHighlights.map((item, i) => (
                     <div key={i} className="flex gap-3 items-start">
@@ -1230,80 +1276,77 @@
                   ))}
                 </div>
 
-                <h4 className="about-subtitle mb-2">
-                  Selected Experience
-                </h4>
-                <div className="hero-previously-pills about-selected-pills mb-6">
-                    {profileData.experienceList.map((exp, i) => (
-                      exp.companyUrl ? (
-                        <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
-                          {exp.company}
-                          <i data-lucide="external-link" className="hero-company-pill-icon" aria-hidden />
-                        </a>
-                      ) : (
-                        <span key={i} className="hero-company-pill">{exp.company}</span>
-                      )
+                {profileData.keyStrengths && profileData.keyStrengths.length > 0 && (
+                  <>
+                    <h4 className="about-subtitle mb-2">Key Strengths</h4>
+                    <ul className="space-y-1.5 about-list-text mb-6 list-none pl-0">
+                      {profileData.keyStrengths.map((item, i) => (
+                        <li key={i} className="flex gap-2 items-start">
+                          <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                <h4 className="about-subtitle mb-2">Selected Experience</h4>
+                <div className="hero-previously-pills about-selected-pills">
+                  {profileData.experienceList.map((exp, i) => (
+                    exp.companyUrl ? (
+                      <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
+                        {exp.company}
+                        <i data-lucide="external-link" className="hero-company-pill-icon" aria-hidden />
+                      </a>
+                    ) : (
+                      <span key={i} className="hero-company-pill">{exp.company}</span>
+                    )
+                  ))}
+                </div>
+              </div>
+
+              {/* 右侧一列：与左侧同高，三块留白/间距统一，移动端同间距 */}
+              <div className="about-right-col">
+                {profileData.impactHighlights && profileData.impactHighlights.length > 0 ? (
+                <div className="bento-item glass flex flex-col text-left about-right-card">
+                  <h4 className="about-module-title">
+                    <i data-lucide="zap" className="w-3.5 h-3.5" />
+                    Impact Highlights
+                  </h4>
+                  <ul className="space-y-1.5 about-list-text overflow-y-auto max-h-[12rem] pr-1 list-none pl-0 mt-0">
+                    {profileData.impactHighlights.map((item, i) => (
+                      <li key={i} className="flex gap-2 items-start">
+                        <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                        <span>{item}</span>
+                      </li>
                     ))}
+                  </ul>
+                </div>
+                ) : (
+                <div className="bento-item glass flex flex-col justify-center items-center text-center about-right-card">
+                  <span className="text-5xl md:text-6xl font-black" style={{ color: 'var(--accent)' }}>
+                    {profileData.experienceYears}
+                  </span>
+                  <span className="text-sm mt-2 about-body-muted">Experience</span>
+                </div>
+                )}
+
+                <div className="bento-item glass flex flex-col text-left about-right-card about-right-middle">
+                  <h4 className="about-module-title">
+                    <i data-lucide="graduation-cap" className="w-3.5 h-3.5" />
+                    Education
+                  </h4>
+                  <p className="about-list-text about-body-muted">{profileData.education.school}</p>
+                  <p className="text-[0.875rem] about-body-muted opacity-90">{profileData.education.major} · {profileData.education.period}</p>
                 </div>
 
-              </div>
-
-              {profileData.impactHighlights && profileData.impactHighlights.length > 0 ? (
-              <div className="bento-item glass flex flex-col">
-                <h4 className="about-module-title mb-3">
-                  <i data-lucide="zap" className="w-3.5 h-3.5" />
-                  Impact Highlights
-                </h4>
-                <ul className="space-y-1.5 about-list-text overflow-y-auto max-h-[12rem] pr-1 list-none pl-0">
-                  {profileData.impactHighlights.map((item, i) => (
-                    <li key={i} className="flex gap-2 items-start">
-                      <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              ) : (
-              <div className="bento-item glass flex flex-col justify-center items-center text-center">
-                <span className="text-5xl md:text-6xl font-black" style={{ color: 'var(--accent)' }}>
-                  {profileData.experienceYears}
-                </span>
-                <span className="text-sm mt-2 about-body-muted">Experience</span>
-              </div>
-              )}
-
-              {profileData.keyStrengths && profileData.keyStrengths.length > 0 && (
-              <div className="bento-item glass flex flex-col text-left">
-                <h4 className="about-module-title mb-3">
-                  <i data-lucide="sparkles" className="w-3.5 h-3.5" />
-                  Key Strengths
-                </h4>
-                <ul className="space-y-1.5 about-list-text overflow-y-auto max-h-[12rem] pr-1 list-none pl-0">
-                  {profileData.keyStrengths.map((item, i) => (
-                    <li key={i} className="flex gap-2 items-start">
-                      <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              )}
-
-              <div className="bento-item wide glass text-left about-supplementary">
-                <h4 className="about-module-title mb-2 about-supplementary text-[0.75rem]">
-                  <i data-lucide="graduation-cap" className="w-3.5 h-3.5 about-supplementary-icon" />
-                  Education
-                </h4>
-                <p className="about-list-text about-body-muted">{profileData.education.school}</p>
-                <p className="text-[0.875rem] about-body-muted opacity-90 mt-0.5">{profileData.education.major} · {profileData.education.period}</p>
-              </div>
-
-              <div className="bento-item glass text-left about-supplementary">
-                <h4 className="about-module-title mb-2 about-supplementary text-[0.75rem]">
-                  <i data-lucide="award" className="w-3.5 h-3.5 about-supplementary-icon" />
-                  Professional Recognition
-                </h4>
-                <p className="about-list-text about-body-muted">Skills assessed for Software Engineering (ANZSCO 261313)</p>
+                <div className="bento-item glass flex flex-col text-left about-right-card">
+                  <h4 className="about-module-title">
+                    <i data-lucide="award" className="w-3.5 h-3.5" />
+                    Professional Recognition
+                  </h4>
+                  <p className="about-list-text about-body-muted">Skills assessed for Software Engineering (ANZSCO 261313)</p>
+                </div>
               </div>
             </div>
           </div>
