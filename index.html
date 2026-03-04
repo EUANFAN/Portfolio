@@ -298,38 +298,80 @@
     .about-card-compact { padding: 1.25rem; }
     .about-card-compact .about-module-title { margin-bottom: 0.75rem; }
 
-    /* 右侧三块：统一留白与标题间距（PC + 移动端一致） */
+    /* 右侧三块：紧凑留白 */
     .about-right-card {
-      padding: 1.25rem;
-      border-radius: 20px;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
       transition: all 0.4s ease;
     }
-    .about-right-card .about-module-title { margin-bottom: 0.75rem; }
+    .about-right-card .about-module-title { margin-bottom: 0.5rem; }
     .about-right-card p + p { margin-top: 0.25rem; }
 
-    /* About：左侧大卡 + 右侧一列（同高，底部对齐） */
-    #about .bento-grid { grid-template-rows: auto auto; align-items: stretch; }
-    #about .bento-item.about-large { grid-column: 1 / 3; grid-row: 1 / 3; }
-    #about .about-right-col {
-      grid-column: 3;
-      grid-row: 1 / 3;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      min-height: 0;
-    }
-    /* 中间卡片伸缩填充，使三块间距均为 gap，底部仍与左侧对齐 */
-    #about .about-right-col .about-right-middle { flex: 1; min-height: 0; }
-    @media (max-width: 768px) {
-      #about .bento-item.about-large { grid-column: auto; grid-row: auto; }
+    /* About 桌面端：左右两列等高，紧凑间距；左侧一列、右侧一列（覆盖 .bento-item.large 的 span 2） */
+    @media (min-width: 769px) {
+      #about .bento-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        grid-template-rows: 1fr;
+        gap: 1.25rem;
+        align-items: stretch;
+      }
+      #about .bento-item.about-large {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+        padding: 1.5rem 1.75rem;
+        border-radius: 16px;
+      }
       #about .about-right-col {
-        grid-column: auto;
-        grid-row: auto;
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+        min-height: 0;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
       }
-      #about .about-right-col .about-right-middle { flex: none; min-height: 0; }
+      #about .about-right-col-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        min-height: 100%;
+      }
+      /* 三张卡片均分高度填满右侧列，与左侧同高无留白 */
+      #about .about-right-col-inner .about-right-card {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      /* Impact Highlights 列表过多时在卡片内滚动 */
+      #about .about-right-col-inner .about-right-card ul {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+      }
+      #about .about-right-col-inner .about-right-col-spacer {
+        display: none;
+      }
+    }
+    @media (max-width: 768px) {
+      #about .bento-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      #about .bento-item.about-large { flex: none; padding: 2rem; }
+      #about .about-right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      #about .about-right-col-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      #about .about-right-col .about-right-col-spacer { display: none; }
     }
 
     ::-webkit-scrollbar { width: 0; background: transparent; }
@@ -1223,7 +1265,9 @@
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            <a href="#about" className="block text-current" aria-label="Scroll to About">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
           </div>
         </section>
       );
@@ -1254,22 +1298,22 @@
       }, []);
 
       return (
-        <section id="about" ref={sectionRef} className="py-24 md:py-32 px-6">
+        <section id="about" ref={sectionRef} className="relative py-16 md:py-24 px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-sm tracking-[0.3em] uppercase mb-12 about-section-label">About Me</h2>
+            <h2 className="text-sm tracking-[0.3em] uppercase mb-8 about-section-label">About Me</h2>
 
             <div className="bento-grid">
               {/* 左侧大卡片：简介 + Key Strengths + Selected Experience */}
               <div className="bento-item large glass about-large">
-                <h3 className="text-2xl md:text-3xl font-bold mb-4 about-emphasis-title">Hello, I'm {profileData.name}</h3>
-                <p className="about-intro-lead mb-6">
+                <h3 className="text-xl md:text-2xl font-bold mb-3 about-emphasis-title">Hello, I'm {profileData.name}</h3>
+                <p className="about-intro-lead mb-4">
                   {profileData.aboutIntro}
                 </p>
-                <div className="space-y-4 mb-6">
+                <div className="space-y-3 mb-4">
                   {profileData.aboutHighlights.map((item, i) => (
                     <div key={i} className="flex gap-3 items-start">
-                      <span className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
-                        <i data-lucide={item.icon} className="w-4 h-4" />
+                      <span className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+                        <i data-lucide={item.icon} className="w-3.5 h-3.5" />
                       </span>
                       <p className="about-list-text flex-1 min-w-0 font-medium">{item.text}</p>
                     </div>
@@ -1279,7 +1323,7 @@
                 {profileData.keyStrengths && profileData.keyStrengths.length > 0 && (
                   <>
                     <h4 className="about-subtitle mb-2">Key Strengths</h4>
-                    <ul className="space-y-1.5 about-list-text mb-6 list-none pl-0">
+                    <ul className="space-y-1.5 about-list-text mb-4 list-none pl-0">
                       {profileData.keyStrengths.map((item, i) => (
                         <li key={i} className="flex gap-2 items-start">
                           <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
@@ -1290,7 +1334,7 @@
                   </>
                 )}
 
-                <h4 className="about-subtitle mb-2">Selected Experience</h4>
+                <h4 className="about-subtitle mb-2 mt-1">Selected Experience</h4>
                 <div className="hero-previously-pills about-selected-pills">
                   {profileData.experienceList.map((exp, i) => (
                     exp.companyUrl ? (
@@ -1307,48 +1351,58 @@
 
               {/* 右侧一列：与左侧同高，三块留白/间距统一，移动端同间距 */}
               <div className="about-right-col">
-                {profileData.impactHighlights && profileData.impactHighlights.length > 0 ? (
-                <div className="bento-item glass flex flex-col text-left about-right-card">
-                  <h4 className="about-module-title">
-                    <i data-lucide="zap" className="w-3.5 h-3.5" />
-                    Impact Highlights
-                  </h4>
-                  <ul className="space-y-1.5 about-list-text overflow-y-auto max-h-[12rem] pr-1 list-none pl-0 mt-0">
-                    {profileData.impactHighlights.map((item, i) => (
-                      <li key={i} className="flex gap-2 items-start">
-                        <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                ) : (
-                <div className="bento-item glass flex flex-col justify-center items-center text-center about-right-card">
-                  <span className="text-5xl md:text-6xl font-black" style={{ color: 'var(--accent)' }}>
-                    {profileData.experienceYears}
-                  </span>
-                  <span className="text-sm mt-2 about-body-muted">Experience</span>
-                </div>
-                )}
+                <div className="about-right-col-inner">
+                  {profileData.impactHighlights && profileData.impactHighlights.length > 0 ? (
+                  <div className="bento-item glass flex flex-col text-left about-right-card">
+                    <h4 className="about-module-title">
+                      <i data-lucide="zap" className="w-3.5 h-3.5" />
+                      Impact Highlights
+                    </h4>
+                    <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0 pr-1">
+                      {profileData.impactHighlights.map((item, i) => (
+                        <li key={i} className="flex gap-2 items-start">
+                          <span className="flex-shrink-0 w-1 h-1 rounded-full mt-2 opacity-50" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  ) : (
+                  <div className="bento-item glass flex flex-col justify-center items-center text-center about-right-card">
+                    <span className="text-5xl md:text-6xl font-black" style={{ color: 'var(--accent)' }}>
+                      {profileData.experienceYears}
+                    </span>
+                    <span className="text-sm mt-2 about-body-muted">Experience</span>
+                  </div>
+                  )}
 
-                <div className="bento-item glass flex flex-col text-left about-right-card about-right-middle">
-                  <h4 className="about-module-title">
-                    <i data-lucide="graduation-cap" className="w-3.5 h-3.5" />
-                    Education
-                  </h4>
-                  <p className="about-list-text about-body-muted">{profileData.education.school}</p>
-                  <p className="text-[0.875rem] about-body-muted opacity-90">{profileData.education.major} · {profileData.education.period}</p>
-                </div>
+                  <div className="bento-item glass flex flex-col text-left about-right-card">
+                    <h4 className="about-module-title">
+                      <i data-lucide="graduation-cap" className="w-3.5 h-3.5" />
+                      Education
+                    </h4>
+                    <p className="about-list-text about-body-muted">{profileData.education.school}</p>
+                    <p className="text-[0.875rem] about-body-muted opacity-90">{profileData.education.major} · {profileData.education.period}</p>
+                  </div>
 
-                <div className="bento-item glass flex flex-col text-left about-right-card">
-                  <h4 className="about-module-title">
-                    <i data-lucide="award" className="w-3.5 h-3.5" />
-                    Professional Recognition
-                  </h4>
-                  <p className="about-list-text about-body-muted">Skills assessed for Software Engineering (ANZSCO 261313)</p>
+                  <div className="bento-item glass flex flex-col text-left about-right-card">
+                    <h4 className="about-module-title">
+                      <i data-lucide="award" className="w-3.5 h-3.5" />
+                      Professional Recognition
+                    </h4>
+                    <p className="about-list-text about-body-muted">Skills assessed for Software Engineering (ANZSCO 261313)</p>
+                  </div>
+
+                  <div className="about-right-col-spacer" aria-hidden />
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#experience" className="block text-current" aria-label="Scroll to Experience">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
           </div>
         </section>
       );
@@ -1390,7 +1444,7 @@
       }, []);
 
       return (
-        <section id="experience" ref={sectionRef} className="py-24 md:py-32 px-6">
+        <section id="experience" ref={sectionRef} className="relative py-24 md:py-32 px-6">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Experience</h2>
 
@@ -1459,6 +1513,12 @@
               ))}
             </div>
 
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#projects" className="block text-current" aria-label="Scroll to Projects">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
           </div>
         </section>
       );
@@ -1534,7 +1594,7 @@
       };
 
       return (
-        <section id="projects" ref={sectionRef} className="py-24 md:py-32 px-6">
+        <section id="projects" ref={sectionRef} className="relative py-24 md:py-32 px-6">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Projects</h2>
 
@@ -1664,6 +1724,12 @@
               })}
             </div>
           </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#skills" className="block text-current" aria-label="Scroll to Skills">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
+          </div>
         </section>
       );
     };
@@ -1755,6 +1821,12 @@
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#contact" className="block text-current" aria-label="Scroll to Contact">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
           </div>
         </section>
       );
