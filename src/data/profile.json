@@ -1,0 +1,185 @@
+{
+  "name": "Euan Fan",
+  "nameChinese": "范园贺",
+  "title": "Senior Frontend / Platform Engineer",
+  "location": "Auckland, New Zealand",
+
+  "heroImage": "/images/hero/hero_photo.jpg",
+  "heroSubline": "Building scalable platforms used by millions.",
+  "heroVisa": "Eligible to work in New Zealand (Open Work Visa)",
+  "heroTechStack": ["React", "TypeScript", "Node.js"],
+
+  "experienceYears": "10+ Years",
+  "birthYear": 1992,
+
+  "email": "fyh1477596895@gmail.com",
+  "phone": "15910269280",
+  "wechat": "15910269280",
+
+  "education": {
+    "school": "Beihua University",
+    "major": "Network Engineering",
+    "period": "2011 - 2015"
+  },
+
+  "aboutIntro": "Senior Frontend / Full-Stack Engineer with 10+ years of experience building scalable platforms used by millions of users.",
+  "aboutHighlights": [
+    { "icon": "code", "text": "Formerly at Alibaba and Baidu, leading the architecture of company-wide systems including design systems, component libraries, and low-code platforms." },
+    { "icon": "brain", "text": "Known for translating complex requirements into high-performance, maintainable solutions that accelerate product delivery." },
+    { "icon": "building-2", "text": "Based in Auckland with full work rights in New Zealand." }
+  ],
+  "keyStrengths": [
+    "Platform architecture and scalable frontend systems",
+    "Full-stack capability with strong React and Node.js experience",
+    "Design systems, component libraries, and engineering productivity"
+  ],
+  "impactHighlights": [
+    "Architected a low-code platform that reduced campaign launch time from days to minutes",
+    "Led development of shared component libraries adopted across multiple business units",
+    "Improved engineering efficiency through scalable platform design"
+  ],
+
+  "experienceList": [
+    {
+      "company": "Meituan",
+      "companyLogo": "/images/company_logo/meituan.png",
+      "companyBrief": "Leading local life services and delivery platform in China.",
+      "companyUrl": "https://www.meituan.com/en-US/about-us",
+      "position": "Senior Software Engineer",
+      "period": "Jul 2021 - Apr 2022",
+      "description": [
+        "Core developer for Meituan Youxuan, a large-scale community group-buying platform integrated with the Meituan App and WeChat ecosystem.",
+        "Built and optimized the leader-side frontend infrastructure, introducing hot–cold code separation and standardized engineering practices to reduce infrastructure change frequency and improve system stability.",
+        "Led the Group-Point ID encryption and obfuscation redesign, preventing horizontal privilege escalation caused by ID scraping and strengthening sensitive data protection."
+      ],
+      "highlights": ["Frontend Infrastructure", "Hot-Cold Separation", "ID Encryption", "Data Protection"]
+    },
+    {
+      "company": "Baidu",
+      "companyLogo": "/images/company_logo/baidu.png",
+      "companyBrief": "Leading search engine and AI company in China.",
+      "companyUrl": "https://ir.baidu.com/",
+      "position": "Senior R&D Engineer",
+      "period": "Aug 2020 - Jul 2021",
+      "description": [
+        "Led the development of an intelligent customer service platform, filling the gap of in-app support functionality for Baidu's marketing applications.",
+        "Drove cross-team adoption of the platform across 15+ internal business systems, leveraging user inquiries as feedback to continuously improve product and platform capabilities.",
+        "Improved operational efficiency by reducing manual customer support workload and increasing resolved cases from 200–300 to around 1,000 per day."
+      ],
+      "highlights": ["Customer Service Platform", "Cross-team Adoption", "Operational Efficiency"]
+    },
+    {
+      "company": "Beike",
+      "companyLogo": "/images/company_logo/beike.png",
+      "companyBrief": "Leading property and living services platform in China.",
+      "companyUrl": "https://investors.ke.com",
+      "position": "Senior Web Front-end Engineer",
+      "period": "Feb 2018 - Mar 2020",
+      "description": [
+        "Built a low-code operations platform that enables non-technical teams to assemble UI components and rapidly generate mobile marketing campaign pages.",
+        "Decoupled campaign release workflows from engineering development cycles, allowing operations teams to configure and launch campaigns independently.",
+        "Significantly improved development efficiency by reducing campaign launch time from 4–5 person-days to under 30 minutes, freeing up substantial engineering resources."
+      ],
+      "highlights": ["Low-code Platform", "Decoupled Workflows", "Development Efficiency"]
+    }
+  ],
+
+  "projectList": [
+    {
+      "title": "Enterprise Low-Code Campaign Platform",
+      "type": "mobile",
+      "screenshots": [
+        "/images/low-code_platform/toC_1.png",
+        "/images/low-code_platform/toC_2.png",
+        "/images/low-code_platform/toC_3.png",
+        "/images/low-code_platform/toC_4.png",
+        "/images/low-code_platform/toC_5.png"
+      ],
+      "outcomes": [
+        "Reduced the launch cycle of a single campaign from 4–5 working days to under 30 minutes.",
+        "Enabled operations teams to independently build and launch campaign pages through a visual workflow.",
+        "Improved engineering efficiency through reusable components, templates, and centralized asset management."
+      ],
+      "role": [
+        "Served as the project owner / frontend lead, driving the platform's overall design and implementation.",
+        "Led the architecture of the visual editor, rendering engine, and reusable component system.",
+        "Built the foundation for a scalable and reusable operations platform."
+      ],
+      "background": [
+        "The business needed to launch promotional and thematic campaign pages at high frequency.",
+        "The traditional delivery model was slow and heavily dependent on engineering resources and release cycles.",
+        "Repetitive campaign development was consuming significant frontend capacity."
+      ],
+      "challengesSolved": [
+        "Shortened campaign delivery time and improved response speed to business needs.",
+        "Decoupled operations from engineering in the campaign release workflow.",
+        "Reduced repeated development, version conflicts, and poor reuse of historical campaign assets."
+      ],
+      "techStack": [
+        "Frontend: React, TypeScript, JavaScript",
+        "Backend: Node.js, MongoDB"
+      ]
+    },
+    {
+      "title": "Smart Customer Service H5",
+      "type": "web",
+      "screenshots": [
+        "/images/low-code_platform/toB_1.png",
+        "/images/low-code_platform/toB_2.png",
+        "/images/low-code_platform/toB_3.png",
+        "/images/low-code_platform/toB_4.png",
+        "/images/low-code_platform/toB_5.png",
+        "/images/low-code_platform/toB_6.png"
+      ],
+      "background": "Multiple business lines (Fengchao, feed ads, etc.) needed a unified entry and ticket flow for customer issues. The existing PC-only support could not serve field and mobile scenarios, so we built an H5 smart customer service to improve resolution efficiency and experience.",
+      "role": "Frontend tech lead: H5 architecture design, onboarding 10+ business platforms, and development of smart Q&A and ticket components.",
+      "problemsSolved": [
+        "Inconsistent UI and experience across platforms, high maintenance cost",
+        "Unstable network in field scenarios led to slow loads and failed submissions",
+        "Disconnected experience between smart Q&A and human ticket handoff"
+      ],
+      "results": [
+        "Onboarded 10+ business platforms; daily issue resolution increased from 200–300 to 1000+",
+        "Offline and retry strategies for first screen and critical APIs significantly improved success rate on weak networks",
+        "Unified Q&A-to-ticket flow and UI, with a clear improvement in user satisfaction"
+      ]
+    }
+  ],
+
+  "skillsGroups": [
+    {
+      "title": "Languages & Frameworks",
+      "items": ["React", "JavaScript", "TypeScript", "HTML5", "CSS3", "Node.js", "MongoDB"]
+    },
+    {
+      "title": "Tools & Platforms",
+      "items": ["Webpack", "Git", "Chrome DevTools", "Postman", "Fiddler", "Charles Proxy"]
+    }
+  ],
+
+  "skillColors": {
+    "HTML5": "#E34F26",
+    "CSS3": "#1572B6",
+    "JavaScript": "#F7DF1E",
+    "TypeScript": "#3178C6",
+    "React": "#61DAFB",
+    "Vue": "#4FC08D",
+    "Node.js": "#339933",
+    "MongoDB": "#47A248",
+    "Koa": "#333333",
+    "Webpack": "#8DD6F9",
+    "Git": "#F05032",
+    "VS Code": "#007ACC",
+    "Ant Design": "#0170FE",
+    "Chrome DevTools": "#4285F4",
+    "Postman": "#FF6C37",
+    "Fiddler": "#006400",
+    "Charles Proxy": "#00A9E0",
+    "Thunder Client": "#FFCC00"
+  },
+
+  "social": {
+    "github": "https://github.com/EUANFAN",
+    "linkedin": "https://www.linkedin.com/in/fan-yuanhe-5b17a23a1/"
+  }
+}

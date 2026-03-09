@@ -986,6 +986,21 @@
       .bento-item.large, .bento-item.wide { grid-column: span 1; grid-row: span 1; }
     }
 
+    /* Project Keyword Highlight in Text */
+    .keyword-highlight {
+      color: #059669;
+      font-weight: 600;
+      background: rgba(5, 150, 105, 0.12);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      margin: 0 0.1rem;
+    }
+
+    [data-theme="dark"] .keyword-highlight {
+      color: #34D399;
+      background: rgba(52, 211, 153, 0.18);
+    }
+
   </style>
 </head>
 
@@ -1130,7 +1145,12 @@
           techStack: [
             "Frontend: React, TypeScript, JavaScript",
             "Backend: Node.js, MongoDB"
-          ]
+          ],
+          // Keywords for highlighting (extracted from each section)
+          outcomeKeywords: ["30 minutes", "visual workflow", "reusable"],
+          roleKeywords: ["project owner", "visual editor", "scalable"],
+          backgroundKeywords: ["high frequency", "engineering resources", "frontend capacity"],
+          challengesKeywords: ["response speed", "decoupled", "reuse"]
         },
         {
           title: "Smart Customer Service H5",
@@ -1713,6 +1733,17 @@
         return [];
       };
 
+      // Helper to highlight keywords in text
+      const highlightKeywords = (text, keywords) => {
+        if (!keywords || !keywords.length || !text) return text;
+        let result = text;
+        keywords.forEach(kw => {
+          const regex = new RegExp(`(${kw})`, 'gi');
+          result = result.replace(regex, '<span class="keyword-highlight">$1</span>');
+        });
+        return result;
+      };
+
       const setSlide = (projectIndex, slideIndex) => {
         setSlideByProject((prev) => ({ ...prev, [projectIndex]: slideIndex }));
       };
@@ -1802,7 +1833,7 @@
                                 {(project.outcomes || project.results).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.outcomeKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1818,7 +1849,7 @@
                                 {(Array.isArray(project.role) ? project.role : [project.role]).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.roleKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1834,7 +1865,7 @@
                                 {(Array.isArray(project.background) ? project.background : [project.background]).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.backgroundKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1850,7 +1881,7 @@
                                 {(project.challengesSolved || project.problemsSolved).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.challengesKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1889,7 +1920,7 @@
                                 {(project.outcomes || project.results).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.outcomeKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1905,7 +1936,7 @@
                                 {(Array.isArray(project.role) ? project.role : [project.role]).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.roleKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1921,7 +1952,7 @@
                                 {(Array.isArray(project.background) ? project.background : [project.background]).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.backgroundKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1937,7 +1968,7 @@
                                 {(project.challengesSolved || project.problemsSolved).map((item, i) => (
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span>{item}</span>
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.challengesKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
