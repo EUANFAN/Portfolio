@@ -760,31 +760,31 @@
       top: 50%;
       transform: translateY(-50%);
       width: 2px;
-      height: 50%;
+      height: 45%;
       border-radius: 1px;
       background: var(--skill-color, var(--accent));
       opacity: 0.65;
       transition: opacity 0.2s ease, height 0.2s ease;
     }
     .skill-pill:hover::before {
-      height: 65%;
+      height: 60%;
       opacity: 0.9;
     }
     @media (min-width: 768px) {
-      .skill-pill::before { left: 0.5rem; }
+      .skill-pill::before { left: 0.4rem; }
     }
     .skills-group-card {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
       border-radius: 1rem;
-      padding: 1.25rem 1.125rem;
+      padding: 1rem 1rem;
       box-shadow: 0 4px 24px -4px var(--accent-soft);
       transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.25s ease;
     }
     @media (min-width: 768px) {
       .skills-group-card {
         border-radius: 1.25rem;
-        padding: 1.5rem 1.5rem;
+        padding: 1.25rem 1.25rem;
       }
     }
     .skills-group-card:hover {
@@ -2075,13 +2075,13 @@
             <div className="grid md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
               {profileData.skillsGroups.map((group, gIndex) => (
                 <div key={gIndex} className="skills-group skills-group-card">
-                  <h3 className="text-sm sm:text-base font-semibold tracking-wide mb-4 md:mb-5 flex items-center gap-2.5 md:gap-3">
+                  <h3 className="text-sm sm:text-base font-semibold tracking-wide mb-3 md:mb-4 flex items-center gap-2 md:gap-2.5" style={{ color: 'var(--text-muted)' }}>
                     <span className="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex-shrink-0" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                       <i data-lucide={gIndex === 0 ? 'code-2' : 'wrench'} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </span>
                     <span style={{ color: 'var(--text-primary)' }}>{group.title}</span>
                   </h3>
-                  <div className="flex flex-wrap gap-2 md:gap-2.5">
+                  <div className="flex flex-wrap gap-1.5 md:gap-2">
                     {group.items.map((item, i) => {
                       const color = getSkillColor(item);
                       const lightBg = ['#F7DF1E', '#61DAFB', '#FFCC00', '#8DD6F9', '#4FC08D'].includes(color);
@@ -2089,7 +2089,7 @@
                       return (
                         <span
                           key={i}
-                          className="skill-pill inline-flex items-center pl-3.5 pr-2.5 sm:pl-4 sm:pr-3 py-2 rounded-lg text-xs sm:text-sm font-medium border transition-all duration-250"
+                          className="skill-pill inline-flex items-center pl-2.5 pr-2 py-1 rounded-md text-xs sm:text-sm font-medium border transition-all duration-250"
                           style={{
                             '--skill-color': color,
                             background: `linear-gradient(135deg, ${color}14 0%, ${color}06 100%)`,
