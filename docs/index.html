@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  <title>Euan Fan | Frontend Engineer</title>
+  <link rel="icon" type="image/png" href="/assets/favicon-Dm-xg3v2.png" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React & ReactDOM (production) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Apply saved theme before paint to avoid flash -->
+  <script>
+    (function() {
+      var stored = localStorage.getItem('portfolio-theme');
+      if (stored === 'dark' || stored === 'light') document.documentElement.setAttribute('data-theme', stored);
+    })();
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* Light theme (default) */
+
+    :root,
+    [data-theme="light"] {
+      --bg-primary: #FAFBFC;
+      --bg-secondary: #F1F5F9;
+      --text-primary: #0F172A;
+      --text-muted: #64748B;
+      --accent: #0EA5E9;
+      --accent-soft: #E0F2FE;
+      --accent-muted: rgba(14, 165, 233, 0.85);
+      --border: #E5E7EB;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(0, 0, 0, 0.08);
+    }
+
+    /* Dark theme */
+
+    [data-theme="dark"] {
+      --bg-primary: #0B1120;
+      --bg-secondary: #111827;
+      --text-primary: #E5E7EB;
+      --text-muted: #9CA3AF;
+      --accent: #38BDF8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --accent-muted: rgba(56, 189, 248, 0.9);
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(17, 24, 39, 0.8);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    html { scroll-behavior: smooth; transition: color 0.25s ease, background-color 0.25s ease; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .noise-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.02;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+    }
+
+    .liquid-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .liquid-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #e0f2fe 0%, transparent 70%);
+      top: -200px; right: -200px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #f0f9ff 0%, transparent 70%);
+      bottom: -150px; left: -150px;
+      animation-delay: -5s;
+    }
+
+    .blob-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #bae6fd 0%, transparent 70%);
+      top: 50%; left: 50%;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(50px, -50px) scale(1.1); }
+      50% { transform: translate(-30px, 30px) scale(0.9); }
+      75% { transform: translate(30px, 50px) scale(1.05); }
+    }
+
+    .experience-card-hover:hover { border-color: var(--accent); }
+
+    .experience-company-logo-wrap {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      min-height: 40px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .experience-company-logo-wrap img {
+      width: 100%;
+      height: 100%;
+      -o-object-fit: contain;
+         object-fit: contain;
+      -o-object-position: center;
+         object-position: center;
+      box-sizing: border-box;
+      border-radius: 6px;
+    }
+
+    .experience-company-logo-fallback {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .experience-company-logo-wrap {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        min-height: 48px;
+        border-radius: 12px;
+      }
+      .experience-company-logo-wrap img { border-radius: 8px; }
+      .experience-company-logo-fallback { font-size: 1.25rem; }
+    }
+
+    .project-card-hover:hover { border-color: var(--accent); }
+
+    .project-screenshot { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+
+    .project-phone-frame,
+    .project-web-fullbleed {
+      overflow: hidden;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    [data-theme="dark"] .project-phone-frame,
+    [data-theme="dark"] .project-web-fullbleed {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .project-phone-frame {
+      border-radius: 28px;
+      aspect-ratio: 9 / 19.5;
+      max-width: 280px;
+    }
+
+    .project-phone-frame img { display: block; width: 100%; height: 100%; -o-object-fit: cover; object-fit: cover; }
+
+    .project-web-preview { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 16 / 10; }
+
+    .project-web-preview img { display: block; width: 100%; height: 100%; -o-object-fit: cover; object-fit: cover; }
+
+    .project-web-fullbleed {
+      width: 100%;
+      aspect-ratio: 16 / 8;
+    }
+
+    .project-web-fullbleed img { display: block; width: 100%; height: 100%; -o-object-fit: cover; object-fit: cover; }
+
+    .project-carousel-track { display: flex; transition: transform 0.35s ease-out; will-change: transform; flex-wrap: nowrap; }
+
+    .project-carousel-track .project-carousel-slide { flex: 0 0 auto; min-width: 0; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); }
+
+    .project-carousel-track .project-carousel-slide img {
+      width: 100%;
+      height: 100%;
+      -o-object-fit: cover;
+         object-fit: cover;
+      -o-object-position: left -2px;
+         object-position: left -2px;
+      display: block;
+      image-rendering: auto;
+      image-rendering: -webkit-optimize-contrast;
+      backface-visibility: hidden;
+      transform: translateZ(0);
+    }
+
+    .project-carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s, transform 0.2s; }
+
+    .project-carousel-dot.active { background: var(--accent); transform: scale(1.2); }
+
+    .project-carousel-dot:hover { background: var(--accent-muted); }
+
+    .project-carousel-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.75rem 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .project-carousel-btn {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .project-carousel-btn:hover:not(:disabled) {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      transform: scale(1.05);
+    }
+
+    .project-carousel-btn:active:not(:disabled) { transform: scale(0.98); }
+
+    .project-carousel-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .timeline-item { transition: all 0.4s ease; }
+
+    .timeline-item:hover { opacity: 1 !important; }
+
+    .timeline-container:hover .timeline-item:not(:hover) { opacity: 0.3; }
+
+    .magnetic-btn { position: relative; transition: transform 0.3s ease; }
+
+    .accent-glow { box-shadow: 0 0 30px var(--accent-soft); }
+
+    .text-gradient {
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .bento-item {
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.4s ease;
+    }
+
+    .bento-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+
+    .bento-item.large { grid-column: span 2; grid-row: span 2; }
+
+    .bento-item.wide { grid-column: span 2; }
+
+    .bento-item.full-width { grid-column: 1 / -1; }
+
+    .bento-item.about-primary {
+      border-color: rgba(14, 165, 233, 0.2);
+      box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.08);
+    }
+
+    .bento-item.about-primary:hover { border-color: var(--accent); }
+
+    [data-theme="dark"] .bento-item.about-primary {
+      border-color: rgba(56, 189, 248, 0.2);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.06);
+    }
+
+    .about-card-compact { padding: 1.25rem; }
+
+    .about-card-compact .about-module-title { margin-bottom: 0.75rem; }
+
+    /* 右侧三块：紧凑留白 */
+
+    .about-right-card {
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      transition: all 0.4s ease;
+    }
+
+    .about-right-card .about-module-title { margin-bottom: 0.5rem; }
+
+    .about-right-card p + p { margin-top: 0.25rem; }
+
+    /* About 桌面端：左右两列等高，紧凑间距；左侧一列、右侧一列（覆盖 .bento-item.large 的 span 2） */
+
+    @media (min-width: 769px) {
+      #about .bento-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        grid-template-rows: 1fr;
+        gap: 1.25rem;
+        align-items: stretch;
+      }
+      #about .bento-item.about-large {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+        padding: 1.5rem 1.75rem;
+        border-radius: 16px;
+      }
+      #about .about-right-col {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      #about .about-right-col-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        min-height: 100%;
+      }
+      /* Education / Professional Recognition：按内容自然高度 */
+      #about .about-right-col-inner .about-right-card {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
+      /* Impact Highlights：撑满剩余空间，内容完整展示无滚动 */
+      #about .about-right-col-inner .about-right-card:first-child {
+        flex: 1;
+        min-height: 0;
+      }
+      /* Impact Highlights 内部列表填满卡片高度 */
+      #about .about-right-col-inner .about-right-card:first-child ul {
+        flex: 1;
+        min-height: 0;
+        overflow-y: visible;
+      }
+      #about .about-right-col-inner .about-right-col-spacer {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #about .bento-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      #about .bento-item.about-large { flex: none; padding: 2rem; }
+      #about .about-right-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      #about .about-right-col-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      #about .about-right-col .about-right-col-spacer { display: none; }
+    }
+
+    /* 各模块底部向下箭头：统一位置，移动端略紧凑、PC 端留白适中 */
+
+    .section-scroll-arrow {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+      .section-scroll-arrow { bottom: 2.5rem; }
+    }
+
+    /* Hero 首屏箭头：移动端距底稍近、PC 与其他模块一致 */
+
+    #hero .section-scroll-arrow {
+      bottom: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      #hero .section-scroll-arrow {
+        bottom: 2.5rem;
+      }
+    }
+
+    ::-webkit-scrollbar { width: 0; background: transparent; }
+
+    .link-underline { position: relative; }
+
+    .link-underline::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    .link-underline:hover::after { width: 100%; }
+
+    .link-underline:hover { color: var(--accent); }
+
+    .about-section-label { color: var(--text-muted); letter-spacing: 0.2em; }
+
+    /* About 模块标题 label：与 Hero .hero-section-label 完全一致 */
+
+    .about-module-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .about-module-title i { color: var(--accent); opacity: 0.9; }
+
+    /* 左侧卡片内的次级标题（Key Strengths / Selected Experience） */
+
+    .about-subtitle {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .about-subtitle::before {
+      content: '';
+      flex-shrink: 0;
+      width: 0.2rem;
+      height: 0.85rem;
+      border-radius: 9999px;
+      background: var(--accent);
+      opacity: 0.75;
+    }
+
+    /* 主标题：Hello, I'm [Name] */
+
+    .about-emphasis-title {
+      color: var(--text-primary);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    /* 名字部分：与 Hero 渐变一致 */
+
+    .about-name-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* 简介段落：清晰易读，无左侧竖线，突出显示 */
+
+    .about-intro-lead {
+      color: var(--text-primary);
+      font-size: 1rem;
+      line-height: 1.7;
+      font-weight: 400;
+      opacity: 0.92;
+    }
+
+    @media (min-width: 768px) {
+      .about-intro-lead { font-size: 1.0625rem; }
+    }
+
+    /* 高亮列表（aboutHighlights）：文字稍大、稍粗，突出重点 */
+
+    .about-highlight-text {
+      font-size: 0.9375rem;
+      line-height: 1.55;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* 普通列表（key strengths / impact highlights）：正常权重、稍 muted */
+
+    .about-list-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      opacity: 0.88;
+    }
+
+    .about-body { color: var(--text-primary); }
+
+    .about-body-muted { color: var(--text-muted); }
+
+    .about-detail-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .about-quote { color: var(--accent); font-weight: 600; }
+
+    .about-company-link {
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .about-company-link:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+    }
+
+    .hero-photo-wrap {
+      position: relative;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px var(--accent-soft), 0 0 0 1px var(--border);
+      aspect-ratio: 4 / 5;
+      max-height:  min(85vh, 520px);
+    }
+
+    .hero-photo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: inherit;
+      padding: 3px;
+      background: linear-gradient(135deg, var(--accent) 0%, transparent 50%, var(--accent) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.4;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-photo-wrap img {
+      width: 100%;
+      height: 100%;
+      -o-object-fit: cover;
+         object-fit: cover;
+      display: block;
+    }
+
+    .hero-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, var(--accent-soft) 0%, var(--bg-secondary) 50%, var(--accent-soft) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    /* Hero 模块：层级 + 特色样式（无竖线） */
+
+    .hero-text-block { position: relative; }
+
+    .hero-location {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .hero-location:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-name-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-name-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.25));
+    }
+
+    .hero-name-primary { color: var(--text-primary); }
+
+    .hero-title-wrap { position: relative; display: inline-block; }
+
+    .hero-title {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    /* Hero 三组 section 标题统一：11–12px, 700, 0.12em, 蓝色高亮 */
+
+    .hero-section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-section-label i { color: var(--accent); opacity: 0.9; }
+
+    .hero-previously-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .hero-company-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid #E6EDF5;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      transition: color 0.2s ease, text-decoration-color 0.2s ease;
+    }
+
+    .hero-company-pill:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.25em;
+      color: var(--accent);
+    }
+
+    .hero-company-pill .hero-company-pill-icon {
+      opacity: 0.75;
+      width: 0.75rem;
+      height: 0.75rem;
+      transition: opacity 0.2s ease;
+    }
+
+    .hero-company-pill:hover .hero-company-pill-icon { opacity: 1; }
+
+    [data-theme="dark"] .hero-company-pill {
+      background: transparent;
+      border-color: var(--border);
+    }
+
+    .hero-subline-wrap { opacity: 0.95; }
+
+    .hero-subline {
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .hero-tech-stack-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.75rem;
+      align-items: center;
+    }
+
+    .hero-tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .hero-tech-pill .hero-tech-pill-check {
+      flex-shrink: 0;
+      width: 0.75rem;
+      height: 0.75rem;
+      color: var(--accent);
+    }
+
+    .hero-tech-pill:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .hero-tech-pill:hover .hero-tech-pill-check { color: var(--accent); }
+
+    /* Work Authorization：与 Technical Expertise 内容样式一致，不高亮、无图标 */
+
+    .hero-visa {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      line-height: 1.4;
+      max-width: 100%;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .hero-visa:hover {
+      border-color: var(--border);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .hero-visa span { word-break: break-word; }
+
+    /* Hero 移动端优化：兼容 web + mobile */
+
+    @media (max-width: 767px) {
+      .hero-text-block { padding-left: 0; }
+      .hero-location {
+        font-size: 0.6875rem;
+        padding: 0.3rem 0.7rem;
+        letter-spacing: 0.1em;
+      }
+      .hero-name-wrap { font-size: 3.5rem; }
+      .hero-section-label {
+        font-size: 0.6875rem;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.4rem;
+      }
+      .hero-previously-pills {
+        gap: 0.4rem;
+        justify-content: center;
+      }
+      .about-selected-pills.hero-previously-pills {
+        justify-content: flex-start;
+      }
+      .about-tech-wrap.hero-tech-stack-wrap {
+        justify-content: flex-start;
+      }
+      .hero-company-pill {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8125rem;
+        min-height: 2.25rem;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .hero-tech-stack-wrap {
+        gap: 0.4rem 0.6rem;
+        justify-content: center;
+      }
+      .hero-tech-pill {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8125rem;
+        min-height: 2rem;
+      }
+      .hero-tech-pill .hero-tech-pill-check {
+        width: 0.6875rem;
+        height: 0.6875rem;
+      }
+      .hero-visa { padding: 0.35rem 0.7rem; font-size: 0.8125rem; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-location { padding: 0.28rem 0.6rem; font-size: 0.625rem; }
+      .hero-name-wrap { font-size: 3.25rem; }
+      .hero-company-pill { padding: 0.35rem 0.6rem; font-size: 0.75rem; min-height: 2rem; }
+      .hero-tech-pill { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+      .hero-visa { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+    }
+
+    .skill-pill {
+      position: relative;
+      color: var(--text-primary);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .skill-pill:hover {
+      transform: translateY(-1px);
+    }
+
+    .skill-pill::before {
+      content: '';
+      position: absolute;
+      left: 0.375rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 50%;
+      border-radius: 1px;
+      background: var(--skill-color, var(--accent));
+      opacity: 0.65;
+      transition: opacity 0.2s ease, height 0.2s ease;
+    }
+
+    .skill-pill:hover::before {
+      height: 65%;
+      opacity: 0.9;
+    }
+
+    @media (min-width: 768px) {
+      .skill-pill::before { left: 0.5rem; }
+    }
+
+    .skills-group-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.25rem 1.125rem;
+      box-shadow: 0 4px 24px -4px var(--accent-soft);
+      transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.25s ease;
+    }
+
+    @media (min-width: 768px) {
+      .skills-group-card {
+        border-radius: 1.25rem;
+        padding: 1.5rem 1.5rem;
+      }
+    }
+
+    .skills-group-card:hover {
+      box-shadow: 0 12px 40px -8px var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    /* Dark theme: liquid blobs */
+
+    [data-theme="dark"] .blob-1 {
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+    }
+
+    [data-theme="dark"] .blob-2 {
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+    }
+
+    [data-theme="dark"] .blob-3 {
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+    }
+
+    /* Theme toggle button */
+
+    .theme-toggle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .theme-toggle .theme-icon-sun,
+    .theme-toggle .theme-icon-moon { position: absolute; inset: 0; margin: auto; width: 1.25rem; height: 1.25rem; }
+
+    .theme-toggle .theme-icon-moon { display: none; }
+
+    .theme-toggle .theme-icon-sun { display: none; }
+
+    [data-theme="light"] .theme-toggle .theme-icon-sun { display: block; }
+
+    [data-theme="dark"] .theme-toggle .theme-icon-moon { display: block; }
+
+    .skills-section-title { color: var(--text-muted); }
+
+    .footer-border { border-color: var(--border); }
+
+    /* Let's Connect：与 About / Experience 区块标签统一 */
+
+    .footer-label {
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .footer-title {
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .footer-title .footer-title-accent { color: var(--accent); }
+
+    .footer-tagline {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 1.55;
+      max-width: 26rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @media (min-width: 768px) {
+      .footer-tagline { font-size: 0.9375rem; }
+    }
+
+    .footer-connect-label {
+      color: var(--text-muted);
+      font-size: 0.6875rem;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .footer-copy { color: var(--text-muted); opacity: 0.75; }
+
+    .footer-visa {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      line-height: 1.45;
+      text-align: center;
+      max-width: 24rem;
+      margin-left: auto;
+      margin-right: auto;
+      flex-wrap: wrap;
+    }
+
+    @media (min-width: 768px) {
+      .footer-visa { font-size: 0.875rem; gap: 0.5rem; max-width: 28rem; }
+    }
+
+    .footer-visa i { color: var(--accent); flex-shrink: 0; }
+
+    /* 主 CTA：邮件按钮 */
+
+    .footer-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      border: 1px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+      word-break: break-all;
+    }
+
+    @media (min-width: 768px) {
+      .footer-cta { padding: 0.875rem 1.75rem; font-size: 1rem; word-break: normal; }
+    }
+
+    .footer-cta:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--bg-primary);
+      box-shadow: 0 6px 24px -4px rgba(14, 165, 233, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .footer-cta i { opacity: 0.95; }
+
+    /* 社交图标 */
+
+    .footer-social-link {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    @media (min-width: 768px) {
+      .footer-social-link { width: 3rem; height: 3rem; }
+    }
+
+    .footer-social-link:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .experience-highlight-tag {
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    /* 工作经历描述多点列表：与 Impact Highlights 一致的灰色小圆点 */
+
+    .experience-description-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    .experience-description-list li {
+      position: relative;
+      padding-left: 1rem;
+      margin-bottom: 0.625rem;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      opacity: 0.9;
+    }
+
+    .experience-description-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.45rem;
+      width: 0.25rem;
+      height: 0.25rem;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    .experience-description-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (min-width: 768px) {
+      .experience-description-list li {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-item.large, .bento-item.wide { grid-column: span 1; grid-row: span 1; }
+    }
+
+    /* Project Keyword Highlight in Text */
+
+    .keyword-highlight {
+      color: #059669;
+      font-weight: 600;
+      background: rgba(5, 150, 105, 0.12);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      margin: 0 0.1rem;
+    }
+
+    [data-theme="dark"] .keyword-highlight {
+      color: #34D399;
+      background: rgba(52, 211, 153, 0.18);
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ============================================
+    // PROFILE DATA - Easy Configuration
+    // ============================================
+    const profileData = {
+      // Personal Info
+      name: "Euan Fan",
+      nameChinese: "范园贺",
+      title: "Senior Frontend / Platform Engineer",
+      location: "Auckland, New Zealand",
+
+      // Hero 职业照（留空则显示占位图，可填相对路径如 "avatar.jpg" 或完整 URL）
+      heroImage: "images/hero/hero_photo.jpg",
+
+      // Hero 区一句话（与 About 不重复，仅作首屏 hook）
+      heroSubline: "Building scalable platforms used by millions.",
+      // Hero 签证/工作权限（首屏突出展示）
+      heroVisa: "Eligible to work in New Zealand (Open Work Visa)",
+      // Hero 技术栈（单行展示）
+      heroTechStack: ["React", "TypeScript", "Node.js"],
+
+      // IMPORTANT: split years vs list to avoid React child error
+      experienceYears: "10+ Years",
+      birthYear: 1992,
+
+      // Contact
+      email: "fyh1477596895@gmail.com",
+      phone: "15910269280",
+      wechat: "15910269280",
+
+      // Education
+      education: {
+        school: "Beihua University",
+        major: "Network Engineering",
+        period: "2011 - 2015"
+      },
+
+      // About Me 模块完整介绍（仅在此处展示，Hero 不重复）
+      aboutIntro: "Senior Frontend / Full-Stack Engineer with 10+ years of experience building scalable platforms used by millions of users.",
+      aboutHighlights: [
+        { icon: "code", text: "Formerly at Alibaba and Baidu, leading the architecture of company-wide systems including design systems, component libraries, and low-code platforms." },
+        { icon: "brain", text: "Known for translating complex requirements into high-performance, maintainable solutions that accelerate product delivery." },
+        { icon: "building-2", text: "Based in Auckland with full work rights in New Zealand." }
+      ],
+      // Key Strengths（About Me 中 Selected Experience 上方）
+      keyStrengths: [
+        "Platform architecture and scalable frontend systems",
+        "Full-stack capability with strong React and Node.js experience",
+        "Design systems, component libraries, and engineering productivity"
+      ],
+      impactHighlights: [
+        "Architected a low-code platform that reduced campaign launch time from days to minutes",
+        "Led development of shared component libraries adopted across multiple business units",
+        "Improved engineering efficiency through scalable platform design"
+      ],
+      // Work Experience (companyLogo optional: logo URL; companyBrief optional)
+      experienceList: [
+        {
+          company: "Meituan",
+          companyLogo: "images/company_logo/meituan.png",
+          companyBrief: "Leading local life services and delivery platform in China.",
+          companyUrl: "https://www.meituan.com/en-US/about-us",
+          position: "Senior Software Engineer",
+          period: "Jul 2021 - Apr 2022",
+          description: [
+            "Core developer for Meituan Youxuan, a large-scale community group-buying platform integrated with the Meituan App and WeChat ecosystem.",
+            "Built and optimized the leader-side frontend infrastructure, introducing hot–cold code separation and standardized engineering practices to reduce infrastructure change frequency and improve system stability.",
+            "Led the Group-Point ID encryption and obfuscation redesign, preventing horizontal privilege escalation caused by ID scraping and strengthening sensitive data protection."
+          ],
+          highlights: ["Frontend Infrastructure", "Hot-Cold Separation", "ID Encryption", "Data Protection"]
+        },
+        {
+          company: "Baidu",
+          companyLogo: "images/company_logo/baidu.png",
+          companyBrief: "Leading search engine and AI company in China.",
+          companyUrl: "https://ir.baidu.com/",
+          position: "Senior R&D Engineer",
+          period: "Aug 2020 - Jul 2021",
+          description: [
+            "Led the development of an intelligent customer service platform, filling the gap of in-app support functionality for Baidu's marketing applications.",
+            "Drove cross-team adoption of the platform across 15+ internal business systems, leveraging user inquiries as feedback to continuously improve product and platform capabilities.",
+            "Improved operational efficiency by reducing manual customer support workload and increasing resolved cases from 200–300 to around 1,000 per day."
+          ],
+          highlights: ["Customer Service Platform", "Cross-team Adoption", "Operational Efficiency"]
+        },
+        {
+          company: "Beike",
+          companyLogo: "images/company_logo/beike.png",
+          companyBrief: "Leading property and living services platform in China.",
+          companyUrl: "https://investors.ke.com",
+          position: "Senior Web Front-end Engineer",
+          period: "Feb 2018 - Mar 2020",
+          description: [
+            "Built a low-code operations platform that enables non-technical teams to assemble UI components and rapidly generate mobile marketing campaign pages.",
+            "Decoupled campaign release workflows from engineering development cycles, allowing operations teams to configure and launch campaigns independently.",
+            "Significantly improved development efficiency by reducing campaign launch time from 4–5 person-days to under 30 minutes, freeing up substantial engineering resources."
+          ],
+          highlights: ["Low-code Platform", "Decoupled Workflows", "Development Efficiency"]
+        },
+      ],
+
+      // Project Showcase (type: 'mobile' | 'web'). Use screenshots[] for carousel; single screenshot still supported.
+      projectList: [
+        {
+          title: "Enterprise Low-Code Campaign Platform",
+          type: "mobile",
+          screenshots: [
+            "images/low-code_platform/toC_1.png",
+            "images/low-code_platform/toC_2.png",
+            "images/low-code_platform/toC_3.png",
+            "images/low-code_platform/toC_4.png",
+            "images/low-code_platform/toC_5.png",
+          ],
+          outcomes: [
+            "Reduced the launch cycle of a single campaign from 4–5 working days to under 30 minutes.",
+            "Enabled operations teams to independently build and launch campaign pages through a visual workflow.",
+            "Improved engineering efficiency through reusable components, templates, and centralized asset management."
+          ],
+          role: [
+            "Served as the project owner / frontend lead, driving the platform's overall design and implementation.",
+            "Led the architecture of the visual editor, rendering engine, and reusable component system.",
+            "Built the foundation for a scalable and reusable operations platform."
+          ],
+          background: [
+            "The business needed to launch promotional and thematic campaign pages at high frequency.",
+            "The traditional delivery model was slow and heavily dependent on engineering resources and release cycles.",
+            "Repetitive campaign development was consuming significant frontend capacity."
+          ],
+          challengesSolved: [
+            "Shortened campaign delivery time and improved response speed to business needs.",
+            "Decoupled operations from engineering in the campaign release workflow.",
+            "Reduced repeated development, version conflicts, and poor reuse of historical campaign assets."
+          ],
+          techStack: [
+            "Frontend: React, TypeScript, JavaScript",
+            "Backend: Node.js, MongoDB"
+          ],
+          // Keywords for highlighting (extracted from each section)
+          outcomeKeywords: ["30 minutes", "visual workflow", "reusable"],
+          roleKeywords: ["project owner", "visual editor", "scalable"],
+          backgroundKeywords: ["high frequency", "engineering resources", "frontend capacity"],
+          challengesKeywords: ["response speed", "decoupled", "reuse"]
+        },
+        {
+          title: "Smart Customer Service H5",
+          type: "web",
+          screenshots: [
+            "images/low-code_platform/toB_1.png",
+            "images/low-code_platform/toB_2.png",
+            "images/low-code_platform/toB_3.png",
+            "images/low-code_platform/toB_4.png",
+            "images/low-code_platform/toB_5.png",
+            "images/low-code_platform/toB_6.png",
+          ],
+          background: "Multiple business lines (Fengchao, feed ads, etc.) needed a unified entry and ticket flow for customer issues. The existing PC-only support could not serve field and mobile scenarios, so we built an H5 smart customer service to improve resolution efficiency and experience.",
+          role: "Frontend tech lead: H5 architecture design, onboarding 10+ business platforms, and development of smart Q&A and ticket components.",
+          problemsSolved: [
+            "Inconsistent UI and experience across platforms, high maintenance cost",
+            "Unstable network in field scenarios led to slow loads and failed submissions",
+            "Disconnected experience between smart Q&A and human ticket handoff"
+          ],
+          results: [
+            "Onboarded 10+ business platforms; daily issue resolution increased from 200–300 to 1000+",
+            "Offline and retry strategies for first screen and critical APIs significantly improved success rate on weak networks",
+            "Unified Q&A-to-ticket flow and UI, with a clear improvement in user satisfaction"
+          ]
+        }
+      ],
+
+      // Skills（分组静态展示，可选品牌色）
+      skillsGroups: [
+        {
+          title: "Languages & Frameworks",
+          items: [
+            "React", "JavaScript", "TypeScript", "HTML5", "CSS3",
+            "Node.js", "MongoDB"
+          ]
+        },
+        {
+          title: "Tools & Platforms",
+          items: [
+            "Webpack", "Git", "Chrome DevTools",
+            "Postman", "Fiddler", "Charles Proxy"
+          ]
+        }
+      ],
+      // 技能品牌色（用于标签高亮与悬停光效）
+      skillColors: {
+        "HTML5": "#E34F26", "CSS3": "#1572B6", "JavaScript": "#F7DF1E", "TypeScript": "#3178C6",
+        "React": "#61DAFB", "Vue": "#4FC08D", "Node.js": "#339933", "MongoDB": "#47A248", "Koa": "#333333",
+        "Webpack": "#8DD6F9", "Git": "#F05032", "VS Code": "#007ACC", "Ant Design": "#0170FE",
+        "Chrome DevTools": "#4285F4", "Postman": "#FF6C37", "Fiddler": "#006400", "Charles Proxy": "#00A9E0", "Thunder Client": "#FFCC00"
+      },
+
+      // Social Links
+      social: {
+        github: "https://github.com/EUANFAN",
+        linkedin: "https://www.linkedin.com/in/fan-yuanhe-5b17a23a1/",
+      },
+
+      // Colors
+      colors: {
+        background: "#FAFBFC",
+        text: "#1a1a2e",
+        accent: "#0ea5e9"
+      }
+    };
+
+    // ============================================
+    // THEME
+    // ============================================
+    const THEME_KEY = 'portfolio-theme';
+    const getInitialTheme = () => {
+      if (typeof window === 'undefined') return 'light';
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored === 'light' || stored === 'dark') return stored;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+      return 'light';
+    };
+
+    // ============================================
+    // COMPONENTS
+    // ============================================
+
+    const ThemeToggle = ({ theme, setTheme }) => {
+      const toggle = () => {
+        const next = theme === 'light' ? 'dark' : 'light';
+        setTheme(next);
+        localStorage.setItem(THEME_KEY, next);
+      };
+      return (
+        <button
+          type="button"
+          aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          className="theme-toggle magnetic-btn relative"
+          onClick={toggle}
+        >
+          <i data-lucide="sun" className="theme-icon-sun" />
+          <i data-lucide="moon" className="theme-icon-moon" />
+        </button>
+      );
+    };
+
+    const LiquidBackground = () => (
+      <div className="liquid-bg">
+        <div className="liquid-blob blob-1" />
+        <div className="liquid-blob blob-2" />
+        <div className="liquid-blob blob-3" />
+      </div>
+    );
+
+    const Navigation = ({ theme, setTheme }) => {
+      const [scrolled, setScrolled] = useState(false);
+
+      useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 100);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+      }, []);
+
+      return (
+        <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? "glass py-4" : "py-6"}`}>
+          <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="#" className="text-xl font-bold tracking-tight">
+              <span style={{ color: 'var(--accent)' }}>EF</span>
+            </a>
+            <div className="flex items-center gap-6">
+              <div className="hidden md:flex gap-8 text-sm font-medium">
+                <a href="#about" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>About</a>
+                <a href="#experience" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Experience</a>
+                <a href="#projects" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Projects</a>
+                <a href="#skills" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Skills</a>
+                <a href="#contact" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Contact</a>
+              </div>
+              <ThemeToggle theme={theme} setTheme={setTheme} />
+            </div>
+          </div>
+        </nav>
+      );
+    };
+
+    const Hero = () => {
+      const heroRef = useRef(null);
+      const nameRef = useRef(null);
+      const titleRef = useRef(null);
+      const taglineRef = useRef(null);
+      const photoRef = useRef(null);
+      const textBlockRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+          tl.from(taglineRef.current, { y: 24, opacity: 0, duration: 0.8, delay: 0.2 })
+            .from(nameRef.current, { y: 60, opacity: 0, duration: 1 }, "-=0.5")
+            .from(titleRef.current, { y: 30, opacity: 0, duration: 0.9 }, "-=0.6")
+            .from(photoRef.current, { scale: 0.92, opacity: 0, duration: 1.1, ease: "power3.out" }, "-=1");
+        }, heroRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      const [firstName, lastName] = profileData.name.split(" ");
+      const hasHeroImage = profileData.heroImage && profileData.heroImage.trim() !== "";
+
+      return (
+        <section id="hero" ref={heroRef} className="min-h-screen flex flex-col justify-center items-center relative px-6 pt-24 pb-12 md:pt-28 md:pb-20">
+          <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-12 md:gap-16 lg:gap-20">
+            <div ref={textBlockRef} className="flex-1 text-center md:text-left order-2 md:order-1 hero-text-block">
+              <p ref={taglineRef} className="hero-location mb-5 md:mb-6 inline-flex">
+                <i data-lucide="map-pin" className="w-3.5 h-3.5 flex-shrink-0 opacity-80" />
+                <span>{profileData.location}</span>
+              </p>
+              <h1 ref={nameRef} className="hero-name-wrap text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-black tracking-tighter leading-none mb-5">
+                <span className="hero-name-accent ml-1 md:ml-0">{firstName}</span>
+                {lastName && <span className="hero-name-primary ml-1 md:ml-2">{lastName}</span>}
+              </h1>
+              <div ref={titleRef} className="hero-title-wrap mb-5">
+                <p className="hero-title text-lg md:text-2xl lg:text-3xl tracking-wide">
+                  {profileData.title}
+                </p>
+              </div>
+              <div className="hero-subline-wrap mb-5 max-w-md md:max-w-none md:pr-4">
+                <p className="hero-subline text-base md:text-lg">
+                  {profileData.heroSubline}
+                </p>
+              </div>
+              {profileData.experienceList && profileData.experienceList.length > 0 && (
+                <div className="mb-4">
+                  <p className="hero-section-label justify-center md:justify-start">
+                    <i data-lucide="building-2" className="w-3.5 h-3.5" />
+                    <span>Selected Experience</span>
+                  </p>
+                  <div className="hero-previously-pills justify-center md:justify-start">
+                    {profileData.experienceList.map((exp, i) => (
+                      exp.companyUrl ? (
+                        <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
+                          {exp.company}
+                          <i data-lucide="external-link" className="hero-company-pill-icon" aria-hidden />
+                        </a>
+                      ) : (
+                        <span key={i} className="hero-company-pill">{exp.company}</span>
+                      )
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profileData.heroTechStack && profileData.heroTechStack.length > 0 && (
+                <div className="mb-4">
+                  <p className="hero-section-label justify-center md:justify-start">
+                    <i data-lucide="code-2" className="w-3.5 h-3.5" />
+                    <span>Technical Expertise</span>
+                  </p>
+                  <div className="hero-tech-stack-wrap justify-center md:justify-start">
+                    {profileData.heroTechStack.map((tech, i) => (
+                      <span key={i} className="hero-tech-pill">
+                        <i data-lucide="check" className="hero-tech-pill-check" aria-hidden />
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profileData.heroVisa && (
+                <div>
+                  <p className="hero-section-label justify-center md:justify-start mb-2">
+                    <i data-lucide="shield-check" className="w-3.5 h-3.5" />
+                    <span>Work Authorization</span>
+                  </p>
+                  <div className="flex justify-center md:justify-start">
+                    <p className="hero-visa">
+                      <span>{profileData.heroVisa}</span>
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div ref={photoRef} className="flex-shrink-0 w-full md:w-[42%] lg:w-[38%] max-w-[320px] md:max-w-none mx-auto order-1 md:order-2">
+              <div className="hero-photo-wrap">
+                {hasHeroImage ? (
+                  <img src={profileData.heroImage} alt={profileData.name} />
+                ) : (
+                  <div className="hero-photo-placeholder">
+                    <i data-lucide="user" className="w-24 h-24 md:w-32 md:h-32 opacity-40" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="section-scroll-arrow">
+            <a href="#about" className="block text-current animate-bounce" aria-label="Scroll to About">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
+          </div>
+        </section>
+      );
+    };
+
+    const About = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          gsap.from(".bento-item", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none none",
+              once: true
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            clearProps: "opacity,transform"
+          });
+        }, sectionRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      return (
+        <section id="about" ref={sectionRef} className="relative py-20 md:py-28 px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm tracking-[0.3em] uppercase mb-8 about-section-label">About Me</h2>
+
+            <div className="bento-grid">
+              {/* 左侧大卡片：简介 + Key Strengths + Selected Experience */}
+              <div className="bento-item large glass about-large">
+                <h3 className="text-2xl md:text-3xl mb-3 about-emphasis-title">Hello, I'm <span className="about-name-accent">{profileData.name}</span></h3>
+                <p className="about-intro-lead mb-4">
+                  {profileData.aboutIntro}
+                </p>
+                <div className="space-y-2.5 mb-4">
+                  {profileData.aboutHighlights.map((item, i) => (
+                    <div key={i} className="flex gap-3 items-start">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+                        <i data-lucide={item.icon} className="w-3.5 h-3.5" />
+                      </span>
+                      <p className="about-highlight-text flex-1 min-w-0">{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {profileData.keyStrengths && profileData.keyStrengths.length > 0 && (
+                  <>
+                    <h4 className="about-subtitle mb-2">Key Strengths</h4>
+                    <ul className="space-y-1.5 about-list-text mb-4 list-none pl-0">
+                      {profileData.keyStrengths.map((item, i) => (
+                        <li key={i} className="flex gap-2 items-start">
+                          <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
+                <h4 className="about-subtitle mb-2 mt-1">Selected Experience</h4>
+                <div className="hero-previously-pills about-selected-pills">
+                  {profileData.experienceList.map((exp, i) => (
+                    exp.companyUrl ? (
+                      <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
+                        {exp.company}
+                        <i data-lucide="external-link" className="hero-company-pill-icon" aria-hidden />
+                      </a>
+                    ) : (
+                      <span key={i} className="hero-company-pill">{exp.company}</span>
+                    )
+                  ))}
+                </div>
+              </div>
+
+              {/* 右侧一列：与左侧同高，三块留白/间距统一，移动端同间距 */}
+              <div className="about-right-col">
+                <div className="about-right-col-inner">
+                  {profileData.impactHighlights && profileData.impactHighlights.length > 0 ? (
+                  <div className="bento-item glass flex flex-col text-left about-right-card">
+                    <h4 className="about-module-title">
+                      <i data-lucide="zap" className="w-3.5 h-3.5" />
+                      Impact Highlights
+                    </h4>
+                    <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0 pr-1">
+                      {profileData.impactHighlights.map((item, i) => (
+                        <li key={i} className="flex gap-2 items-start">
+                          <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  ) : (
+                  <div className="bento-item glass flex flex-col justify-center items-center text-center about-right-card">
+                    <span className="text-5xl md:text-6xl font-black" style={{ color: 'var(--accent)' }}>
+                      {profileData.experienceYears}
+                    </span>
+                    <span className="text-sm mt-2 about-body-muted">Experience</span>
+                  </div>
+                  )}
+
+                  <div className="bento-item glass flex flex-col text-left about-right-card">
+                    <h4 className="about-module-title">
+                      <i data-lucide="graduation-cap" className="w-3.5 h-3.5" />
+                      Education
+                    </h4>
+                    <p className="about-highlight-text">{profileData.education.school}</p>
+                    <p className="about-detail-text mt-0.5">{profileData.education.major} · {profileData.education.period}</p>
+                  </div>
+
+                  <div className="bento-item glass flex flex-col text-left about-right-card">
+                    <h4 className="about-module-title">
+                      <i data-lucide="award" className="w-3.5 h-3.5" />
+                      Professional Recognition
+                    </h4>
+                    <p className="about-detail-text">Skills assessed for Software Engineering (ANZSCO 261313)</p>
+                  </div>
+
+                  <div className="about-right-col-spacer" aria-hidden />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="section-scroll-arrow">
+            <a href="#experience" className="block text-current animate-bounce" aria-label="Scroll to Experience">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
+          </div>
+        </section>
+      );
+    };
+
+    const Experience = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const section = sectionRef.current;
+        if (!section) return;
+
+        const items = section.querySelectorAll(".timeline-item");
+        gsap.set(items, { x: -50, opacity: 0 });
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                gsap.to(items, {
+                  x: 0,
+                  opacity: 1,
+                  duration: 0.8,
+                  stagger: 0.2,
+                  ease: "power3.out"
+                });
+                observer.unobserve(section);
+              }
+            });
+          },
+          { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0 }
+        );
+
+        observer.observe(section);
+        return () => {
+          observer.disconnect();
+          gsap.set(items, { clearProps: "all" });
+        };
+      }, []);
+
+      return (
+        <section id="experience" ref={sectionRef} className="relative py-20 md:py-28 px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Selected Experience</h2>
+
+            <div className="timeline-container relative">
+              <div className="absolute left-0 md:left-8 top-0 bottom-0 w-px experience-line" style={{ background: 'linear-gradient(to bottom, var(--accent), var(--border), transparent)' }} />
+
+              {profileData.experienceList.map((exp, index) => (
+                <div key={index} className="timeline-item relative pl-8 md:pl-20 pb-16 last:pb-0">
+                  <div
+                    className="absolute left-0 md:left-8 top-2 w-4 h-4 rounded-full -translate-x-1/2 border-2 transition-all duration-300"
+                    style={{ borderColor: 'var(--accent)', background: 'var(--bg-primary)' }}
+                  />
+
+                  <div className="glass rounded-2xl p-5 md:p-8 transition-all duration-400 experience-card-hover">
+                    <div className="flex flex-wrap items-start gap-3 md:gap-4 mb-1.5 md:mb-2">
+                      <div className="experience-company-logo-wrap">
+                        {exp.companyLogo ? (
+                          <img
+                            src={exp.companyLogo}
+                            alt=""
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              var next = e.currentTarget.nextElementSibling;
+                              if (next) next.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <span className="experience-company-logo-fallback" style={{ display: exp.companyLogo ? 'none' : 'flex' }}>
+                          {(exp.company || '').charAt(0)}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 sm:gap-2">
+                          <h3 className="text-lg md:text-2xl font-bold leading-tight">
+                            {exp.companyUrl ? (
+                              <a href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="link-underline hover:opacity-90">{exp.company}</a>
+                            ) : (
+                              exp.company
+                            )}
+                          </h3>
+                          <span className="text-sm opacity-60">{exp.period}</span>
+                        </div>
+                        {exp.companyBrief && (
+                          <p className="hidden md:block text-sm opacity-60 leading-relaxed">{exp.companyBrief}</p>
+                        )}
+                      </div>
+                      {exp.companyBrief && (
+                        <p className="w-full md:hidden text-xs md:text-sm opacity-60 leading-relaxed order-3">{exp.companyBrief}</p>
+                      )}
+                    </div>
+                    <p className="text-base font-medium mb-2 md:mb-4" style={{ color: 'var(--accent)' }}>
+                      {exp.position}
+                    </p>
+                    {Array.isArray(exp.description) ? (
+                      <ul className="experience-description-list">
+                        {exp.description.map((point, i) => (
+                          <li key={i}>{point}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm md:text-base opacity-70 leading-relaxed mb-2 md:mb-4">
+                        {exp.description}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {exp.highlights.map((highlight, i) => (
+                        <span key={i} className="px-3 py-1 rounded-full text-xs experience-highlight-tag">
+                          {highlight}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          <div className="section-scroll-arrow">
+            <a href="#projects" className="block text-current animate-bounce" aria-label="Scroll to Projects">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
+          </div>
+        </section>
+      );
+    };
+
+    const Projects = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const section = sectionRef.current;
+        if (!section) return;
+
+        const items = section.querySelectorAll(".project-item");
+        gsap.set(items, { y: 40, opacity: 0 });
+
+        let hasAnimated = false;
+        const runAnimation = () => {
+          if (hasAnimated) return;
+          hasAnimated = true;
+          gsap.to(items, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: "power3.out"
+          });
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) runAnimation();
+            });
+          },
+          { root: null, rootMargin: "80px 0px 80px 0px", threshold: [0, 0.05, 0.1] }
+        );
+
+        observer.observe(section);
+
+        // Fallback: on mobile, IntersectionObserver can miss during scroll. Re-check when section is near viewport.
+        const fallbackCheck = () => {
+          if (hasAnimated) return;
+          const rect = section.getBoundingClientRect();
+          const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+          const inView = rect.top < windowHeight * 0.85 && rect.bottom > 0;
+          if (inView && items.length > 0) {
+            const first = items[0];
+            const style = window.getComputedStyle(first);
+            if (parseFloat(style.opacity) < 0.1) runAnimation();
+          }
+        };
+        const scrollHandler = () => requestAnimationFrame(fallbackCheck);
+        window.addEventListener("scroll", scrollHandler, { passive: true });
+        setTimeout(fallbackCheck, 500);
+
+        return () => {
+          observer.disconnect();
+          window.removeEventListener("scroll", scrollHandler);
+          gsap.set(items, { clearProps: "all" });
+        };
+      }, []);
+
+      const [slideByProject, setSlideByProject] = useState({});
+
+      const getImages = (project) => {
+        if (project.screenshots && project.screenshots.length > 0) return project.screenshots;
+        if (project.screenshot) return [project.screenshot];
+        return [];
+      };
+
+      // Helper to highlight keywords in text
+      const highlightKeywords = (text, keywords) => {
+        if (!keywords || !keywords.length || !text) return text;
+        let result = text;
+        keywords.forEach(kw => {
+          const regex = new RegExp(`(${kw})`, 'gi');
+          result = result.replace(regex, '<span class="keyword-highlight">$1</span>');
+        });
+        return result;
+      };
+
+      const setSlide = (projectIndex, slideIndex) => {
+        setSlideByProject((prev) => ({ ...prev, [projectIndex]: slideIndex }));
+      };
+
+      return (
+        <section id="projects" ref={sectionRef} className="relative py-20 md:py-28 px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Projects</h2>
+
+            <div className="space-y-16 md:space-y-20">
+              {profileData.projectList.map((project, index) => {
+                const isMobile = project.type === "mobile";
+                const images = getImages(project);
+                const currentSlide = Math.min(slideByProject[index] ?? 0, Math.max(0, images.length - 1));
+                const hasCarousel = images.length > 1;
+
+                const slidePct = images.length > 0 ? 100 / images.length : 100;
+                const carouselArea = (
+                  <div className={isMobile ? "flex-shrink-0 flex flex-col items-center md:order-1" : "w-full pt-6 px-6 md:pt-8 md:px-8"}>
+                    <div className={"overflow-hidden rounded-2xl " + (isMobile ? "project-phone-frame mx-auto md:mx-0" : "project-web-fullbleed w-full")}>
+                      <div
+                        className="project-carousel-track h-full"
+                        style={{
+                          width: `${images.length * 100}%`,
+                          minWidth: `${images.length * 100}%`,
+                          transform: `translateX(-${currentSlide * (100 / images.length)}%)`
+                        }}
+                      >
+                        {images.map((src, i) => (
+                          <div key={i} className="project-carousel-slide h-full" style={{ width: `${100 / images.length}%`, flex: `0 0 ${100 / images.length}%` }}>
+                            <img src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full h-full block" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {hasCarousel && (
+                      <div className="project-carousel-bar">
+                        <button
+                          type="button"
+                          aria-label="Previous image"
+                          className="project-carousel-btn"
+                          disabled={currentSlide === 0}
+                          onClick={() => setSlide(index, Math.max(0, currentSlide - 1))}
+                        >
+                          <i data-lucide="chevron-left" className="w-4 h-4" />
+                        </button>
+                        <div className="flex items-center gap-2">
+                          {images.map((_, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              aria-label={`Go to slide ${i + 1}`}
+                              className={`project-carousel-dot ${i === currentSlide ? "active" : ""}`}
+                              onClick={() => setSlide(index, i)}
+                            />
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          aria-label="Next image"
+                          className="project-carousel-btn"
+                          disabled={currentSlide === images.length - 1}
+                          onClick={() => setSlide(index, Math.min(images.length - 1, currentSlide + 1))}
+                        >
+                          <i data-lucide="chevron-right" className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+
+                return (
+                  <article key={index} className="project-item">
+                    <div className={`glass rounded-2xl transition-all duration-400 project-card-hover border border-transparent overflow-hidden ${isMobile ? "p-6 md:p-8" : ""}`}>
+                      {isMobile ? (
+                        <div className="flex flex-col md:flex-row md:items-start md:gap-10 lg:gap-12 gap-8">
+                          {carouselArea}
+                          <div className="flex-1 min-w-0 md:order-2">
+                            <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            {(project.outcomes || project.results) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="target" className="w-3.5 h-3.5" />
+                                {project.outcomes ? 'Outcomes' : 'Results'}
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(project.outcomes || project.results).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.outcomeKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {(project.role != null) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="briefcase" className="w-3.5 h-3.5" />
+                                Role
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(Array.isArray(project.role) ? project.role : [project.role]).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.roleKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {(project.background != null) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="book-open" className="w-3.5 h-3.5" />
+                                Background
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(Array.isArray(project.background) ? project.background : [project.background]).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.backgroundKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {(project.challengesSolved || project.problemsSolved) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="check-circle" className="w-3.5 h-3.5" />
+                                {project.challengesSolved ? 'Challenges Solved' : 'Problems Solved'}
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(project.challengesSolved || project.problemsSolved).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.challengesKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {project.techStack && project.techStack.length > 0 && (
+                            <div>
+                              <h4 className="about-module-title">
+                                <i data-lucide="layers" className="w-3.5 h-3.5" />
+                                Tech Stack
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {project.techStack.map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {carouselArea}
+                          <div className="p-6 md:p-8">
+                            <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            {(project.outcomes || project.results) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="target" className="w-3.5 h-3.5" />
+                                {project.outcomes ? 'Outcomes' : 'Results'}
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(project.outcomes || project.results).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.outcomeKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {(project.role != null) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="briefcase" className="w-3.5 h-3.5" />
+                                Role
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(Array.isArray(project.role) ? project.role : [project.role]).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.roleKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {(project.background != null) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="book-open" className="w-3.5 h-3.5" />
+                                Background
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(Array.isArray(project.background) ? project.background : [project.background]).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.backgroundKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {(project.challengesSolved || project.problemsSolved) && (
+                            <div className="mb-6">
+                              <h4 className="about-module-title">
+                                <i data-lucide="check-circle" className="w-3.5 h-3.5" />
+                                {project.challengesSolved ? 'Challenges Solved' : 'Problems Solved'}
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {(project.challengesSolved || project.problemsSolved).map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.challengesKeywords) }} />
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                            {project.techStack && project.techStack.length > 0 && (
+                            <div>
+                              <h4 className="about-module-title">
+                                <i data-lucide="layers" className="w-3.5 h-3.5" />
+                                Tech Stack
+                              </h4>
+                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
+                                {project.techStack.map((item, i) => (
+                                  <li key={i} className="flex gap-2 items-start">
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
+                                    <span>{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="section-scroll-arrow">
+            <a href="#skills" className="block text-current animate-bounce" aria-label="Scroll to Skills">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
+          </div>
+        </section>
+      );
+    };
+
+    const Skills = ({ theme }) => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          gsap.from(".skills-title", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+            y: 24,
+            opacity: 0,
+            duration: 0.7,
+            ease: "power3.out"
+          });
+          gsap.from(".skills-group", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            },
+            y: 32,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 0.1
+          });
+        }, sectionRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      const getSkillColor = (name) => profileData.skillColors?.[name] || profileData.colors.accent;
+
+      return (
+        <section id="skills" ref={sectionRef} className="py-16 md:py-28 px-4 sm:px-6 relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none opacity-25" style={{
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, var(--accent-soft) 0%, transparent 65%)'
+          }} />
+          <div className="max-w-6xl mx-auto relative">
+            <h2 className="skills-title text-sm tracking-[0.3em] uppercase mb-10 md:mb-14 skills-section-title">
+              Technical Skills
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
+              {profileData.skillsGroups.map((group, gIndex) => (
+                <div key={gIndex} className="skills-group skills-group-card">
+                  <h3 className="text-sm sm:text-base font-semibold tracking-wide mb-4 md:mb-5 flex items-center gap-2.5 md:gap-3">
+                    <span className="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex-shrink-0" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+                      <i data-lucide={gIndex === 0 ? 'code-2' : 'wrench'} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </span>
+                    <span style={{ color: 'var(--text-primary)' }}>{group.title}</span>
+                  </h3>
+                  <div className="flex flex-wrap gap-2 md:gap-2.5">
+                    {group.items.map((item, i) => {
+                      const color = getSkillColor(item);
+                      const lightBg = ['#F7DF1E', '#61DAFB', '#FFCC00', '#8DD6F9', '#4FC08D'].includes(color);
+                      const pillTextColor = theme === 'dark' ? 'var(--text-primary)' : (lightBg ? 'rgba(26,26,46,0.92)' : 'var(--text-primary)');
+                      return (
+                        <span
+                          key={i}
+                          className="skill-pill inline-flex items-center pl-3.5 pr-2.5 sm:pl-4 sm:pr-3 py-2 rounded-lg text-xs sm:text-sm font-medium border transition-all duration-250"
+                          style={{
+                            '--skill-color': color,
+                            background: `linear-gradient(135deg, ${color}14 0%, ${color}06 100%)`,
+                            color: pillTextColor,
+                            borderColor: `${color}22`
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = `0 4px 14px -4px ${color}38`;
+                            e.currentTarget.style.borderColor = `${color}45`;
+                            e.currentTarget.style.background = `linear-gradient(135deg, ${color}20 0%, ${color}10 100%)`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = '';
+                            e.currentTarget.style.borderColor = `${color}22`;
+                            e.currentTarget.style.background = `linear-gradient(135deg, ${color}14 0%, ${color}06 100%)`;
+                          }}
+                        >
+                          <span className="relative z-10">{item}</span>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="section-scroll-arrow">
+            <a href="#contact" className="block text-current animate-bounce" aria-label="Scroll to Contact">
+              <i data-lucide="chevron-down" className="w-6 h-6 opacity-60" />
+            </a>
+          </div>
+        </section>
+      );
+    };
+
+    const Footer = () => {
+      const sectionRef = useRef(null);
+
+      useEffect(() => {
+        const ctx = gsap.context(() => {
+          gsap.from(".footer-content > *", {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+              toggleActions: "play none none reverse"
+            },
+            y: 60,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power3.out"
+          });
+        }, sectionRef);
+
+        return () => ctx.revert();
+      }, []);
+
+      return (
+        <footer id="contact" ref={sectionRef} className="min-h-[70vh] flex flex-col justify-center py-20 md:py-28 px-4 sm:px-6 relative">
+          <div className="footer-content max-w-6xl mx-auto text-center w-full">
+            <p className="footer-label mb-6 md:mb-8">Let's Connect</p>
+
+            <h2 className="footer-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tighter mb-2 md:mb-3">
+              Get In <span className="footer-title-accent">Touch</span>
+            </h2>
+            <p className="footer-tagline mb-6 md:mb-8">
+              Open to opportunities and conversations.
+            </p>
+            {profileData.heroVisa && (
+              <p className="footer-visa mb-8 md:mb-10">
+                <i data-lucide="check-circle" className="w-4 h-4 flex-shrink-0" />
+                <span>{profileData.heroVisa}</span>
+              </p>
+            )}
+
+            <div className="w-full flex justify-center mb-8 md:mb-10">
+              <a
+                href={`mailto:${profileData.email}`}
+                className="footer-cta inline-flex items-center gap-2"
+              >
+                <i data-lucide="mail" className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                <span>{profileData.email}</span>
+              </a>
+            </div>
+
+            <p className="footer-connect-label mb-3 md:mb-4">Find me on</p>
+            <div className="flex justify-center gap-3 sm:gap-4 mb-12 md:mb-14">
+              <a href={profileData.social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                 className="footer-social-link">
+                <i data-lucide="github" className="w-5 h-5" />
+              </a>
+              <a href={profileData.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                 className="footer-social-link">
+                <i data-lucide="linkedin" className="w-5 h-5" />
+              </a>
+              <a href={`mailto:${profileData.email}`} aria-label="Email"
+                 className="footer-social-link">
+                <i data-lucide="mail" className="w-5 h-5" />
+              </a>
+            </div>
+
+            <div className="pt-6 md:pt-8 border-t footer-border">
+              <p className="footer-copy text-xs">© {new Date().getFullYear()} {profileData.name}. Built with React, GSAP & Tailwind CSS.</p>
+            </div>
+          </div>
+        </footer>
+      );
+    };
+
+    const App = () => {
+      const [theme, setTheme] = useState(getInitialTheme);
+
+      useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+      }, [theme]);
+
+      useEffect(() => {
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.refresh();
+        return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+      }, []);
+
+      return (
+        <>
+          <LiquidBackground />
+          <div className="noise-overlay" />
+          <Navigation theme={theme} setTheme={setTheme} />
+          <main>
+            <Hero />
+            <About />
+            <Experience />
+            <Projects />
+            <Skills theme={theme} />
+            <Footer />
+          </main>
+        </>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
