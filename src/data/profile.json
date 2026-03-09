@@ -121,27 +121,32 @@
       ]
     },
     {
-      "title": "Smart Customer Service H5",
-      "type": "web",
-      "screenshots": [
-        "/images/low-code_platform/toB_1.png",
-        "/images/low-code_platform/toB_2.png",
-        "/images/low-code_platform/toB_3.png",
-        "/images/low-code_platform/toB_4.png",
-        "/images/low-code_platform/toB_5.png",
-        "/images/low-code_platform/toB_6.png"
+      "title": "Course Commerce Platform",
+      "type": "mobile",
+      "screenshots": [],
+      "outcomes": [
+        "Supported the company's core course sales business, serving millions of users in high-traffic transaction scenarios.",
+        "Built frontend foundations including a component library, project scaffolding, and UI standards.",
+        "Improved delivery efficiency and reduced legacy maintenance costs."
       ],
-      "background": "Multiple business lines (Fengchao, feed ads, etc.) needed a unified entry and ticket flow for customer issues. The existing PC-only support could not serve field and mobile scenarios, so we built an H5 smart customer service to improve resolution efficiency and experience.",
-      "role": "Frontend tech lead: H5 architecture design, onboarding 10+ business platforms, and development of smart Q&A and ticket components.",
-      "problemsSolved": [
-        "Inconsistent UI and experience across platforms, high maintenance cost",
-        "Unstable network in field scenarios led to slow loads and failed submissions",
-        "Disconnected experience between smart Q&A and human ticket handoff"
+      "role": [
+        "Served as the core project owner, leading architecture and key module delivery.",
+        "Owned code quality, engineering standards, and critical business flows.",
+        "Played a major role in complex payment and transaction modules."
       ],
-      "results": [
-        "Onboarded 10+ business platforms; daily issue resolution increased from 200–300 to 1000+",
-        "Offline and retry strategies for first screen and critical APIs significantly improved success rate on weak networks",
-        "Unified Q&A-to-ticket flow and UI, with a clear improvement in user satisfaction"
+      "background": [
+        "The business needed a mobile channel for course purchases and conversion.",
+        "Existing systems were fragmented, difficult to manage, and costly to maintain.",
+        "A more stable and scalable technical foundation was required as the business grew."
+      ],
+      "challengesSolved": [
+        "Solved compatibility issues across WeChat, Alipay, and major mobile browsers.",
+        "Handled complex transaction logic across course types, payment methods, and discount combinations.",
+        "Improved reuse and maintainability through a component-driven, modular architecture."
+      ],
+      "techStack": [
+        "Frontend: React, TypeScript, JavaScript",
+        "Backend: Python, MySQL, Redis"
       ]
     }
   ],
