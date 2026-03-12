@@ -1129,6 +1129,7 @@
         {
           title: "Enterprise Low-Code Campaign Platform",
           type: "mobile",
+          overview: "A visual low-code platform enabling operations teams to independently build and launch marketing campaign pages in minutes without engineering involvement.",
           screenshots: [
             "images/low-code_platform/toC_1.png",
             "images/low-code_platform/toC_2.png",
@@ -1169,6 +1170,7 @@
         {
           title: "Course Commerce Platform",
           type: "web",
+          overview: "A mobile-first course e-commerce platform supporting course purchases, payments, and transactions for millions of users across WeChat, Alipay, and major browsers.",
           screenshots: [
             "images/low-code_platform/toB_1.png",
             "images/low-code_platform/toB_2.png",
@@ -1853,7 +1855,10 @@
                         <div className="flex flex-col md:flex-row md:items-start md:gap-10 lg:gap-12 gap-8">
                           {carouselArea}
                           <div className="flex-1 min-w-0 md:order-2">
-                            <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            {project.overview && (
+                              <p className="text-sm md:text-base opacity-70 leading-relaxed mb-6">{project.overview}</p>
+                            )}
                             {(project.outcomes || project.results) && (
                             <div className="mb-6">
                               <h4 className="about-module-title">
@@ -1881,22 +1886,6 @@
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
                                     <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.roleKeywords) }} />
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            )}
-                            {(project.background != null) && (
-                            <div className="mb-6">
-                              <h4 className="about-module-title">
-                                <i data-lucide="book-open" className="w-3.5 h-3.5" />
-                                Background
-                              </h4>
-                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
-                                {(Array.isArray(project.background) ? project.background : [project.background]).map((item, i) => (
-                                  <li key={i} className="flex gap-2 items-start">
-                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.backgroundKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
@@ -1940,7 +1929,10 @@
                         <>
                           {carouselArea}
                           <div className="p-6 md:p-8">
-                            <h3 className="text-xl md:text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
+                            {project.overview && (
+                              <p className="text-sm md:text-base opacity-70 leading-relaxed mb-6">{project.overview}</p>
+                            )}
                             {(project.outcomes || project.results) && (
                             <div className="mb-6">
                               <h4 className="about-module-title">
@@ -1968,22 +1960,6 @@
                                   <li key={i} className="flex gap-2 items-start">
                                     <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
                                     <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.roleKeywords) }} />
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            )}
-                            {(project.background != null) && (
-                            <div className="mb-6">
-                              <h4 className="about-module-title">
-                                <i data-lucide="book-open" className="w-3.5 h-3.5" />
-                                Background
-                              </h4>
-                              <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
-                                {(Array.isArray(project.background) ? project.background : [project.background]).map((item, i) => (
-                                  <li key={i} className="flex gap-2 items-start">
-                                    <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
-                                    <span dangerouslySetInnerHTML={{ __html: highlightKeywords(item, project.backgroundKeywords) }} />
                                   </li>
                                 ))}
                               </ul>
