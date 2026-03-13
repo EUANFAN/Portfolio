@@ -30,7 +30,7 @@
   </script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap');
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -66,7 +66,7 @@
     html { scroll-behavior: smooth; transition: color 0.25s ease, background-color 0.25s ease; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       background-color: var(--bg-primary);
       color: var(--text-primary);
       overflow-x: hidden;
@@ -569,7 +569,7 @@
     .hero-location:hover { border-color: var(--accent); color: var(--accent); }
     .hero-name-wrap {
       position: relative;
-      display: inline-block;
+      display: block;
     }
     .hero-name-accent {
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-muted) 100%);
@@ -829,6 +829,30 @@
     [data-theme="light"] .theme-toggle .theme-icon-sun { display: block; }
     [data-theme="dark"] .theme-toggle .theme-icon-moon { display: block; }
 
+    .lang-toggle {
+      height: 2rem;
+      padding: 0 0.625rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--glass-bg);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      white-space: nowrap;
+    }
+    .lang-toggle:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+    .lang-toggle-active { color: var(--accent); }
+    .lang-toggle-sep { opacity: 0.25; font-weight: 400; }
+
     .skills-section-title { color: var(--text-muted); }
 
     .footer-border { border-color: var(--border); }
@@ -1013,7 +1037,7 @@
     // ============================================
     // PROFILE DATA - Easy Configuration
     // ============================================
-    const profileData = {
+    const profileDataEn = {
       // Personal Info
       name: "Euan Fan",
       nameChinese: "范园贺",
@@ -1049,7 +1073,7 @@
       // About Me 模块完整介绍（仅在此处展示，Hero 不重复）
       aboutIntro: "Senior Frontend / Full-Stack Engineer with 10+ years of experience building scalable platforms used by millions of users.",
       aboutHighlights: [
-        { icon: "code", text: "Formerly at Alibaba and Baidu, leading the architecture of company-wide systems including design systems, component libraries, and low-code platforms." },
+        { icon: "code", text: "Formerly at Meituan and Baidu, leading the architecture of company-wide systems including design systems, component libraries, and low-code platforms." },
         { icon: "brain", text: "Known for translating complex requirements into high-performance, maintainable solutions that accelerate product delivery." },
         { icon: "building-2", text: "Based in Beijing with full work rights in China." }
       ],
@@ -1070,7 +1094,7 @@
           company: "Xiwangxue",
           companyLogo: "images/company_logo/xiwangxue.png",
           companyBrief: "A leading K-12 education company in China.",
-          companyUrl: "",
+          companyUrl: "https://www.xiwang.com/",
           position: "Senior Full-Stack Engineer",
           period: "May 2022 - Jul 2025",
           description: [
@@ -1250,10 +1274,226 @@
       }
     };
 
+    const profileDataZh = {
+      name: "范园贺",
+      nameChinese: "范园贺",
+      title: "高级前端 / 全栈工程师",
+      location: "中国 · 北京",
+      heroImage: "images/hero/hero_photo.jpg",
+      heroSubline: "持续打造服务于百万级用户的平台型产品与现代 Web 系统。",
+      heroVisa: "可在中国合法工作",
+      heroTechStack: ["React", "TypeScript", "Node.js"],
+      experienceYears: "10年以上经验",
+      birthYear: 1992,
+      email: "fyh1477596895@gmail.com",
+      phone: "15910269280",
+      wechat: "15910269280",
+      education: {
+        school: "北华大学",
+        major: "网络工程",
+        period: "2011 - 2015"
+      },
+      aboutIntro: "我是一名拥有 10 年以上经验的高级前端 / 全栈工程师，长期专注于平台型产品、前端架构和工程化体系建设，参与并主导过多个服务于百万级用户的核心系统。",
+      aboutHighlights: [
+        { icon: "code", text: "曾在美团、百度、贝壳等公司参与并主导公司级平台建设，覆盖设计系统、组件库、低代码平台与交易类系统。" },
+        { icon: "brain", text: "擅长将复杂业务需求抽象为可扩展、可维护的技术方案，在保证交付效率的同时兼顾系统稳定性与长期演进能力。" },
+        { icon: "building-2", text: "目前常驻北京，正在面向更国际化的协作环境持续打磨英文沟通与远程协作能力。" }
+      ],
+      keyStrengths: [
+        "平台架构设计与可扩展前端系统建设",
+        "以前端为核心、具备完整的全栈研发能力",
+        "设计系统、组件库与研发效能体系建设"
+      ],
+      impactHighlights: [
+        "主导低代码平台建设，将活动上线周期从数天压缩到 30 分钟以内",
+        "推动共享组件体系在多个业务团队中落地复用",
+        "通过平台化和工程化建设持续提升研发效率与系统稳定性"
+      ],
+      experienceList: [
+        {
+          company: "希望学",
+          companyLogo: "images/company_logo/xiwangxue.png",
+          companyBrief: "中国领先的 K12 教育机构。",
+          companyUrl: "https://www.xiwang.com/",
+          position: "高级全栈工程师",
+          period: "2022年5月 - 2025年7月",
+          description: [
+            "主导公司前端基础设施建设，包括代码规范、项目规范、组件库、开发脚手架以及 UI 规范体系，推动工程一致性和团队协作效率提升。",
+            "负责运营活动与课程售卖等核心业务方向，搭建可视化平台能力，支撑多业务场景的高效交付。",
+            "持续深耕研发提效与系统稳定性建设，通过平台化、标准化和可维护性优化提升整体交付质量。"
+          ],
+          highlights: ["基础设施", "可视化平台", "研发效能", "系统稳定性"]
+        },
+        {
+          company: "美团",
+          companyLogo: "images/company_logo/meituan.png",
+          companyBrief: "中国领先的本地生活服务与配送平台。",
+          companyUrl: "https://www.meituan.com/en-US/about-us",
+          position: "高级软件工程师",
+          period: "2021年7月 - 2022年4月",
+          description: [
+            "作为核心开发成员参与美团优选社区团购业务建设，该业务深度运行于美团 App 与微信生态。",
+            "负责团长端前端基础设施建设，通过代码冷热分层与工程规范优化，降低基础设施变更频率并提升系统稳定性。",
+            "主导团点 ID 混淆与加密改造，解决因 ID 抓取导致的水平越权问题，增强敏感数据保护能力。"
+          ],
+          highlights: ["前端基础设施", "冷热分层", "ID 加密", "数据保护"]
+        },
+        {
+          company: "百度",
+          companyLogo: "images/company_logo/baidu.png",
+          companyBrief: "中国领先的搜索与 AI 技术公司。",
+          companyUrl: "https://ir.baidu.com/",
+          position: "高级研发工程师",
+          period: "2020年8月 - 2021年7月",
+          description: [
+            "主导智能客服平台建设，补齐百度营销类应用内客服能力不足的问题。",
+            "推动平台在 15+ 个内部业务系统中接入落地，并将用户问题沉淀为产品与平台持续优化的输入。",
+            "显著提升运营效率，将人工客服每日处理量从 200–300 提升至约 1000。"
+          ],
+          highlights: ["智能客服", "跨团队协作", "运营效率"]
+        },
+        {
+          company: "贝壳",
+          companyLogo: "images/company_logo/beike.png",
+          companyBrief: "中国领先的居住与房产服务平台。",
+          companyUrl: "https://investors.ke.com",
+          position: "高级前端工程师",
+          period: "2018年2月 - 2020年3月",
+          description: [
+            "搭建面向运营场景的低代码平台，使非技术人员能够通过组件化方式快速生成移动端活动页面。",
+            "将活动发布流程从研发排期与发版流程中解耦，使运营团队可以独立配置并上线活动。",
+            "将单个活动从开发到上线的周期由 4–5 人天缩短至 30 分钟以内，显著释放研发产能。"
+          ],
+          highlights: ["低代码平台", "流程解耦", "提效"]
+        }
+      ],
+      projectList: [
+        {
+          title: "企业级低代码运营活动平台",
+          type: "mobile",
+          overview: "这是一个面向运营团队的可视化低代码平台，让活动页面的搭建与发布不再依赖研发排期，使业务能够以更快节奏响应市场需求。",
+          screenshots: [
+            "images/low-code_platform/toC_1.png",
+            "images/low-code_platform/toC_2.png",
+            "images/low-code_platform/toC_3.png",
+            "images/low-code_platform/toC_4.png",
+            "images/low-code_platform/toC_5.png",
+          ],
+          outcomes: [
+            "将单个活动的上线周期从 4–5 个工作日缩短到 30 分钟以内。",
+            "通过可视化流程支持运营团队独立完成活动搭建、预览与发布。",
+            "沉淀组件、模板和统一资产管理机制，持续提升研发效率与复用能力。"
+          ],
+          role: [
+            "担任项目负责人 / 前端负责人，主导平台整体方案设计与核心能力落地。",
+            "负责可视化编辑器、渲染引擎以及可复用组件体系的架构设计。",
+            "推动平台从单点业务支撑演进为可扩展、可复用的运营基础设施。"
+          ],
+          background: [
+            "业务侧需要高频上线促销活动、专题活动等页面。",
+            "传统研发模式交付链路较长，且高度依赖研发资源和发版节奏。",
+            "大量重复性活动开发持续占用前端产能，影响长期平台建设投入。"
+          ],
+          challengesSolved: [
+            "显著缩短活动交付周期，提升对业务需求的响应速度。",
+            "将运营流程与研发排期解耦，降低上线对开发侧的依赖。",
+            "减少重复开发、版本冲突以及历史活动资产难以复用的问题。"
+          ],
+          techStack: [
+            "前端：React、TypeScript、JavaScript",
+            "后端：Node.js、MongoDB"
+          ],
+          outcomeKeywords: ["30分钟", "可视化流程", "复用能力"],
+          roleKeywords: ["项目负责人", "可视化编辑器", "运营基础设施"],
+          backgroundKeywords: ["高频上线", "研发资源", "前端产能"],
+          challengesKeywords: ["响应速度", "解耦", "复用"]
+        },
+        {
+          title: "课程交易平台",
+          type: "web",
+          overview: "这是一个面向在线课程购买场景的移动优先交易平台，重点解决高并发、多环境兼容与复杂支付逻辑带来的系统挑战。",
+          screenshots: [
+            "images/low-code_platform/toB_1.png",
+            "images/low-code_platform/toB_2.png",
+            "images/low-code_platform/toB_3.png",
+            "images/low-code_platform/toB_4.png",
+            "images/low-code_platform/toB_5.png",
+            "images/low-code_platform/toB_6.png",
+          ],
+          outcomes: [
+            "支撑公司核心售课与购课业务，在高并发场景下服务百万级用户。",
+            "完成前端基础设施建设，包括组件库、项目脚手架与 UI 规范体系。",
+            "降低老旧系统维护成本，并提升多端交付效率与一致性。"
+          ],
+          role: [
+            "担任核心项目负责人，主导整体架构设计与关键模块交付。",
+            "负责代码质量、工程规范以及核心业务链路的技术实现。",
+            "深度参与支付、交易等高复杂度模块建设。"
+          ],
+          background: [
+            "公司需要建立移动端售卖渠道，支持用户在线购课与转化。",
+            "原有系统与数据管理能力不足，导致业务流程分散、维护成本偏高。",
+            "随着业务增长，平台需要更稳定、更易扩展的技术基础。"
+          ],
+          challengesSolved: [
+            "解决微信、支付宝及主流浏览器环境下的多端兼容问题。",
+            "处理课程类型、支付方式与优惠策略叠加带来的复杂交易逻辑。",
+            "通过组件化与模块化设计提升 PC 与移动端的复用性和可维护性。"
+          ],
+          techStack: [
+            "前端：React、TypeScript、JavaScript",
+            "后端：Python、MySQL、Redis"
+          ],
+          outcomeKeywords: ["百万级用户", "前端基础设施", "多端"],
+          roleKeywords: ["核心负责人", "架构设计", "支付"],
+          backgroundKeywords: ["移动端", "高并发", "可扩展"],
+          challengesKeywords: ["多端兼容", "复杂交易", "可维护性"]
+        }
+      ],
+      skillsGroups: [
+        { title: "语言与框架", items: ["React", "JavaScript", "TypeScript", "HTML5", "CSS3", "Node.js", "MongoDB"] },
+        { title: "工具与平台", items: ["Webpack", "Git", "Chrome DevTools", "Postman", "Fiddler", "Charles Proxy"] }
+      ],
+      skillColors: profileDataEn.skillColors,
+      social: { github: "https://github.com/EUANFAN", linkedin: "https://www.linkedin.com/in/euan-fan/" },
+      colors: profileDataEn.colors
+    };
+
+    // ============================================
+    // UI TEXT (i18n for hardcoded strings)
+    // ============================================
+    const UI_TEXT = {
+      en: {
+        nav: ['About', 'Experience', 'Projects', 'Skills', 'Contact'],
+        hero: { selectedExp: 'Selected Experience', techExpertise: 'Technical Expertise', workAuth: 'Work Authorization' },
+        about: { sectionLabel: 'About Me', greeting: "Hello, I'm", displayName: (d) => d.name, keyStrengths: 'Key Strengths', selectedExp: 'Selected Experience', impactHighlights: 'Impact Highlights', education: 'Education', recognition: 'Professional Recognition', recognitionDesc: 'Skills assessed for Software Engineering (ANZSCO 261313)', experience: 'Experience' },
+        experience: { sectionLabel: 'Selected Experience' },
+        projects: { sectionLabel: 'Projects', outcomes: 'Outcomes', results: 'Results', role: 'Role', background: 'Background', challengesSolved: 'Challenges Solved', problemsSolved: 'Problems Solved', techStack: 'Tech Stack' },
+        skills: { sectionLabel: 'Technical Skills', subtitle: 'Languages, frameworks & tools I work with day to day.' },
+        footer: { connect: "Let's Connect", titleMain: 'Get In', titleAccent: 'Touch', tagline: 'Open to opportunities and conversations.', findMe: 'Find me on', builtWith: 'Built with React, GSAP & Tailwind CSS.' }
+      },
+      zh: {
+        nav: ['关于', '经历', '项目', '技能', '联系'],
+        hero: { selectedExp: '任职经历', techExpertise: '技术方向', workAuth: '工作状态' },
+        about: { sectionLabel: '关于我', greeting: '你好，我是', displayName: (d) => d.nameChinese || d.name, keyStrengths: '核心能力', selectedExp: '任职经历', impactHighlights: '核心成果', education: '教育经历', recognition: '专业资质', recognitionDesc: '技能评估：软件工程（ANZSCO 261313）', experience: '经验' },
+        experience: { sectionLabel: '工作经历' },
+        projects: { sectionLabel: '项目经历', outcomes: '成果', results: '成果', role: '职责', background: '背景', challengesSolved: '解决的挑战', problemsSolved: '解决的问题', techStack: '技术栈' },
+        skills: { sectionLabel: '技术能力', subtitle: '日常工作中使用的语言、框架与工具。' },
+        footer: { connect: '联系我', titleMain: '期待', titleAccent: '沟通', tagline: '欢迎探讨职位机会与技术话题。', findMe: '也可以在这里找到我', builtWith: '使用 React、GSAP 与 Tailwind CSS 构建。' }
+      }
+    };
+
     // ============================================
     // THEME
     // ============================================
     const THEME_KEY = 'portfolio-theme';
+    const LANG_KEY = 'portfolio-lang';
+    const getInitialLang = () => {
+      if (typeof window === 'undefined') return 'en';
+      const stored = localStorage.getItem(LANG_KEY);
+      if (stored === 'en' || stored === 'zh') return stored;
+      return 'en';
+    };
     const getInitialTheme = () => {
       if (typeof window === 'undefined') return 'light';
       const stored = localStorage.getItem(THEME_KEY);
@@ -1285,6 +1525,21 @@
       );
     };
 
+    const LangToggle = ({ lang, setLang }) => {
+      const toggle = () => {
+        const next = lang === 'en' ? 'zh' : 'en';
+        setLang(next);
+        localStorage.setItem(LANG_KEY, next);
+      };
+      return (
+        <button type="button" aria-label="Switch language" className="lang-toggle" onClick={toggle}>
+          <span className={lang === 'en' ? 'lang-toggle-active' : ''}>EN</span>
+          <span className="lang-toggle-sep">/</span>
+          <span className={lang === 'zh' ? 'lang-toggle-active' : ''}>中</span>
+        </button>
+      );
+    };
+
     const LiquidBackground = () => (
       <div className="liquid-bg">
         <div className="liquid-blob blob-1" />
@@ -1293,8 +1548,16 @@
       </div>
     );
 
-    const Navigation = ({ theme, setTheme }) => {
+    const Navigation = ({ theme, setTheme, lang, setLang }) => {
       const [scrolled, setScrolled] = useState(false);
+      const ui = UI_TEXT[lang].nav;
+      const navLinks = [
+        { href: '#about', label: ui[0] },
+        { href: '#experience', label: ui[1] },
+        { href: '#projects', label: ui[2] },
+        { href: '#skills', label: ui[3] },
+        { href: '#contact', label: ui[4] },
+      ];
 
       useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 100);
@@ -1308,14 +1571,13 @@
             <a href="#" className="text-xl font-bold tracking-tight">
               <span style={{ color: 'var(--accent)' }}>EF</span>
             </a>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <div className="hidden md:flex gap-8 text-sm font-medium">
-                <a href="#about" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>About</a>
-                <a href="#experience" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Experience</a>
-                <a href="#projects" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Projects</a>
-                <a href="#skills" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Skills</a>
-                <a href="#contact" className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>Contact</a>
+                {navLinks.map((link) => (
+                  <a key={link.href} href={link.href} className="link-underline transition-colors" style={{ color: 'var(--text-primary)' }}>{link.label}</a>
+                ))}
               </div>
+              <LangToggle lang={lang} setLang={setLang} />
               <ThemeToggle theme={theme} setTheme={setTheme} />
             </div>
           </div>
@@ -1323,7 +1585,8 @@
       );
     };
 
-    const Hero = () => {
+    const Hero = ({ data, lang }) => {
+      const ui = UI_TEXT[lang].hero;
       const heroRef = useRef(null);
       const nameRef = useRef(null);
       const titleRef = useRef(null);
@@ -1344,8 +1607,9 @@
         return () => ctx.revert();
       }, []);
 
-      const [firstName, lastName] = profileData.name.split(" ");
-      const hasHeroImage = profileData.heroImage && profileData.heroImage.trim() !== "";
+      const [firstName, lastName] = data.name.split(" ");
+      const hasHeroImage = data.heroImage && data.heroImage.trim() !== "";
+
 
       return (
         <section id="hero" ref={heroRef} className="min-h-screen flex flex-col justify-center items-center relative px-6 pt-24 pb-12 md:pt-28 md:pb-20">
@@ -1353,7 +1617,7 @@
             <div ref={textBlockRef} className="flex-1 text-center md:text-left order-2 md:order-1 hero-text-block">
               <p ref={taglineRef} className="hero-location mb-5 md:mb-6 inline-flex">
                 <i data-lucide="map-pin" className="w-3.5 h-3.5 flex-shrink-0 opacity-80" />
-                <span>{profileData.location}</span>
+                <span>{data.location}</span>
               </p>
               <h1 ref={nameRef} className="hero-name-wrap text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7.5rem] font-black tracking-tighter leading-none mb-5">
                 <span className="hero-name-accent ml-1 md:ml-0">{firstName}</span>
@@ -1361,22 +1625,22 @@
               </h1>
               <div ref={titleRef} className="hero-title-wrap mb-5">
                 <p className="hero-title text-lg md:text-2xl lg:text-3xl tracking-wide">
-                  {profileData.title}
+                  {data.title}
                 </p>
               </div>
               <div className="hero-subline-wrap mb-5 max-w-md md:max-w-none md:pr-4">
                 <p className="hero-subline text-base md:text-lg">
-                  {profileData.heroSubline}
+                  {data.heroSubline}
                 </p>
               </div>
-              {profileData.experienceList && profileData.experienceList.length > 0 && (
+              {data.experienceList && data.experienceList.length > 0 && (
                 <div className="mb-4">
                   <p className="hero-section-label justify-center md:justify-start">
                     <i data-lucide="building-2" className="w-3.5 h-3.5" />
-                    <span>Selected Experience</span>
+                    <span>{ui.selectedExp}</span>
                   </p>
                   <div className="hero-previously-pills justify-center md:justify-start">
-                    {profileData.experienceList.map((exp, i) => (
+                    {data.experienceList.map((exp, i) => (
                       exp.companyUrl ? (
                         <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
                           {exp.company}
@@ -1389,14 +1653,14 @@
                   </div>
                 </div>
               )}
-              {profileData.heroTechStack && profileData.heroTechStack.length > 0 && (
+              {data.heroTechStack && data.heroTechStack.length > 0 && (
                 <div className="mb-4">
                   <p className="hero-section-label justify-center md:justify-start">
                     <i data-lucide="code-2" className="w-3.5 h-3.5" />
-                    <span>Technical Expertise</span>
+                    <span>{ui.techExpertise}</span>
                   </p>
                   <div className="hero-tech-stack-wrap justify-center md:justify-start">
-                    {profileData.heroTechStack.map((tech, i) => (
+                    {data.heroTechStack.map((tech, i) => (
                       <span key={i} className="hero-tech-pill">
                         <i data-lucide="check" className="hero-tech-pill-check" aria-hidden />
                         {tech}
@@ -1405,15 +1669,15 @@
                   </div>
                 </div>
               )}
-              {profileData.heroVisa && (
+              {data.heroVisa && (
                 <div>
                   <p className="hero-section-label justify-center md:justify-start mb-2">
                     <i data-lucide="shield-check" className="w-3.5 h-3.5" />
-                    <span>Work Authorization</span>
+                    <span>{ui.workAuth}</span>
                   </p>
                   <div className="flex justify-center md:justify-start">
                     <p className="hero-visa">
-                      <span>{profileData.heroVisa}</span>
+                      <span>{data.heroVisa}</span>
                     </p>
                   </div>
                 </div>
@@ -1423,7 +1687,7 @@
             <div ref={photoRef} className="flex-shrink-0 w-full md:w-[42%] lg:w-[38%] max-w-[320px] md:max-w-none mx-auto order-1 md:order-2">
               <div className="hero-photo-wrap">
                 {hasHeroImage ? (
-                  <img src={profileData.heroImage} alt={profileData.name} />
+                  <img src={data.heroImage} alt={data.name} />
                 ) : (
                   <div className="hero-photo-placeholder">
                     <i data-lucide="user" className="w-24 h-24 md:w-32 md:h-32 opacity-40" />
@@ -1442,7 +1706,8 @@
       );
     };
 
-    const About = () => {
+    const About = ({ data, lang }) => {
+      const ui = UI_TEXT[lang].about;
       const sectionRef = useRef(null);
 
       useEffect(() => {
@@ -1469,17 +1734,17 @@
       return (
         <section id="about" ref={sectionRef} className="relative py-20 md:py-28 px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-sm tracking-[0.3em] uppercase mb-8 about-section-label">About Me</h2>
+            <h2 className="text-sm tracking-[0.3em] uppercase mb-8 about-section-label">{ui.sectionLabel}</h2>
 
             <div className="bento-grid">
               {/* 左侧大卡片：简介 + Key Strengths + Selected Experience */}
               <div className="bento-item large glass about-large">
-                <h3 className="text-2xl md:text-3xl mb-3 about-emphasis-title">Hello, I'm <span className="about-name-accent">{profileData.name}</span></h3>
+                <h3 className="text-2xl md:text-3xl mb-3 about-emphasis-title">{ui.greeting} <span className="about-name-accent">{ui.displayName(data)}</span></h3>
                 <p className="about-intro-lead mb-4">
-                  {profileData.aboutIntro}
+                  {data.aboutIntro}
                 </p>
                 <div className="space-y-2.5 mb-4">
-                  {profileData.aboutHighlights.map((item, i) => (
+                  {data.aboutHighlights.map((item, i) => (
                     <div key={i} className="flex gap-3 items-start">
                       <span className="flex-shrink-0 w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                         <i data-lucide={item.icon} className="w-3.5 h-3.5" />
@@ -1489,11 +1754,11 @@
                   ))}
                 </div>
 
-                {profileData.keyStrengths && profileData.keyStrengths.length > 0 && (
+                {data.keyStrengths && data.keyStrengths.length > 0 && (
                   <>
-                    <h4 className="about-subtitle mb-2">Key Strengths</h4>
+                    <h4 className="about-subtitle mb-2">{ui.keyStrengths}</h4>
                     <ul className="space-y-1.5 about-list-text mb-4 list-none pl-0">
-                      {profileData.keyStrengths.map((item, i) => (
+                      {data.keyStrengths.map((item, i) => (
                         <li key={i} className="flex gap-2 items-start">
                           <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
                           <span>{item}</span>
@@ -1503,9 +1768,9 @@
                   </>
                 )}
 
-                <h4 className="about-subtitle mb-2 mt-1">Selected Experience</h4>
+                <h4 className="about-subtitle mb-2 mt-1">{ui.selectedExp}</h4>
                 <div className="hero-previously-pills about-selected-pills">
-                  {profileData.experienceList.map((exp, i) => (
+                  {data.experienceList.map((exp, i) => (
                     exp.companyUrl ? (
                       <a key={i} href={exp.companyUrl} target="_blank" rel="noopener noreferrer" className="hero-company-pill" title={`Visit ${exp.company}`}>
                         {exp.company}
@@ -1521,14 +1786,14 @@
               {/* 右侧一列：与左侧同高，三块留白/间距统一，移动端同间距 */}
               <div className="about-right-col">
                 <div className="about-right-col-inner">
-                  {profileData.impactHighlights && profileData.impactHighlights.length > 0 ? (
+                  {data.impactHighlights && data.impactHighlights.length > 0 ? (
                   <div className="bento-item glass flex flex-col text-left about-right-card">
                     <h4 className="about-module-title">
                       <i data-lucide="zap" className="w-3.5 h-3.5" />
-                      Impact Highlights
+                      {ui.impactHighlights}
                     </h4>
                     <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0 pr-1">
-                      {profileData.impactHighlights.map((item, i) => (
+                      {data.impactHighlights.map((item, i) => (
                         <li key={i} className="flex gap-2 items-start">
                           <span className="flex-shrink-0 w-1 h-1 rounded-full mt-[0.45rem] opacity-40" style={{ background: 'var(--text-muted)' }} aria-hidden />
                           <span>{item}</span>
@@ -1539,27 +1804,27 @@
                   ) : (
                   <div className="bento-item glass flex flex-col justify-center items-center text-center about-right-card">
                     <span className="text-5xl md:text-6xl font-black" style={{ color: 'var(--accent)' }}>
-                      {profileData.experienceYears}
+                      {data.experienceYears}
                     </span>
-                    <span className="text-sm mt-2 about-body-muted">Experience</span>
+                    <span className="text-sm mt-2 about-body-muted">{ui.experience}</span>
                   </div>
                   )}
 
                   <div className="bento-item glass flex flex-col text-left about-right-card">
                     <h4 className="about-module-title">
                       <i data-lucide="graduation-cap" className="w-3.5 h-3.5" />
-                      Education
+                      {ui.education}
                     </h4>
-                    <p className="about-highlight-text">{profileData.education.school}</p>
-                    <p className="about-detail-text mt-0.5">{profileData.education.major} · {profileData.education.period}</p>
+                    <p className="about-highlight-text">{data.education.school}</p>
+                    <p className="about-detail-text mt-0.5">{data.education.major} · {data.education.period}</p>
                   </div>
 
                   <div className="bento-item glass flex flex-col text-left about-right-card">
                     <h4 className="about-module-title">
                       <i data-lucide="award" className="w-3.5 h-3.5" />
-                      Professional Recognition
+                      {ui.recognition}
                     </h4>
-                    <p className="about-detail-text">Skills assessed for Software Engineering (ANZSCO 261313)</p>
+                    <p className="about-detail-text">{ui.recognitionDesc}</p>
                   </div>
 
                   <div className="about-right-col-spacer" aria-hidden />
@@ -1577,7 +1842,8 @@
       );
     };
 
-    const Experience = () => {
+    const Experience = ({ data, lang }) => {
+      const ui = UI_TEXT[lang].experience;
       const sectionRef = useRef(null);
 
       useEffect(() => {
@@ -1615,12 +1881,12 @@
       return (
         <section id="experience" ref={sectionRef} className="relative py-20 md:py-28 px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Selected Experience</h2>
+            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">{ui.sectionLabel}</h2>
 
             <div className="timeline-container relative">
               <div className="absolute left-0 md:left-8 top-0 bottom-0 w-px experience-line" style={{ background: 'linear-gradient(to bottom, var(--accent), var(--border), transparent)' }} />
 
-              {profileData.experienceList.map((exp, index) => (
+              {data.experienceList.map((exp, index) => (
                 <div key={index} className="timeline-item relative pl-8 md:pl-20 pb-16 last:pb-0">
                   <div
                     className="absolute left-0 md:left-8 top-2 w-4 h-4 rounded-full -translate-x-1/2 border-2 transition-all duration-300"
@@ -1701,7 +1967,8 @@
       );
     };
 
-    const Projects = () => {
+    const Projects = ({ data, lang }) => {
+      const ui = UI_TEXT[lang].projects;
       const sectionRef = useRef(null);
 
       useEffect(() => {
@@ -1784,10 +2051,10 @@
       return (
         <section id="projects" ref={sectionRef} className="relative py-20 md:py-28 px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">Projects</h2>
+            <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">{ui.sectionLabel}</h2>
 
             <div className="space-y-16 md:space-y-20">
-              {profileData.projectList.map((project, index) => {
+              {data.projectList.map((project, index) => {
                 const isMobile = project.type === "mobile";
                 const images = getImages(project);
                 const currentSlide = Math.min(slideByProject[index] ?? 0, Math.max(0, images.length - 1));
@@ -1863,7 +2130,7 @@
                             <div className="mb-6">
                               <h4 className="about-module-title">
                                 <i data-lucide="target" className="w-3.5 h-3.5" />
-                                {project.outcomes ? 'Outcomes' : 'Results'}
+                                {project.outcomes ? ui.outcomes : ui.results}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {(project.outcomes || project.results).map((item, i) => (
@@ -1879,7 +2146,7 @@
                             <div className="mb-6">
                               <h4 className="about-module-title">
                                 <i data-lucide="briefcase" className="w-3.5 h-3.5" />
-                                Role
+                                {ui.role}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {(Array.isArray(project.role) ? project.role : [project.role]).map((item, i) => (
@@ -1895,7 +2162,7 @@
                             <div className="mb-6">
                               <h4 className="about-module-title">
                                 <i data-lucide="check-circle" className="w-3.5 h-3.5" />
-                                {project.challengesSolved ? 'Challenges Solved' : 'Problems Solved'}
+                                {project.challengesSolved ? ui.challengesSolved : ui.problemsSolved}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {(project.challengesSolved || project.problemsSolved).map((item, i) => (
@@ -1911,7 +2178,7 @@
                             <div>
                               <h4 className="about-module-title">
                                 <i data-lucide="layers" className="w-3.5 h-3.5" />
-                                Tech Stack
+                                {ui.techStack}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {project.techStack.map((item, i) => (
@@ -1937,7 +2204,7 @@
                             <div className="mb-6">
                               <h4 className="about-module-title">
                                 <i data-lucide="target" className="w-3.5 h-3.5" />
-                                {project.outcomes ? 'Outcomes' : 'Results'}
+                                {project.outcomes ? ui.outcomes : ui.results}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {(project.outcomes || project.results).map((item, i) => (
@@ -1953,7 +2220,7 @@
                             <div className="mb-6">
                               <h4 className="about-module-title">
                                 <i data-lucide="briefcase" className="w-3.5 h-3.5" />
-                                Role
+                                {ui.role}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {(Array.isArray(project.role) ? project.role : [project.role]).map((item, i) => (
@@ -1969,7 +2236,7 @@
                             <div className="mb-6">
                               <h4 className="about-module-title">
                                 <i data-lucide="check-circle" className="w-3.5 h-3.5" />
-                                {project.challengesSolved ? 'Challenges Solved' : 'Problems Solved'}
+                                {project.challengesSolved ? ui.challengesSolved : ui.problemsSolved}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {(project.challengesSolved || project.problemsSolved).map((item, i) => (
@@ -1985,7 +2252,7 @@
                             <div>
                               <h4 className="about-module-title">
                                 <i data-lucide="layers" className="w-3.5 h-3.5" />
-                                Tech Stack
+                                {ui.techStack}
                               </h4>
                               <ul className="space-y-1.5 about-list-text list-none pl-0 mt-0">
                                 {project.techStack.map((item, i) => (
@@ -2016,7 +2283,8 @@
       );
     };
 
-    const Skills = ({ theme }) => {
+    const Skills = ({ data, theme, lang }) => {
+      const ui = UI_TEXT[lang].skills;
       const sectionRef = useRef(null);
 
       useEffect(() => {
@@ -2050,7 +2318,7 @@
         return () => ctx.revert();
       }, []);
 
-      const getSkillColor = (name) => profileData.skillColors?.[name] || profileData.colors.accent;
+      const getSkillColor = (name) => data.skillColors?.[name] || data.colors.accent;
 
       return (
         <section id="skills" ref={sectionRef} className="py-16 md:py-28 px-4 sm:px-6 relative overflow-hidden">
@@ -2059,11 +2327,11 @@
           }} />
           <div className="max-w-6xl mx-auto relative">
             <h2 className="skills-title text-sm tracking-[0.3em] uppercase mb-10 md:mb-14 skills-section-title">
-              Technical Skills
+              {ui.sectionLabel}
             </h2>
 
             <div className="grid md:grid-cols-2 gap-8 md:gap-10 lg:gap-12">
-              {profileData.skillsGroups.map((group, gIndex) => (
+              {data.skillsGroups.map((group, gIndex) => (
                 <div key={gIndex} className="skills-group skills-group-card">
                   <h3 className="text-sm sm:text-base font-semibold tracking-wide mb-3 md:mb-4 flex items-center gap-2 md:gap-2.5" style={{ color: 'var(--text-muted)' }}>
                     <span className="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex-shrink-0" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
@@ -2116,7 +2384,8 @@
       );
     };
 
-    const Footer = () => {
+    const Footer = ({ data, lang }) => {
+      const ui = UI_TEXT[lang].footer;
       const sectionRef = useRef(null);
 
       useEffect(() => {
@@ -2141,49 +2410,49 @@
       return (
         <footer id="contact" ref={sectionRef} className="min-h-[70vh] flex flex-col justify-center py-20 md:py-28 px-4 sm:px-6 relative">
           <div className="footer-content max-w-6xl mx-auto text-center w-full">
-            <p className="footer-label mb-6 md:mb-8">Let's Connect</p>
+            <p className="footer-label mb-6 md:mb-8">{ui.connect}</p>
 
             <h2 className="footer-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tighter mb-2 md:mb-3">
-              Get In <span className="footer-title-accent">Touch</span>
+              {ui.titleMain} <span className="footer-title-accent">{ui.titleAccent}</span>
             </h2>
             <p className="footer-tagline mb-6 md:mb-8">
-              Open to opportunities and conversations.
+              {ui.tagline}
             </p>
-            {profileData.heroVisa && (
+            {data.heroVisa && (
               <p className="footer-visa mb-8 md:mb-10">
                 <i data-lucide="check-circle" className="w-4 h-4 flex-shrink-0" />
-                <span>{profileData.heroVisa}</span>
+                <span>{data.heroVisa}</span>
               </p>
             )}
 
             <div className="w-full flex justify-center mb-8 md:mb-10">
               <a
-                href={`mailto:${profileData.email}`}
+                href={`mailto:${data.email}`}
                 className="footer-cta inline-flex items-center gap-2"
               >
                 <i data-lucide="mail" className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-                <span>{profileData.email}</span>
+                <span>{data.email}</span>
               </a>
             </div>
 
-            <p className="footer-connect-label mb-3 md:mb-4">Find me on</p>
+            <p className="footer-connect-label mb-3 md:mb-4">{ui.findMe}</p>
             <div className="flex justify-center gap-3 sm:gap-4 mb-12 md:mb-14">
-              <a href={profileData.social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+              <a href={data.social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
                  className="footer-social-link">
                 <i data-lucide="github" className="w-5 h-5" />
               </a>
-              <a href={profileData.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+              <a href={data.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
                  className="footer-social-link">
                 <i data-lucide="linkedin" className="w-5 h-5" />
               </a>
-              <a href={`mailto:${profileData.email}`} aria-label="Email"
+              <a href={`mailto:${data.email}`} aria-label="Email"
                  className="footer-social-link">
                 <i data-lucide="mail" className="w-5 h-5" />
               </a>
             </div>
 
             <div className="pt-6 md:pt-8 border-t footer-border">
-              <p className="footer-copy text-xs">© {new Date().getFullYear()} {profileData.name}. Built with React, GSAP & Tailwind CSS.</p>
+              <p className="footer-copy text-xs">© {new Date().getFullYear()} {data.name}. {ui.builtWith}</p>
             </div>
           </div>
         </footer>
@@ -2192,6 +2461,8 @@
 
     const App = () => {
       const [theme, setTheme] = useState(getInitialTheme);
+      const [lang, setLang] = useState(getInitialLang);
+      const data = lang === 'zh' ? profileDataZh : profileDataEn;
 
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -2204,18 +2475,22 @@
         return () => ScrollTrigger.getAll().forEach((t) => t.kill());
       }, []);
 
+      useEffect(() => {
+        setTimeout(() => lucide.createIcons(), 50);
+      }, [lang]);
+
       return (
         <>
           <LiquidBackground />
           <div className="noise-overlay" />
-          <Navigation theme={theme} setTheme={setTheme} />
+          <Navigation theme={theme} setTheme={setTheme} lang={lang} setLang={setLang} />
           <main>
-            <Hero />
-            <About />
-            <Experience />
-            <Projects />
-            <Skills theme={theme} />
-            <Footer />
+            <Hero data={data} lang={lang} />
+            <About data={data} lang={lang} />
+            <Experience data={data} lang={lang} />
+            <Projects data={data} lang={lang} />
+            <Skills data={data} theme={theme} lang={lang} />
+            <Footer data={data} lang={lang} />
           </main>
         </>
       );
