@@ -40,6 +40,7 @@
       --bg-primary: #FAFBFC;
       --bg-secondary: #F1F5F9;
       --text-primary: #0F172A;
+      --text-secondary: #334155;
       --text-muted: #64748B;
       --accent: #0EA5E9;
       --accent-soft: #E0F2FE;
@@ -54,6 +55,7 @@
       --bg-primary: #0B1120;
       --bg-secondary: #111827;
       --text-primary: #E5E7EB;
+      --text-secondary: #CBD5E1;
       --text-muted: #9CA3AF;
       --accent: #38BDF8;
       --accent-soft: rgba(56, 189, 248, 0.15);
@@ -464,32 +466,31 @@
       background-clip: text;
     }
 
-    /* 简介段落：清晰易读，无左侧竖线，突出显示 */
+    /* 简介段落：最重要的内容，用一级色保持最高可读性 */
     .about-intro-lead {
       color: var(--text-primary);
       font-size: 1rem;
       line-height: 1.7;
       font-weight: 400;
-      opacity: 0.92;
     }
     @media (min-width: 768px) {
       .about-intro-lead { font-size: 1.0625rem; }
     }
 
-    /* 高亮列表（aboutHighlights）：文字稍大、稍粗，突出重点 */
+    /* 高亮要点（aboutHighlights 图标列表 + 教育机构名称）：段落型内容保持 400 */
     .about-highlight-text {
       font-size: 0.9375rem;
       line-height: 1.55;
-      color: var(--text-primary);
-      font-weight: 600;
+      color: var(--text-secondary);
+      font-weight: 400;
     }
 
-    /* 普通列表（key strengths / impact highlights）：正常权重、稍 muted */
+    /* 列表内容（Key Strengths / Impact Highlights）：500 便于快速扫读 */
     .about-list-text {
       font-size: 0.9rem;
       line-height: 1.6;
-      color: var(--text-primary);
-      opacity: 0.88;
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .about-body { color: var(--text-primary); }
@@ -981,8 +982,8 @@
       margin-bottom: 0.625rem;
       font-size: 0.9375rem;
       line-height: 1.6;
-      color: var(--text-primary);
-      opacity: 0.9;
+      color: var(--text-secondary);
+      font-weight: 400;
     }
     .experience-description-list li::before {
       content: '';
@@ -1079,14 +1080,15 @@
       ],
       // Key Strengths（About Me 中 Selected Experience 上方）
       keyStrengths: [
-        "Platform architecture and scalable frontend systems",
-        "Full-stack capability with strong React and Node.js experience",
-        "Design systems, component libraries, and engineering productivity"
+        "Platform Architecture and Complex Frontend Systems",
+        "Frontend-Centered End-to-End Engineering Delivery",
+        "Engineering Infrastructure and Developer Productivity"
       ],
       impactHighlights: [
-        "Architected a low-code platform that reduced campaign launch time from days to minutes",
-        "Led development of shared component libraries adopted across multiple business units",
-        "Improved engineering efficiency through scalable platform design"
+        "Reduced campaign launch cycles from days to minutes through low-code platform design",
+        "Drove adoption of shared component libraries and design systems across multiple business teams",
+        "Improved engineering efficiency and system stability through platform and infrastructure development",
+        "Delivered core systems supporting products used by millions of users"
       ],
       // Work Experience (companyLogo optional: logo URL; companyBrief optional)
       experienceList: [
@@ -1300,14 +1302,15 @@
         { icon: "building-2", text: "目前常驻北京，正在面向更国际化的协作环境持续打磨英文沟通与远程协作能力。" }
       ],
       keyStrengths: [
-        "平台架构设计与可扩展前端系统建设",
-        "以前端为核心、具备完整的全栈研发能力",
-        "设计系统、组件库与研发效能体系建设"
+        "平台化架构设计与复杂前端系统建设",
+        "以前端为核心的全链路工程落地能力",
+        "工程体系建设与研发效能提升"
       ],
       impactHighlights: [
-        "主导低代码平台建设，将活动上线周期从数天压缩到 30 分钟以内",
-        "推动共享组件体系在多个业务团队中落地复用",
-        "通过平台化和工程化建设持续提升研发效率与系统稳定性"
+        "主导低代码平台建设，将活动上线周期从数天压缩至分钟级",
+        "推动组件库与设计系统在多个业务团队复用落地",
+        "通过平台化与工程化建设提升系统稳定性与研发效率",
+        "支撑百万级用户产品的核心系统设计与持续演进"
       ],
       experienceList: [
         {
@@ -2124,7 +2127,7 @@
                           <div className="flex-1 min-w-0 md:order-2">
                             <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
                             {project.overview && (
-                              <p className="text-sm md:text-base opacity-70 leading-relaxed mb-6">{project.overview}</p>
+                              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>{project.overview}</p>
                             )}
                             {(project.outcomes || project.results) && (
                             <div className="mb-6">
@@ -2198,7 +2201,7 @@
                           <div className="p-6 md:p-8">
                             <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
                             {project.overview && (
-                              <p className="text-sm md:text-base opacity-70 leading-relaxed mb-6">{project.overview}</p>
+                              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>{project.overview}</p>
                             )}
                             {(project.outcomes || project.results) && (
                             <div className="mb-6">
