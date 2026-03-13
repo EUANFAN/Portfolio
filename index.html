@@ -40,7 +40,6 @@
       --bg-primary: #FAFBFC;
       --bg-secondary: #F1F5F9;
       --text-primary: #0F172A;
-      --text-secondary: #334155;
       --text-muted: #64748B;
       --accent: #0EA5E9;
       --accent-soft: #E0F2FE;
@@ -55,7 +54,6 @@
       --bg-primary: #0B1120;
       --bg-secondary: #111827;
       --text-primary: #E5E7EB;
-      --text-secondary: #CBD5E1;
       --text-muted: #9CA3AF;
       --accent: #38BDF8;
       --accent-soft: rgba(56, 189, 248, 0.15);
@@ -477,19 +475,19 @@
       .about-intro-lead { font-size: 1.0625rem; }
     }
 
-    /* 高亮要点（aboutHighlights 图标列表 + 教育机构名称）：段落型内容保持 400 */
+    /* 高亮要点（aboutHighlights 图标列表 + 教育机构名称） */
     .about-highlight-text {
       font-size: 0.9375rem;
       line-height: 1.55;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       font-weight: 400;
     }
 
-    /* 列表内容（Key Strengths / Impact Highlights）：500 便于快速扫读 */
+    /* 列表内容（Key Strengths / Impact Highlights）：短条目 500 便于快速扫读 */
     .about-list-text {
       font-size: 0.9rem;
       line-height: 1.6;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       font-weight: 500;
     }
 
@@ -982,7 +980,7 @@
       margin-bottom: 0.625rem;
       font-size: 0.9375rem;
       line-height: 1.6;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       font-weight: 400;
     }
     .experience-description-list li::before {
@@ -2127,7 +2125,7 @@
                           <div className="flex-1 min-w-0 md:order-2">
                             <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
                             {project.overview && (
-                              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>{project.overview}</p>
+                              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-primary)' }}>{project.overview}</p>
                             )}
                             {(project.outcomes || project.results) && (
                             <div className="mb-6">
@@ -2201,7 +2199,7 @@
                           <div className="p-6 md:p-8">
                             <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>{project.title}</h3>
                             {project.overview && (
-                              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>{project.overview}</p>
+                              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-primary)' }}>{project.overview}</p>
                             )}
                             {(project.outcomes || project.results) && (
                             <div className="mb-6">
