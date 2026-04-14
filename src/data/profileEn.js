@@ -50,10 +50,7 @@ const profileDataEn = {
         "Built reusable frontend infrastructure through the platform work, including shared component libraries, UI standards, project scaffolding, and engineering conventions, improving consistency and delivery efficiency across teams.",
         "Partnered with product, design, and business teams to define scalable platform capabilities, drive cross-team alignment, and ensure adoption in real business scenarios."
       ],
-      highlights: ["Low-Code Platform",
-        "Platform Architecture",
-        "Frontend Infrastructure",
-        "Cross-Team Collaboration"]
+      highlights: ["Low-Code Platform", "Platform Architecture", "Frontend Infrastructure", "Cross-Team Collaboration"]
     },
     {
       company: "Meituan",
@@ -63,11 +60,11 @@ const profileDataEn = {
       position: "Senior Software Engineer",
       period: "Jul 2021 - Apr 2022",
       description: [
-        "Core developer for Meituan Youxuan, a large-scale community group-buying platform integrated with the Meituan App and WeChat ecosystem.",
-        "Built and optimized the leader-side frontend infrastructure, introducing hot–cold code separation and standardized engineering practices to reduce infrastructure change frequency and improve system stability.",
-        "Led the Group-Point ID encryption and obfuscation redesign, preventing horizontal privilege escalation caused by ID scraping and strengthening sensitive data protection."
+        "Core frontend engineer for Meituan Youxuan, a large-scale community group-buying product in the Meituan app and WeChat ecosystem.",
+        "Built and improved frontend infrastructure for the group leader side, improving system stability and reducing repeated infrastructure changes through hot–cold code separation and engineering standards.",
+        "Focused on the WeChat Mini Program stack, including performance optimization, reusable component development, and cross-team component reuse to improve delivery efficiency and consistency."
       ],
-      highlights: ["Frontend Infrastructure", "Hot-Cold Separation", "ID Encryption", "Data Protection"]
+      highlights: ["Community Group-Buying", "WeChat Mini Program", "Performance Optimization", "Reusable Components"]
     },
     {
       company: "Baidu",
@@ -77,33 +74,33 @@ const profileDataEn = {
       position: "Senior R&D Engineer",
       period: "Aug 2020 - Jul 2021",
       description: [
-        "Led the development of an intelligent customer service platform, filling the gap of in-app support functionality for Baidu's marketing applications.",
-        "Drove cross-team adoption of the platform across 15+ internal business systems, leveraging user inquiries as feedback to continuously improve product and platform capabilities.",
-        "Improved operational efficiency by reducing manual customer support workload and increasing resolved cases from 200–300 to around 1,000 per day."
+        "Led the development of an intelligent customer service platform, bringing in-app support capabilities to Baidu’s marketing products.",
+        "Worked with multiple teams to roll out the platform across 15+ internal business systems, and used user support cases as feedback to keep improving the product and platform.",
+        "Improved operational efficiency by reducing manual support workload and increasing daily resolved cases from around 200–300 to about 1,000."
       ],
-      highlights: ["Customer Service Platform", "Cross-team Adoption", "Operational Efficiency"]
+      highlights: ["Customer Service Platform", "Operational Efficiency", "Support Automation"]
     },
-    {
-      company: "Beike",
-      companyLogo: "images/company_logo/beike.png",
-      companyBrief: "Leading property and living services platform in China.",
-      companyUrl: "https://investors.ke.com",
-      position: "Senior Web Front-end Engineer",
-      period: "Feb 2018 - Mar 2020",
-      description: [
-        "Built a low-code operations platform that enables non-technical teams to assemble UI components and rapidly generate mobile marketing campaign pages.",
-        "Decoupled campaign release workflows from engineering development cycles, allowing operations teams to configure and launch campaigns independently.",
-        "Significantly improved development efficiency by reducing campaign launch time from 4–5 person-days to under 30 minutes, freeing up substantial engineering resources."
-      ],
-      highlights: ["Low-code Platform", "Decoupled Workflows", "Development Efficiency"]
-    },
+    // {
+    //   company: "Beike",
+    //   companyLogo: "images/company_logo/beike.png",
+    //   companyBrief: "Leading property and living services platform in China.",
+    //   companyUrl: "https://investors.ke.com",
+    //   position: "Senior Web Front-end Engineer",
+    //   period: "Feb 2018 - Mar 2020",
+    //   description: [
+    //     "Built a low-code operations platform that enables non-technical teams to assemble UI components and rapidly generate mobile marketing campaign pages.",
+    //     "Decoupled campaign release workflows from engineering development cycles, allowing operations teams to configure and launch campaigns independently.",
+    //     "Significantly improved development efficiency by reducing campaign launch time from 4–5 person-days to under 30 minutes, freeing up substantial engineering resources."
+    //   ],
+    //   highlights: ["Low-code Platform", "Decoupled Workflows", "Development Efficiency"]
+    // },
   ],
 
   projectList: [
     {
-      title: "Enterprise Low-Code Campaign Platform",
+      title: "Low-Code Campaign Platform",
       type: "mobile",
-      overview: "A visual low-code platform enabling operations teams to independently build and launch marketing campaign pages in minutes without engineering involvement.",
+      overview: "A low-code platform that lets operations teams build and launch marketing campaign pages on their own, without needing frontend support for every page.",
       screenshots: [
         "images/low-code_platform/toC_1.png",
         "images/low-code_platform/toC_2.png",
@@ -112,14 +109,14 @@ const profileDataEn = {
         "images/low-code_platform/toC_5.png",
       ],
       outcomes: [
-        "Reduced the launch cycle of a single campaign from 4–5 working days to under 30 minutes.",
-        "Enabled operations teams to independently build and launch campaign pages through a visual workflow.",
-        "Improved engineering efficiency through reusable components, templates, and centralized asset management."
+        "Reduced the launch cycle of a campaign page from 4–5 working days to under 30 minutes by turning page delivery into a low-code, configuration-driven workflow.",
+        "Enabled operations teams to independently build and launch campaign pages through a visual editor, without needing frontend support for every page.",
+        "Improved engineering efficiency through reusable components, shared templates, and centralized asset management, reducing repeated frontend work and making delivery faster and more consistent."
       ],
       role: [
-        "Served as the project owner / frontend lead, driving the platform's overall design and implementation.",
-        "Led the architecture of the visual editor, rendering engine, and reusable component system.",
-        "Built the foundation for a scalable and reusable operations platform."
+        "Served as the frontend lead and one of the core owners of the project, responsible for the overall platform architecture and key implementation decisions.",
+        "Led the design and development of the visual editor, the rendering layer, and the reusable component system.",
+        "Built the core foundations of the platform so it could support scalable page delivery and reusable workflows across different business scenarios.",
       ],
       // background: [
       //   "The business needed to launch promotional and thematic campaign pages at high frequency.",
@@ -127,18 +124,20 @@ const profileDataEn = {
       //   "Repetitive campaign development was consuming significant frontend capacity."
       // ],
       challengesSolved: [
-        "Shortened campaign delivery time and improved response speed to business needs.",
-        "Decoupled operations from engineering in the campaign release workflow.",
-        "Reduced repeated development, version conflicts, and poor reuse of historical campaign assets."
+        "Standardized campaign page building across teams with a unified page data model and a standard component integration workflow.",
+        "Reduced reliance on engineers by giving operations teams a more intuitive visual editing workflow.",
+        "Improved editor interaction consistency through structured state management with MobX.",
+        "Improved performance for user-facing campaign pages through SSR and more efficient rendering and loading strategies.",
+        "Reduced repeated frontend work and improved reuse across components, templates, and historical assets.",
       ],
       techStack: [
         "Frontend: React, TypeScript, JavaScript",
         "Backend: Node.js, MongoDB"
       ],
-      outcomeKeywords: ["30 minutes", "visual workflow", "reusable"],
-      roleKeywords: ["project owner", "visual editor", "scalable"],
-      backgroundKeywords: ["high frequency", "engineering resources", "frontend capacity"],
-      challengesKeywords: ["response speed", "decoupled", "reuse"]
+      outcomeKeywords: ["30 minutes", "low-code", "configuration-driven", "visual editor", "reusable components"],
+      roleKeywords: ["frontend lead", "core owner", "design and development", "different business scenarios"],
+      backgroundKeywords: [],
+      challengesKeywords: ["unified page data model", "visual editing workflow", "structured state management", "performance", "reuse"]
     },
     {
       title: "Course Commerce Platform",
