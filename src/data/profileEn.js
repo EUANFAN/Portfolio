@@ -21,20 +21,20 @@ const profileDataEn = {
 
   aboutIntro: "Senior Frontend / Full-Stack Engineer with 10+ years of experience building scalable platforms used by millions of users.",
   aboutHighlights: [
-    { icon: "code", text: "Formerly at Meituan and Baidu, leading the architecture of company-wide systems including design systems, component libraries, and low-code platforms." },
-    { icon: "brain", text: "Known for translating complex requirements into high-performance, maintainable solutions that accelerate product delivery." },
+    { icon: "code", text: "Previously worked at Xiwangxue, Meituan and Baidu, with a focus on low-code platforms, frontend architecture, and reusable systems" },
+    { icon: "brain", text: "Experienced in building practical, high-performance, and maintainable systems that improve delivery speed and product quality." },
     { icon: "building-2", text: "Based in Beijing with full work rights in China." }
   ],
   keyStrengths: [
-    "Platform Architecture and Complex Frontend Systems",
-    "Frontend-Centered End-to-End Engineering Delivery",
-    "Engineering Infrastructure and Developer Productivity"
+    "Low-Code Platforms and Reusable Systems",
+    "Frontend Architecture for Complex Products",
+    "Engineering Infrastructure and Delivery Efficiency"
   ],
   impactHighlights: [
-    "Reduced campaign launch cycles from days to minutes through low-code platform design",
-    "Drove adoption of shared component libraries and design systems across multiple business teams",
-    "Improved engineering efficiency and system stability through platform and infrastructure development",
-    "Delivered core systems supporting products used by millions of users"
+    "Reduced campaign launch cycles from days to minutes by building a low-code platform",
+    "Drove adoption of shared component libraries across multiple business teams",
+    "Improved engineering efficiency and system stability by building platform and frontend infrastructure",
+    "Built core systems supporting products used by millions of users"
   ],
 
   experienceList: [
