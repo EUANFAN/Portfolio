@@ -46,11 +46,14 @@ const profileDataEn = {
       position: "Senior Software Engineer",
       period: "May 2022 - Jul 2025",
       description: [
-        "Led frontend infrastructure initiatives, including code standards, project conventions, component libraries, development scaffolding, and UI standards, improving engineering consistency and team productivity.",
-        "Owned key business areas such as operational campaigns and course commerce, and built visual platform capabilities to support scalable delivery across the organization.",
-        "Drove engineering productivity and system stability through platformization, standardization, and maintainability improvements."
+        "Led the development of a low-code platform for operational campaigns, shifting page delivery from repeated frontend implementation to a more scalable, configuration-driven workflow.",
+        "Built reusable frontend infrastructure through the platform work, including shared component libraries, UI standards, project scaffolding, and engineering conventions, improving consistency and delivery efficiency across teams.",
+        "Partnered with product, design, and business teams to define scalable platform capabilities, drive cross-team alignment, and ensure adoption in real business scenarios."
       ],
-      highlights: ["Infrastructure", "Visual Platform", "Engineering Productivity", "System Stability"]
+      highlights: ["Low-Code Platform",
+        "Platform Architecture",
+        "Frontend Infrastructure",
+        "Cross-Team Collaboration"]
     },
     {
       company: "Meituan",
