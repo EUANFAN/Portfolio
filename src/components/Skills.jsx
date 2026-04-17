@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Code2, Wrench, ChevronDown } from 'lucide-react';
+import { Layout, Server, Wrench, Sparkles, ChevronDown } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
 import { prefersReducedMotion } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const groupIcons = [Code2, Wrench];
+const groupIcons = [Layout, Server, Wrench, Sparkles];
 
 const Skills = ({ data, theme, lang }) => {
   const ui = UI_TEXT[lang].skills;
@@ -55,7 +55,7 @@ const Skills = ({ data, theme, lang }) => {
   return (
     <section id="skills" ref={sectionRef} className="relative py-20 md:py-28 px-6">
       <div className="max-w-6xl mx-auto relative">
-        <h2 className="skills-title text-sm tracking-[0.3em] uppercase opacity-60 mb-10 md:mb-14">
+        <h2 className="skills-title section-heading mb-10 md:mb-14">
           {ui.sectionLabel}
         </h2>
 
@@ -84,7 +84,7 @@ const Skills = ({ data, theme, lang }) => {
                     return (
                       <span
                         key={i}
-                        className="skill-pill inline-flex items-center pl-2.5 pr-2 py-1 rounded-md text-xs sm:text-sm font-medium border transition-all duration-250"
+                        className="skill-pill inline-flex items-start md:items-center pl-2.5 pr-2 py-1.5 md:py-1 rounded-md text-xs sm:text-sm font-medium border transition-all duration-250 max-w-full"
                         style={{
                           '--skill-color': color,
                           background: `linear-gradient(135deg, ${color}14 0%, ${color}06 100%)`,
@@ -102,7 +102,7 @@ const Skills = ({ data, theme, lang }) => {
                           e.currentTarget.style.background = `linear-gradient(135deg, ${color}14 0%, ${color}06 100%)`;
                         }}
                       >
-                        <span className="relative z-10">{item}</span>
+                        <span className="relative z-10 whitespace-normal break-words text-left flex-1 leading-snug">{item}</span>
                       </span>
                     );
                   })}

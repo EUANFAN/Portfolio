@@ -190,7 +190,7 @@ const Projects = ({ data, lang }) => {
   return (
     <section id="projects" ref={sectionRef} className="relative py-20 md:py-28 px-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">{ui.sectionLabel}</h2>
+        <h2 className="section-heading mb-10 md:mb-14">{ui.sectionLabel}</h2>
 
         <div className="space-y-16 md:space-y-20">
           {data.projectList.map((project, index) => {
@@ -266,11 +266,11 @@ const Projects = ({ data, lang }) => {
                     <div className="flex flex-col md:flex-row md:items-start md:gap-10 lg:gap-12 gap-8">
                       {carouselArea}
                       <div className="flex-1 min-w-0 md:order-2">
-                        <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+                        <h3 className="text-xl md:text-2xl font-bold mb-2">
                           {project.title}
                         </h3>
                         {project.overview && (
-                          <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-primary)' }}>
+                          <p className="text-sm md:text-base leading-relaxed mb-6 opacity-80">
                             {project.overview}
                           </p>
                         )}
@@ -281,11 +281,11 @@ const Projects = ({ data, lang }) => {
                     <>
                       {carouselArea}
                       <div className="p-6 md:p-8">
-                        <h3 className="text-xl md:text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+                        <h3 className="text-xl md:text-2xl font-bold mb-2">
                           {project.title}
                         </h3>
                         {project.overview && (
-                          <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'var(--text-primary)' }}>
+                          <p className="text-sm md:text-base leading-relaxed mb-6 opacity-80">
                             {project.overview}
                           </p>
                         )}

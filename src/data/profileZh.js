@@ -183,8 +183,10 @@ const profileDataZh = {
   ],
 
   skillsGroups: [
-    { title: "语言与框架", items: ["React", "JavaScript", "TypeScript", "HTML5", "CSS3", "Node.js", "MongoDB"] },
-    { title: "工具与平台", items: ["Webpack", "Git", "Chrome DevTools", "Postman", "Fiddler", "Charles Proxy"] }
+    { title: "Frontend (前端)", items: ["React", "JavaScript", "TypeScript", "HTML5", "CSS3"] },
+    { title: "Build Tools (构建工具)", items: ["Webpack", "Vite", "Babel", "ESLint", "npm", "pnpm"] },
+    { title: "Backend (后端)", items: ["Node.js", "MongoDB", "Koa", "Redis", "API 开发"] },
+    { title: "AI Development (AI 开发)", items: ["ChatGPT", "Cursor", "Claude Code", "AI辅助编程、调试与内容生成"] }
   ],
 
   skillColors: profileEn.skillColors,

@@ -51,7 +51,7 @@ const About = ({ data, lang }) => {
   return (
     <section id="about" ref={sectionRef} className="relative py-20 md:py-28 px-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-sm tracking-[0.3em] uppercase mb-8 about-section-label">{ui.sectionLabel}</h2>
+        <h2 className="section-heading mb-10 md:mb-14">{ui.sectionLabel}</h2>
 
         <div className="bento-grid">
           {/* Left: intro + key strengths + selected experience */}

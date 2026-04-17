@@ -184,19 +184,32 @@ const profileDataEn = {
 
   skillsGroups: [
     {
-      title: "Languages & Frameworks",
-      items: ["React", "JavaScript", "TypeScript", "HTML5", "CSS3", "Node.js", "MongoDB"]
+      title: "Frontend",
+      items: ["React", "JavaScript", "TypeScript", "HTML5", "CSS3"]
     },
     {
-      title: "Tools & Platforms",
-      items: ["Webpack", "Git", "Chrome DevTools", "Postman", "Fiddler", "Charles Proxy"]
+      title: "Build Tools",
+      items: ["Webpack", "Vite", "Babel", "ESLint", "npm", "pnpm"]
+    },
+    {
+      title: "Backend",
+      items: ["Node.js", "MongoDB", "Koa", "Redis", "API development"]
+    },
+    {
+      title: "AI Development",
+      items: ["ChatGPT", "Cursor", "Claude Code", "AI-assisted coding, debugging, and content generation"]
     }
   ],
 
   skillColors: {
     "HTML5": "#E34F26", "CSS3": "#1572B6", "JavaScript": "#F7DF1E", "TypeScript": "#3178C6",
     "React": "#61DAFB", "Vue": "#4FC08D", "Node.js": "#339933", "MongoDB": "#47A248", "Koa": "#333333",
-    "Webpack": "#8DD6F9", "Git": "#F05032", "VS Code": "#007ACC", "Ant Design": "#0170FE",
+    "Redis": "#DC382D", "API development": "#0ea5e9", "API 开发": "#0ea5e9",
+    "Webpack": "#8DD6F9", "Vite": "#646CFF", "Babel": "#F9DC3E", "ESLint": "#4B32C3", "npm": "#CB3837", "pnpm": "#F69220",
+    "Git": "#F05032", "VS Code": "#007ACC", "Ant Design": "#0170FE",
+    "ChatGPT": "#10A37F", "Cursor": "#6B7280", "Claude Code": "#D97757",
+    "AI-assisted coding, debugging, and content generation": "#0ea5e9",
+    "AI辅助编程、调试与内容生成": "#0ea5e9",
     "Chrome DevTools": "#4285F4", "Postman": "#FF6C37", "Fiddler": "#006400", "Charles Proxy": "#00A9E0", "Thunder Client": "#FFCC00"
   },
 

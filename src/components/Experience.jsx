@@ -47,7 +47,7 @@ const Experience = ({ data, lang }) => {
   return (
     <section id="experience" ref={sectionRef} className="relative py-20 md:py-28 px-6">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-sm tracking-[0.3em] uppercase opacity-60 mb-16">{ui.sectionLabel}</h2>
+        <h2 className="section-heading mb-10 md:mb-14">{ui.sectionLabel}</h2>
 
         <div className="timeline-container relative">
           <div
