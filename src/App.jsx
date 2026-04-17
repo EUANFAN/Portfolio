@@ -26,7 +26,33 @@ function App() {
 
   useEffect(() => {
     ScrollTrigger.refresh();
-    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+
+    let rafId = 0;
+    const scheduleRefresh = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => ScrollTrigger.refresh());
+    };
+
+    const onLoad = () => scheduleRefresh();
+    window.addEventListener('load', onLoad);
+
+    const imgs = Array.from(document.images || []);
+    imgs.forEach((img) => {
+      if (!img.complete) img.addEventListener('load', scheduleRefresh, { once: true });
+    });
+
+    const resizeObserver = 'ResizeObserver' in window
+      ? new ResizeObserver(scheduleRefresh)
+      : null;
+    if (resizeObserver) resizeObserver.observe(document.body);
+
+    return () => {
+      window.removeEventListener('load', onLoad);
+      imgs.forEach((img) => img.removeEventListener('load', scheduleRefresh));
+      if (resizeObserver) resizeObserver.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
   }, []);
 
   return (

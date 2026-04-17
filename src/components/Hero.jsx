@@ -5,6 +5,7 @@ import {
   ShieldCheck, ChevronDown, User
 } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
+import { prefersReducedMotion } from '../utils/motion';
 
 const Hero = ({ data, lang }) => {
   const ui = UI_TEXT[lang].hero;
@@ -15,7 +16,15 @@ const Hero = ({ data, lang }) => {
   const photoRef = useRef(null);
 
   useEffect(() => {
+    const reduced = prefersReducedMotion();
     const ctx = gsap.context(() => {
+      if (reduced) {
+        gsap.set(
+          [taglineRef.current, nameRef.current, titleRef.current, photoRef.current],
+          { clearProps: 'all', opacity: 1 }
+        );
+        return;
+      }
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
       tl.from(taglineRef.current, { y: 24, opacity: 0, duration: 0.8, delay: 0.2 })
         .from(nameRef.current, { y: 60, opacity: 0, duration: 1 }, '-=0.5')

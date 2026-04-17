@@ -5,6 +5,7 @@ import {
   ChevronLeft, ChevronRight, ChevronDown
 } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
+import { prefersReducedMotion } from '../utils/motion';
 
 const highlightKeywords = (text, keywords) => {
   if (!keywords || !keywords.length || !text) return text;
@@ -25,12 +26,34 @@ const Projects = ({ data, lang }) => {
     if (!section) return;
 
     const items = section.querySelectorAll('.project-item');
+    if (!items.length) return;
+
+    if (prefersReducedMotion()) {
+      gsap.set(items, { clearProps: 'all', opacity: 1, y: 0 });
+      return;
+    }
+
     gsap.set(items, { y: 40, opacity: 0 });
 
     let hasAnimated = false;
+    let observer = null;
+    let fallbackTimer = 0;
+
+    const cleanupObservers = () => {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = 0;
+      }
+    };
+
     const runAnimation = () => {
       if (hasAnimated) return;
       hasAnimated = true;
+      cleanupObservers();
       gsap.to(items, {
         y: 0,
         opacity: 1,
@@ -40,7 +63,7 @@ const Projects = ({ data, lang }) => {
       });
     };
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) runAnimation();
@@ -48,27 +71,17 @@ const Projects = ({ data, lang }) => {
       },
       { root: null, rootMargin: '80px 0px 80px 0px', threshold: [0, 0.05, 0.1] }
     );
-
     observer.observe(section);
 
-    const fallbackCheck = () => {
+    fallbackTimer = window.setTimeout(() => {
       if (hasAnimated) return;
       const rect = section.getBoundingClientRect();
       const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const inView = rect.top < windowHeight * 0.85 && rect.bottom > 0;
-      if (inView && items.length > 0) {
-        const first = items[0];
-        const style = window.getComputedStyle(first);
-        if (parseFloat(style.opacity) < 0.1) runAnimation();
-      }
-    };
-    const scrollHandler = () => requestAnimationFrame(fallbackCheck);
-    window.addEventListener('scroll', scrollHandler, { passive: true });
-    setTimeout(fallbackCheck, 500);
+      if (rect.top < windowHeight * 0.85 && rect.bottom > 0) runAnimation();
+    }, 600);
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', scrollHandler);
+      cleanupObservers();
       gsap.set(items, { clearProps: 'all' });
     };
   }, []);

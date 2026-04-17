@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Mail, Github, Linkedin, CheckCircle } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
+import { prefersReducedMotion } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,18 +12,22 @@ const Footer = ({ data, lang }) => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
+
     const ctx = gsap.context(() => {
       gsap.from('.footer-content > *', {
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 70%',
-          toggleActions: 'play none none reverse',
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+          once: true,
         },
         y: 60,
         opacity: 0,
         duration: 1,
         stagger: 0.15,
         ease: 'power3.out',
+        clearProps: 'opacity,transform',
       });
     }, sectionRef);
 

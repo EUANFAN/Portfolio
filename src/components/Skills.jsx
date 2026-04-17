@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Code2, Wrench, ChevronDown } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
+import { prefersReducedMotion } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,23 +14,28 @@ const Skills = ({ data, theme, lang }) => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
+
     const ctx = gsap.context(() => {
       gsap.from('.skills-title', {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 85%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none',
+          once: true,
         },
         y: 24,
         opacity: 0,
         duration: 0.7,
         ease: 'power3.out',
+        clearProps: 'opacity,transform',
       });
       gsap.from('.skills-group', {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 80%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none',
+          once: true,
         },
         y: 32,
         opacity: 0,
@@ -37,6 +43,7 @@ const Skills = ({ data, theme, lang }) => {
         stagger: 0.15,
         ease: 'power3.out',
         delay: 0.1,
+        clearProps: 'opacity,transform',
       });
     }, sectionRef);
 

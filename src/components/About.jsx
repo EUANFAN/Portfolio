@@ -6,6 +6,7 @@ import {
   ExternalLink, ChevronDown
 } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
+import { prefersReducedMotion } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,11 +26,13 @@ const About = ({ data, lang }) => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
+
     const ctx = gsap.context(() => {
       gsap.from('.bento-item', {
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 80%',
+          start: 'top 85%',
           toggleActions: 'play none none none',
           once: true,
         },

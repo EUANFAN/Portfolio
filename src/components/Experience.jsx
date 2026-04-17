@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ExternalLink, ChevronDown } from 'lucide-react';
 import UI_TEXT from '../data/uiText';
+import { prefersReducedMotion } from '../utils/motion';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Experience = ({ data, lang }) => {
   const ui = UI_TEXT[lang].experience;
@@ -12,31 +16,32 @@ const Experience = ({ data, lang }) => {
     if (!section) return;
 
     const items = section.querySelectorAll('.timeline-item');
-    gsap.set(items, { x: -50, opacity: 0 });
+    if (!items.length) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            gsap.to(items, {
-              x: 0,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.2,
-              ease: 'power3.out',
-            });
-            observer.unobserve(section);
-          }
+    if (prefersReducedMotion()) {
+      gsap.set(items, { clearProps: 'all', opacity: 1, x: 0 });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      items.forEach((item) => {
+        gsap.from(item, {
+          scrollTrigger: {
+            trigger: item,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+            once: true,
+          },
+          x: -50,
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          clearProps: 'opacity,transform',
         });
-      },
-      { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0 }
-    );
+      });
+    }, sectionRef);
 
-    observer.observe(section);
-    return () => {
-      observer.disconnect();
-      gsap.set(items, { clearProps: 'all' });
-    };
+    return () => ctx.revert();
   }, []);
 
   return (

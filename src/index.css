@@ -35,6 +35,20 @@
 
 html { scroll-behavior: smooth; transition: color 0.25s ease, background-color 0.25s ease; }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .liquid-blob { animation: none !important; }
+  .animate-bounce { animation: none !important; }
+}
+
 body {
   font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   background-color: var(--bg-primary);
