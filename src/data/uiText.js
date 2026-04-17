@@ -26,8 +26,7 @@ const UI_TEXT = {
       techStack: 'Tech Stack'
     },
     skills: {
-      sectionLabel: 'Technical Skills',
-      subtitle: 'Languages, frameworks & tools I work with day to day.'
+      sectionLabel: 'Technical Skills'
     },
     footer: {
       connect: "Let's Connect",
@@ -65,8 +64,7 @@ const UI_TEXT = {
       techStack: '技术栈'
     },
     skills: {
-      sectionLabel: '技术能力',
-      subtitle: '日常工作中使用的语言、框架与工具。'
+      sectionLabel: '技术能力'
     },
     footer: {
       connect: '联系我',

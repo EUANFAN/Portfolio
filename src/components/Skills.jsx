@@ -53,13 +53,9 @@ const Skills = ({ data, theme, lang }) => {
   const getSkillColor = (name) => data.skillColors?.[name] || data.colors.accent;
 
   return (
-    <section id="skills" ref={sectionRef} className="py-16 md:py-28 px-4 sm:px-6 relative overflow-hidden">
-      <div
-        className="absolute inset-0 pointer-events-none opacity-25"
-        style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, var(--accent-soft) 0%, transparent 65%)' }}
-      />
+    <section id="skills" ref={sectionRef} className="relative py-20 md:py-28 px-6">
       <div className="max-w-6xl mx-auto relative">
-        <h2 className="skills-title text-sm tracking-[0.3em] uppercase mb-10 md:mb-14 skills-section-title">
+        <h2 className="skills-title text-sm tracking-[0.3em] uppercase opacity-60 mb-10 md:mb-14">
           {ui.sectionLabel}
         </h2>
 
