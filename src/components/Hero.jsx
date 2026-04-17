@@ -15,6 +15,28 @@ const Hero = ({ data, lang }) => {
   const taglineRef = useRef(null);
   const photoRef = useRef(null);
 
+  // Hidden entrance to the interview materials:
+  // tapping the hero image 7 times within a 2s rolling window opens /Portfolio/interview/.
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef(null);
+
+  const handleHeroImageTap = () => {
+    tapCountRef.current += 1;
+
+    clearTimeout(tapTimerRef.current);
+    tapTimerRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+    }, 2000);
+
+    if (tapCountRef.current >= 7) {
+      tapCountRef.current = 0;
+      clearTimeout(tapTimerRef.current);
+      window.location.href = `${import.meta.env.BASE_URL}public/interview/`;
+    }
+  };
+
+  useEffect(() => () => clearTimeout(tapTimerRef.current), []);
+
   useEffect(() => {
     const reduced = prefersReducedMotion();
     const ctx = gsap.context(() => {
@@ -131,7 +153,13 @@ const Hero = ({ data, lang }) => {
         <div ref={photoRef} className="flex-shrink-0 w-full md:w-[42%] lg:w-[38%] max-w-[320px] md:max-w-none mx-auto order-1 md:order-2">
           <div className="hero-photo-wrap">
             {hasHeroImage ? (
-              <img src={data.heroImage} alt={data.name} />
+              <img
+                src={data.heroImage}
+                alt={data.name}
+                onClick={handleHeroImageTap}
+                draggable={false}
+                style={{ touchAction: 'manipulation', userSelect: 'none' }}
+              />
             ) : (
               <div className="hero-photo-placeholder">
                 <User className="w-24 h-24 md:w-32 md:h-32 opacity-40" />
