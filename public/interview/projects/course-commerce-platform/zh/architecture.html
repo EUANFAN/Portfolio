@@ -24,7 +24,7 @@
 
       <header class="page-header" style="margin-bottom:40px;">
         <div class="section-eyebrow"><span class="num">04</span>技术架构</div>
-        <h1 class="page-title">整体架构、技术栈与关键链路</h1>
+        <h1 class="page-title">整体分层、技术栈与关键链路</h1>
         <p class="page-lead" style="margin-top:12px;">
           一张分层图看清项目 —— 上层是业务模块，中层是平台能力，底层是前端基础设施。
           所有业务共享一套路由、权限、请求、表单和通用组件。
@@ -185,65 +185,92 @@
 
       </div>
 
-      <h3 class="sub">关键链路 1：启动与权限</h3>
-      <p class="muted">
-        用户访问页面时，前端的完整启动流程：
-      </p>
-      <div class="flow" aria-label="启动与权限链路">
+      <h3 class="sub">关键链路 1：权限链路（菜单 + 按钮双层鉴权）</h3>
+      <p class="muted">项目里最有辨识度的一条——后端权限列表直接驱动前端的<strong class="em">路由、菜单、按钮</strong>三件事。</p>
+      <div class="flow" aria-label="权限链路">
         <span class="node accent">SSO 登录</span>
-        <span class="arrow">→</span>
-        <span class="node">token 写入 Cookie</span>
         <span class="arrow">→</span>
         <span class="node">getInitialState()</span>
         <span class="arrow">→</span>
-        <span class="node">拉取菜单 + 功能权限</span>
+        <span class="node">拉 {menus, permissions}</span>
         <span class="arrow">→</span>
-        <span class="node">access 配置生成</span>
+        <span class="node">按 type 分层</span>
         <span class="arrow">→</span>
-        <span class="node accent">路由守卫 + 按钮级鉴权</span>
+        <span class="node">access.ts 生成 boolean 开关</span>
+        <span class="arrow">→</span>
+        <span class="node accent">路由守卫 + 菜单渲染 + 按钮鉴权</span>
       </div>
       <p style="margin-top:10px;">
-        Umi Max 的 <code>initialState</code> 做一次性权限拉取，<code>access.ts</code> 根据菜单列表
-        生成几十个布尔权限开关（如 <code>canSeePresentCoupon</code>），业务代码通过
-        <code>&lt;Access accessible={access.canSeeXxx}&gt;</code> 或 <code>useAccess()</code>
-        hook 消费，一处配置、全站生效。
+        权限列表里 <code>type=0/1</code> 是<strong class="em">菜单权限</strong>（驱动路由和 ProLayout 菜单渲染），
+        其余是<strong class="em">功能权限</strong>（驱动按钮）。菜单层用 <code>&lt;Access accessible={access.canSeeXxx}&gt;</code>，
+        按钮层用 <code>useAuthCheck('project-center-project-list-course-edit')</code> ——
+        <strong class="em">一处 key，路由跳转、菜单显隐、按钮可见三件事同时生效</strong>，新业务模块只需要加 route + access key，不用手动改菜单。
       </p>
 
-      <h3 class="sub">关键链路 2：请求与鉴权</h3>
+      <h3 class="sub">关键链路 2：请求与契约链路</h3>
+      <p class="muted">前后端契约由 Swagger 自动生成，业务代码只写 happy path。</p>
       <div class="flow" aria-label="请求链路">
+        <span class="node accent">@dandelion/swagger</span>
+        <span class="arrow">→</span>
+        <span class="node">生成 TS 类型 + 请求函数</span>
+        <span class="arrow">→</span>
         <span class="node">业务调用</span>
         <span class="arrow">→</span>
-        <span class="node">axios 实例</span>
+        <span class="node">请求拦截器（SSO token / mode 注入）</span>
         <span class="arrow">→</span>
-        <span class="node">请求拦截器注入 token</span>
+        <span class="node">后端</span>
         <span class="arrow">→</span>
-        <span class="node accent">后端</span>
-        <span class="arrow">→</span>
-        <span class="node">响应拦截器</span>
-        <span class="arrow">→</span>
-        <span class="node">stat/code 校验 → 统一 message 提示</span>
+        <span class="node accent">响应拦截器（401 跳 SSO · 业务码统一 toast）</span>
       </div>
       <p style="margin-top:10px;">
-        响应拦截器里把 <strong class="em">401 自动登出 + 跳 SSO</strong> 和
-        <strong class="em">业务错误统一弹 toast</strong> 两件事做掉，业务代码里只需要关心
-        happy path。错误码约定在拦截器里收敛，不扩散到业务层。
+        <code>@dandelion/swagger</code> 基于 OpenAPI 自动生成 TS 类型和请求函数，<strong class="em">前端几乎不再手写接口层</strong>；
+        axios 拦截器把 <strong class="em">401 自动登出并跳 SSO</strong>、<strong class="em">业务错误码统一弹 toast</strong> 两件事做掉，
+        错误约定在拦截器里收敛，不扩散到业务层——业务代码里只需要关心 happy path。
       </p>
 
-      <h3 class="sub">关键链路 3：路由与菜单</h3>
-      <div class="flow" aria-label="路由链路">
-        <span class="node accent">routes/index.ts 集中声明</span>
+      <h3 class="sub">关键链路 3：CRUD 列表页链路（Hook 驱动）</h3>
+      <p class="muted">20+ 列表页共享同一套行为，单页代码从 500+ 行压到 ~150 行的核心抽象。</p>
+      <div class="flow" aria-label="CRUD 列表页链路">
+        <span class="node">columns + searchForm + fetchFn 声明</span>
         <span class="arrow">→</span>
-        <span class="node">每个节点带 access 字段</span>
+        <span class="node accent">useTableSearch</span>
         <span class="arrow">→</span>
-        <span class="node">Umi 生成路由表</span>
+        <span class="node">useAntdTable 数据源</span>
         <span class="arrow">→</span>
-        <span class="node">ProLayout 自动渲染侧边菜单</span>
+        <span class="node accent">useTableSet</span>
         <span class="arrow">→</span>
-        <span class="node">无权限节点自动隐藏</span>
+        <span class="node">ProTable 渲染 + localStorage 持久化</span>
       </div>
       <p style="margin-top:10px;">
-        路由表由后端权限数据驱动 —— <strong class="em">一份路由声明，路由跳转、菜单渲染、权限拦截三件事同时搞定</strong>。
-        新增业务模块只需要加一段 route + 对应 <code>access</code> key，不用手动改菜单。
+        <code>useTableSearch</code> 接管<strong class="em">搜索 / 重置 / 分页 / URL 同步</strong>——返回 <code>{ search, reset, formValue }</code>，
+        搜索时自动 <code>reset current</code>，翻页时保留筛选，重置时清 params；
+        <code>useTableSet</code> 接管<strong class="em">自定义列（列宽 / 列显隐 / 操作列）</strong>，返回 <code>{ width, render }</code>，
+        用户调整的列配置走 <code>localStorage</code> 持久化。
+        <strong class="em">默认行为在 Hook 里集中定义，20+ 列表页开箱一致</strong>，新增一页不用再想一次。
+      </p>
+
+      <h3 class="sub">关键链路 4：资源上传链路（前端直传 OSS）</h3>
+      <p class="muted">图片 / 视频 / 文件统一走 OSS 签名直传，不经过业务服务器中转。</p>
+      <div class="flow" aria-label="OSS 上传链路">
+        <span class="node">选文件</span>
+        <span class="arrow">→</span>
+        <span class="node">前端校验（类型 / 大小 / 尺寸）</span>
+        <span class="arrow">→</span>
+        <span class="node accent">getOssToken()</span>
+        <span class="arrow">→</span>
+        <span class="node">FormData POST 到 OSS host</span>
+        <span class="arrow">→</span>
+        <span class="node accent">CDN_NAME/PUBLIC_PATH/fileUrl</span>
+        <span class="arrow">→</span>
+        <span class="node">写回表单字段</span>
+      </div>
+      <p style="margin-top:10px;">
+        统一的 <code>&lt;Upload&gt;</code> / <code>&lt;VideoUpload&gt;</code> / <code>&lt;Dragger&gt;</code> 组件把链路封装好：
+        调 <code>/libraapi/oss/get_policy_token</code> 拿 <code>{ OSSAccessKeyId, signature, policy, host, dir }</code>，
+        然后用 <code>FormData</code> 把 <code>key / OSSAccessKeyId / policy / signature</code> 连同文件一起 POST 到 OSS host，
+        回拿到 <code>fileUrl</code> 后拼成 <code>OSS_CDN_NAME/OSS_PUBLIC_PATH/fileUrl</code> 入表单。
+        <strong class="em">前端直传、业务服务器零转发</strong>，减轻后端压力，也避免大文件走业务链路超时。
+        视频播放用 <code>?x-oss-process=video/snapshot</code> 直接生成封面，无需后端再算一次。
       </p>
 
       <h3 class="sub">目录结构概览</h3>

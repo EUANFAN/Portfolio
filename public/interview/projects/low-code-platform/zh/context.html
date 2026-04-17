@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>背景与问题 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台 - 背景与问题" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="context" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">企业级低代码活动搭建平台</a>
+        <span class="sep">/</span>
+        <span>背景与问题</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">02</span>背景与问题</div>
+        <h1 class="page-title">为什么要做这个低代码平台</h1>
+      </header>
+
+      <h3 class="sub">启动之前的状态</h3>
+      <ul class="bullets">
+        <li>每一个活动页都是前端从零写。运营提需求 → 视觉出稿 → 前端排期 → 开发 → 测试 → 发布，一个不复杂的活动页平均要 <strong class="em">1–2 天</strong>，临期需求经常“排不上”。</li>
+        <li>组件完全没沉淀。<strong class="em">图片、富文本、吸底按钮、报名弹窗</strong>这些每个活动都在用的模块，各写各的、各自带一套样式兜底，Code Review 也很难统一。</li>
+        <li>多端维护是灾难。同一个活动要同时投 <strong class="em">H5、微信公众号、家长版 App WebView、微信小程序 WebView</strong>，几端行为有细微差异，改一处要同步多处，漏一处就出线上问题。</li>
+        <li>埋点、跳转、分享配置口径散乱。每个活动都自己实现一遍“点击跳小程序 / 曝光埋点 / 分享文案”，运营和数据同学经常回来对账。</li>
+        <li>前端人力被重复交付占死。平台型工作（组件库、工具链、SSR、性能）常年排不进去，业务一催活动，平台工作就停摆。</li>
+      </ul>
+
+      <h3 class="sub">带来的具体问题</h3>
+      <div class="card-grid problems">
+        <div class="mini-card">
+          <div class="mini-title">运营效率低</div>
+          <div class="mini-desc">改文案、换图、调吸底按钮都要排前端。热点活动追不上节奏，A/B 试错基本“做不起”。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">前端产能被挤占</div>
+          <div class="mini-desc">活动页结构高度相似但每次从零写，团队被重复劳动占满，想做的组件生态、SSR、性能优化长期推不动。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">一致性差、数据口径乱</div>
+          <div class="mini-desc">视觉差异、埋点差异、多端差异全靠“人约定”。出问题时排障链路长、数据对账成本高。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">治理缺失、风险不可控</div>
+          <div class="mini-desc">没有版本治理：动一个公共样式可能“顺手”影响历史活动；回滚靠人工改代码、拉紧急需求。</div>
+        </div>
+      </div>
+
+      <h3 class="sub">需求的本质</h3>
+      <p>
+        表面上是“再做一个后台”，实际上要解决的是<strong class="em">交付方式</strong>的问题 ——
+        把活动页的生产，从“每个活动排前端工期”变成<strong class="em">“运营自助配置 + 平台兜底质量”</strong>，
+        让前端团队把精力从重复交付里抽出来，投到组件生态、SSR 秒开、版本治理这些长期收益更高的事情上。
+        同时，教育行业的用户数据、营销组件（课程卡、老师介绍、报名表单、拉新）重度定制，<strong class="em">外采 SaaS 跑不通</strong>，
+        长期成本也不如自研划算，所以最终选的是自建路线。
+      </p>
+
+      <h3 class="sub">对前端架构的要求</h3>
+      <ul class="bullets">
+        <li><strong class="em">能扩张</strong>：活动场景持续变，组件必须<strong>可插拔、可版本化</strong>，业务方能低成本接入新组件（通过 <code>x-cli</code> 脚手架发布到 CDN），不改平台代码。</li>
+        <li><strong class="em">双端一致</strong>：编辑器里看到的效果要能稳定复现到线上——<strong>编辑器 375px 固定画布 + C 端 px2rem 自适应</strong>，一份样式多端复用。</li>
+        <li><strong class="em">性能是硬指标</strong>：活动页是流量入口，首屏必须秒开，<strong>SSR + CDN</strong> 不是加分项而是默认项。</li>
+        <li><strong class="em">发布要有兜底</strong>：SSR 任何一步失败都不能阻塞发布链路 —— 客户端必须能降级为 <code>ReactDOM.render</code>，<strong>发布绝不能因为 SSR 挂掉</strong>。</li>
+        <li><strong class="em">交互零代码</strong>：所有跳转、曝光、分享、跳小程序都通过<strong>声明式触发器</strong>表达（<code>type / event / data</code>），不给运营开 JavaScript 后门，降低接入门槛和线上风险。</li>
+        <li><strong class="em">3–5 人能维护</strong>：团队长期保持小规模，架构要足够简单、接入契约要足够清晰，避免靠“口口相传”撑场。</li>
+      </ul>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./index.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">01 · 概览</span>
+        </a>
+        <a class="next" href="./role.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">03 · 我的职责</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

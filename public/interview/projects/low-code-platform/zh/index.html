@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>概览 · 企业级低代码活动平台</title>
-<meta name="description" content="企业级低代码活动平台项目梳理 · 概览" />
+<title>概览 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台项目梳理 · 概览" />
 <meta name="robots" content="noindex, nofollow" />
 <link rel="stylesheet" href="../styles.css" />
 </head>
@@ -18,18 +18,18 @@
 
       <header class="page-header">
         <div class="page-eyebrow">项目深度梳理</div>
-        <h1 class="page-title">企业级低代码活动平台</h1>
+        <h1 class="page-title">企业级低代码活动搭建平台</h1>
         <p class="page-lead">
-          一个面向运营、产品、市场团队的可视化搭建平台。非研发同学通过拖拽组件、配置参数就能产出一张完整的营销活动页，
-          支持多端（移动 Web / 微信 H5 / 微信小程序）一次配置、同步发布，把活动上线周期从「几天」压缩到「十几分钟」。
+          一个面向运营、市场、产品团队的可视化搭建平台：把 H5 活动页的生产，从「每个活动排前端工期」，变成「运营自己拖一拖、配一配、发布」。
+          底层是 <strong>MobX 驱动的三栏编辑器</strong> + <strong>可插拔的组件体系</strong> + <strong>Node 侧 SSR 发布流水线</strong>，把所见即所得和秒开两件事一起做了。
         </p>
 
         <div class="meta-strip" aria-label="项目信息">
           <div class="cell"><div class="label">公司</div><div class="val">希望学</div></div>
           <div class="cell"><div class="label">时间</div><div class="val">2023 — 2025</div></div>
-          <div class="cell"><div class="label">角色</div><div class="val">前端负责人 · 3–5 人团队</div></div>
-          <div class="cell"><div class="label">技术栈</div><div class="val">React · TypeScript · Vite · Node.js</div></div>
-          <div class="cell"><div class="label">用户</div><div class="val">运营 / 产品 / 市场</div></div>
+          <div class="cell"><div class="label">角色</div><div class="val">前端负责人 · 核心贡献者 · 3–5 人团队</div></div>
+          <div class="cell"><div class="label">前端栈</div><div class="val">React · MobX · react-rnd · react-sortable-hoc · Ant Design · Less</div></div>
+          <div class="cell"><div class="label">服务端</div><div class="val">Koa · jsdom · ReactDOM.renderToString · Handlebars · MongoDB · Redis</div></div>
         </div>
       </header>
 
@@ -37,34 +37,89 @@
       <h2 class="section-title" style="font-size:26px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:18px;">一句话讲清楚这个项目</h2>
 
       <p>
-        一个 <strong>JSON schema 驱动</strong>的低代码活动搭建平台：左侧物料库 + 中间画布 + 右侧属性面板是运营看到的编辑器；
-        底层是一套自研渲染引擎 + 版本化组件库 + 触发器事件系统，让同一份 schema 在多个渠道上都能正确渲染、正确埋点、正确分享。
+        运营在<strong>三栏编辑器</strong>（左侧组件库 / 中间画布 / 右侧属性面板）里拖组件、调样式、挂触发器，
+        画布所见即所得，点「发布」后 Node 侧会用 <strong>jsdom + renderToString</strong> 把页面 SSR 成一份可以秒开的 HTML，
+        传到 CDN；C 端访问时先拿到 SSR 的 HTML（首屏直接出画面），再 <code>ReactDOM.hydrate</code> 绑事件，整个活动页就变成可交互状态。
       </p>
+
+      <h3 class="sub">业务域一览</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">搭建与编辑器</div>
+          <div class="mini-desc">三栏编辑器（组件库 / 画布 / 属性面板）、拖拽编排、对齐与层级、基础容器与自由布局。运营日常工作的主入口。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">物料与模板</div>
+          <div class="mini-desc">活动页模板、区块复用、页面配置（主题色 / 埋点 / 分享信息 / 跳转策略）、跨活动的标准化“搭建底盘”。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">组件生态</div>
+          <div class="mini-desc">三层可插拔组件（内建 / 内部 CDN / 第三方 x-cli）、版本治理、运行时动态加载与注册，保证“能扩展、可回滚”。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">发布与运行时</div>
+          <div class="mini-desc">Node 侧 SSR 发布流水线（jsdom + renderToString + Handlebars）、CDN 分发、C 端 hydrate、失败优雅降级与保底发布。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">数据与治理</div>
+          <div class="mini-desc">页面数据模型（schema / PageData）、触发器与埋点约定、组件升级策略、线上稳定性兜底（如 require.cache 隔离）。</div>
+        </div>
+      </div>
 
       <dl class="star" aria-label="STAR 总结">
         <dt>背景（S）</dt>
-        <dd>早期每个活动页都由前端手写，运营一有「换图、换文案、加个按钮」的需求就得排期。团队里一半的前端人力被消耗在重复的落地页搭建上，上线节奏被研发工期卡死。</dd>
+        <dd>活动节奏从「月」加快到「周甚至天」，但每个活动页都得前端从零写一份——组件库各写各的，样式兜底各写各的，埋点也各写各的。前端一半人力被套在重复交付里，平台型工作常年推不动。</dd>
         <dt>目标（T）</dt>
-        <dd>把前端从活动交付链路中「拿掉」：运营自己配、自己预览、自己发布；同时必须保证多端一致、视觉不走样、数据埋点不丢。</dd>
+        <dd>把前端从活动交付链路里拿掉：运营能自己配、自己预览、自己发布；同时保证编辑器上看到的和线上看到的一模一样，首屏不能慢，线上不能因为发布失败挂掉。</dd>
         <dt>动作（A）</dt>
-        <dd>设计一套能完整描述页面结构、样式、行为、分享配置的 JSON schema；构建渲染引擎 + CDN 版本化组件库 + 拖拽式编辑器；带动 4 条业务线完成迁移。</dd>
+        <dd>
+          用 <strong>MobX</strong> 把编辑器的三栏数据统一进一个 StageStore，改任何一个地方，另外两个地方自动联动；
+          组件做成<strong>三层可插拔</strong>（内建 / 内部 CDN / 第三方 x-cli）+ 运行时动态加载；
+          Node 侧搭 <strong>SSR 发布流水线</strong>：jsdom 模拟浏览器环境，把 App 整棵树 <code>renderToString</code> 出来，Handlebars 装进模板传 CDN；
+          同时做<strong>优雅降级</strong>——SSR 任何一步失败，客户端就退回 <code>ReactDOM.render</code>，发布流程保底不中断。
+        </dd>
         <dt>结果（R）</dt>
-        <dd>活动页上线周期从平均 2 天降到约 15 分钟；前端团队从「交付型」转向「平台型」工作——维护物料库、优化编辑器体验、接入实验与埋点能力。</dd>
+        <dd>活动页上线从「天」级压到「十几分钟」级；前端从「交付型」变成「平台型」，接下来的精力全都投入编辑器、组件生态和 SSR 性能；累计承载了公司内部几条业务线的几乎全部活动页。</dd>
       </dl>
 
-      <h3 class="sub">让它真正跑起来的几个关键点</h3>
+      <h3 class="sub">让它真正跑起来的四个关键点</h3>
       <ul class="bullets">
-        <li><strong>Schema 即契约。</strong>一份 JSON 描述布局、组件、样式、触发器、分享配置。编辑器只负责写它，运行时只负责读它，两边之间没有任何其他耦合。</li>
-        <li><strong>组件版本化 + CDN 加载。</strong>每个 widget 是一个独立 bundle，有自己的 semver；运行时按 schema 里钉住的版本加载，组件升级不会打穿历史活动页。</li>
-        <li><strong>用触发器代替「写代码」。</strong>不让运营写 JS，而是暴露一组声明式触发器（<code>onClick</code>/<code>onShow</code>/<code>onScroll</code>），它们的 action 也是 schema——跳转、埋点、分享、弹窗、跨组件调用。</li>
-        <li><strong>多端天然一致。</strong>同一份 schema 通过渠道适配器分别渲染到 H5、微信 H5、小程序——运营「配一次，发多端」。</li>
+        <li>
+          <strong>MobX 驱动的三栏响应式。</strong>
+          左（组件库）、中（画布）、右（属性面板）三个 <code>@observer</code> 组件共享同一个 <code>StageStore</code>。
+          属性面板改 <code>widget.data.url</code>，画布自动重绘，<strong>不用事件总线，不用 Redux 样板代码</strong>。
+        </li>
+        <li>
+          <strong>可插拔组件体系（内建 / 内部 / 外部三层）。</strong>
+          内建组件（Image / RichText / Container 等）打包进客户端；内部和外部组件按版本从 CDN 动态 <code>loadScript</code>；
+          每个组件定义里有 <code>data</code>（默认数据）、<code>config</code>（声明式属性面板）、<code>onRender</code>（共享渲染函数）、<code>methods</code>。
+          第三方开发者用 <code>x-cli</code> 脚手架就能发组件，不用动平台代码。
+        </li>
+        <li>
+          <strong>所见即所得的双端一致性。</strong>
+          编辑器的 <code>BaseWidget</code> 和 C 端的 <code>Widget</code> 都继承 <code>WidgetClass</code>，<strong>共用 <code>onRender</code> 和同一份 <code>.less</code></strong>。
+          编辑器用 375px 固定画布，C 端用 <strong>px2rem（1rem = 37.5px）</strong>自适应，编辑器看到啥、线上就是啥。
+        </li>
+        <li>
+          <strong>SSR + 秒开 + 优雅降级。</strong>
+          服务端用 jsdom 模拟 <code>document</code>/<code>navigator</code>，从 CDN 拉外部组件的 JS、<code>new Function()</code> 执行注册，
+          再 <code>renderToString(&lt;App /&gt;)</code>，Handlebars 把 HTML 和 PageData 缝到模板里传 CDN。
+          只要任何一步失败，就把 <code>needHydrate</code> 置 false，让客户端退回 <code>render</code>，<strong>发布绝对不能因为 SSR 挂掉</strong>。
+        </li>
+      </ul>
+
+      <h3 class="sub">几个容易被忽略、但其实很要紧的细节</h3>
+      <ul class="bullets">
+        <li><strong>MobX 4 <code>observable({})</code> 不追踪动态属性</strong>——所以 <code>widget.data</code> 改值时必须整块重新赋值（<code>this.data = { ...this.data, [k]: v }</code>），不然下游面板不会刷新。</li>
+        <li><strong>每次 SSR 都得清 <code>require.cache</code></strong>，不然上次发布的组件代码会污染这一次的渲染。</li>
+        <li><strong>Stage 抽象层</strong>把 Project / Page / Layer / Widget 四种容器的 <code>addChild</code> / <code>removeChildren</code> / <code>sortChildren</code> 做成了同一个多态接口——编辑器代码里几乎不再出现「按容器类型分支 if/else」。</li>
       </ul>
 
       <footer class="pager" aria-label="章节导航">
         <span></span>
-        <a class="next" href="./role.html">
+        <a class="next" href="./context.html">
           <span class="dir">下一章 →</span>
-          <span class="lbl">02 · 我的职责</span>
+          <span class="lbl">02 · 背景与问题</span>
         </a>
       </footer>
 

@@ -31,15 +31,22 @@
   };
 
   // Each language only lists pages that actually exist in that folder.
-  // Keep the two arrays intentionally asymmetric — demo-level scope.
+  // Keep the two arrays intentionally asymmetric — English version is a
+  // smaller demo, Chinese version follows the full 8-section deep-dive layout.
   const SECTIONS = {
     en: [
       { key: 'overview', num: '01', label: 'Overview',        href: 'index.html' },
       { key: 'role',     num: '02', label: 'My Role & Scope', href: 'role.html' },
     ],
     zh: [
-      { key: 'overview', num: '01', label: '概览',       href: 'index.html' },
-      { key: 'role',     num: '02', label: '我的职责',   href: 'role.html' },
+      { key: 'overview',     num: '01', label: '概览',       href: 'index.html' },
+      { key: 'context',      num: '02', label: '背景与问题', href: 'context.html' },
+      { key: 'role',         num: '03', label: '我的职责',   href: 'role.html' },
+      { key: 'architecture', num: '04', label: '技术架构',   href: 'architecture.html' },
+      { key: 'modules',      num: '05', label: '重点模块',   href: 'modules.html' },
+      { key: 'decisions',    num: '06', label: '关键决策',   href: 'decisions.html' },
+      { key: 'challenges',   num: '07', label: '难点与方案', href: 'challenges.html' },
+      { key: 'impact',       num: '08', label: '项目成果',   href: 'impact.html' },
     ],
   };
 

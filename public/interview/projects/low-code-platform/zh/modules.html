@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>重点模块 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台 - 重点技术模块" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="modules" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">企业级低代码活动搭建平台</a>
+        <span class="sep">/</span>
+        <span>重点模块</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">05</span>重点模块</div>
+        <h1 class="page-title">5 个重点模块，逐一拆解</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          平台看起来是一个大产品，但技术含量不是平均分布的。下面这 5 块是投入最多、也最能体现架构判断的地方——
+          分别是编辑器三栏模型、画布架构、组件体系、触发器、SSR 发布链路。
+        </p>
+      </header>
+
+      <!-- ========== 01 编辑器三栏模型 ========== -->
+      <div class="decision">
+        <div class="decision-title">01 · 编辑器三栏模型 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">MobX 驱动的单一数据源</span></div>
+        <p style="margin-bottom:10px;">
+          编辑器长什么样其实大家都见过——左边组件库、中间画布、右边属性面板。真正的技术含量在三栏怎么通信：
+          <strong class="em">不是事件，不是 Redux，而是共享同一个 MobX <code>StageStore</code></strong>。
+        </p>
+        <div class="decision-row">
+          <div class="label">数据模型</div>
+          <div class="val"><code>StageStore → Project → Pages → Widgets → Layers / Triggers / Animations</code>，全链路 <code>@observable</code>，每个节点的属性改动都会被 MobX 追踪。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">通信方式</div>
+          <div class="val">三个面板都是 <code>@observer</code>。右侧改 <code>widget.data.url</code>，画布里的 <code>&lt;WidgetContent&gt;</code> 自动 re-render——没有 dispatch、没有 subscribe、没有 props 穿透。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">一个绕不开的坑</div>
+          <div class="val">MobX 4 的 <code>observable({})</code> <strong class="em">不追踪动态新增的属性</strong>。所以 <code>widget.modifyData(k, v)</code> 里要写成 <code>this.data = { ...this.data, [k]: v }</code>，强制引用换新。这个细节我们踩过坑，后面抽到 Widget 基类里兜底。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Stage 抽象层</div>
+          <div class="val">Project / Page / Layer / Widget 四种容器形状不同，但「加子节点」「删子节点」「选中子节点」「排序子节点」都一样。用 <code>Stage</code> 类做多态包装，编辑器里从此没有按容器类型分支的 if/else。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">@observable</span>
+          <span class="tag">@observer</span>
+          <span class="tag">单一数据源</span>
+          <span class="tag">多态抽象</span>
+        </div>
+      </div>
+
+      <!-- ========== 02 画布架构 ========== -->
+      <div class="decision">
+        <div class="decision-title">02 · 画布架构 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">瀑布流 + 自由定位 并存</span></div>
+        <p style="margin-bottom:10px;">
+          运营搭页面时有两种心智——「按顺序往下铺一列组件」和「随便放哪儿都行」。我们没有强选一个，而是<strong class="em">两种布局共存于同一张画布</strong>。
+        </p>
+        <div class="decision-row">
+          <div class="label">瀑布流布局</div>
+          <div class="val">用 <code>react-sortable-hoc</code>，组件按文档流从上到下排列，可拖拽排序。适合课程卡片、图文列表这种"结构感强"的模块。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">自由定位布局</div>
+          <div class="val">用 <code>react-rnd</code>，组件绝对定位，可拖拽移动 + 八向缩放，拖动步长 5px。适合"按设计稿精确摆放"的场景，比如浮层按钮、装饰元素。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">多层级视口</div>
+          <div class="val"><code>SwipeableViews</code> 包住画布，运营可以从"项目" → "页面" → "容器" → "图层"一路深入编辑，像点进文件夹，退出来就回到上一层。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">画布周边</div>
+          <div class="val">水平 / 垂直两把 <code>CanvasRuler</code>（像素标尺 + 对齐辅助线），一个 <code>Selector</code>（鼠标框选多个组件），让画布从"一个 div"变成真正可用的工作空间。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">react-rnd</span>
+          <span class="tag">react-sortable-hoc</span>
+          <span class="tag">SwipeableViews</span>
+          <span class="tag">CanvasRuler · Selector</span>
+        </div>
+      </div>
+
+      <!-- ========== 03 可插拔组件体系 ========== -->
+      <div class="decision">
+        <div class="decision-title">03 · 可插拔组件体系 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">内建 / 内部 / 外部 三层</span></div>
+        <p style="margin-bottom:10px;">
+          组件是这个平台最活跃的资产。分三层的目的是<strong class="em">平衡"稳定"和"灵活"</strong>——越稳定的打包进客户端，越业务化的从 CDN 运行时拉。
+        </p>
+        <div class="decision-row">
+          <div class="label">内建组件</div>
+          <div class="val">Image / RichText / NormalText / Container / DataContainer / Layer——所有业务都会用的底层积木，构建时直接 import 进客户端 bundle。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">内部组件（PageData.innerWidgets）</div>
+          <div class="val">业务定制组件（比如"课程卡片"），每个独立打 bundle 传 CDN，运行时 <code>loadScript</code> 动态加载。发更新版本不会打穿客户端。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">外部组件（PageData.installed）</div>
+          <div class="val">第三方团队用 <code>x-cli</code> 脚手架开发、提交审核、上传 CDN。<strong class="em">版本号写在 schema 里</strong>——C 端按 schema 钉住的版本加载，历史页永远不会被升级打穿。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">统一契约</div>
+          <div class="val">不管哪一层，组件定义长一个样：<code>{ name, type, data, config, methods, onRender, onEnter, onNext }</code>。<code>config</code> 直接被右侧属性面板消费生成表单，写组件 = 写组件定义。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">组件注册中心</div>
+          <div class="val">所有组件最终汇聚到 <code>WidgetConfigs</code> 这个 <code>@observable</code> 数组，作为全局注册表。外部组件通过 <code>god.__components__</code> 自注册，跟内建组件统一视图。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">动态 import</span>
+          <span class="tag">loadScript · loadStyle</span>
+          <span class="tag">semver 钉死版本</span>
+          <span class="tag">x-cli 脚手架</span>
+        </div>
+      </div>
+
+      <!-- ========== 04 触发器体系 ========== -->
+      <div class="decision">
+        <div class="decision-title">04 · 触发器体系 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">用声明式替代"让运营写代码"</span></div>
+        <p style="margin-bottom:10px;">
+          触发器是我们坚持「不让运营写 JS」的关键。所有交互都用声明式描述——<strong class="em">什么事件，触发什么 action</strong>。
+        </p>
+        <div class="decision-row">
+          <div class="label">事件类型</div>
+          <div class="val"><code>onClick</code> / <code>onShow</code> / <code>onScroll</code> / <code>onCustomEvent</code>——覆盖活动页 95% 以上的交互场景。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Action 集合</div>
+          <div class="val"><code>Redirect</code>（跳转）· <code>ScrollToPage</code>（滚动到指定页面）· <code>ChangeWidget</code>（修改其他组件状态，实现跨组件通信）· <code>EmitListeners</code>（发自定义事件，配合 <code>onCustomEvent</code> 实现订阅 / 发布）。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">为什么不开代码面板</div>
+          <div class="val">一旦允许运营写 JS，审计 / 安全 / 排障就全失控。声明式触发器虽然有上限，但覆盖了绝大多数场景，<strong class="em">把平台的稳定性承诺守住了</strong>。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">可视化调试</div>
+          <div class="val">编辑器里能看到触发器的挂载关系——谁触发了谁、按什么顺序执行。触发器一多容易成迷宫，可视化这一刀很关键。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">声明式</span>
+          <span class="tag">跨组件通信</span>
+          <span class="tag">埋点 hook 自动挂</span>
+        </div>
+      </div>
+
+      <!-- ========== 05 SSR 发布流水线 ========== -->
+      <div class="decision">
+        <div class="decision-title">05 · SSR 发布流水线 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">Koa + jsdom + renderToString + 降级</span></div>
+        <p style="margin-bottom:10px;">
+          这条链路是整个项目里技术密度最高的地方，细节多、失败面大、但一旦跑通，用户就能享受 1s 级首屏。
+        </p>
+        <div class="decision-row">
+          <div class="label">环境模拟</div>
+          <div class="val">jsdom 在 Node 里创建一个"假浏览器"——<code>document</code> / <code>navigator</code> / <code>localStorage</code> 都得有，否则第三方组件一调浏览器 API 就炸。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">组件预加载</div>
+          <div class="val">按 schema 里的 <code>installed</code> 列表从 CDN 拉所有外部组件 JS，用 <code>new Function()</code> 执行，让它们注册到 <code>god.__components__</code>。<strong class="em">只有带合法 <code>xcli</code> 元数据的组件才允许服务端执行</strong>——安全兜底。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">React SSR</div>
+          <div class="val"><code>require</code> 客户端的 <code>App</code>，<code>renderToString(&lt;App /&gt;)</code> 生成 <code>mainHTML</code>。Handlebars 模板把 <code>mainHTML</code> 和 <code>PageData</code>（JSON）嵌进最终 HTML，传 CDN。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">require.cache 隔离</div>
+          <div class="val">每次发布都清 App 模块的 <code>require.cache</code>，不然上一次发布的旧组件代码会污染这一次渲染。这个细节不搞会出诡异 bug。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">优雅降级</div>
+          <div class="val">只要 SSR 任何一步失败，就把 <code>needHydrate</code> 置 <code>false</code>，C 端退回 <code>ReactDOM.render</code>。用户会慢一点看到页面，但绝不会看到白屏——<strong class="em">发布流程 SLA 远比 SSR 收益重要</strong>。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">C 端 hydrate</div>
+          <div class="val">浏览器拿到 SSR HTML 后，<code>ReactDOM.hydrate</code> 在已有 DOM 上绑事件监听——不重建节点，不闪屏，不掉 LCP。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">jsdom</span>
+          <span class="tag">renderToString</span>
+          <span class="tag">Handlebars</span>
+          <span class="tag">hydrate</span>
+          <span class="tag">require.cache 隔离</span>
+          <span class="tag">优雅降级</span>
+        </div>
+      </div>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./architecture.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">04 · 技术架构</span>
+        </a>
+        <a class="next" href="./decisions.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">06 · 关键决策</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

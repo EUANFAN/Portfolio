@@ -338,6 +338,9 @@ ol.bullets li::before {
   font-size: 13px; font-weight: 800;
   letter-spacing: 0.01em; margin-bottom: 6px;
 }
+.card-grid.problems .mini-card .mini-title {
+  color: #DC2626;
+}
 .mini-card .mini-desc {
   font-size: 13px; color: var(--text-muted); line-height: 1.55;
 }
