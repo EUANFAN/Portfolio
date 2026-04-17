@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>重点模块 · 课程商业平台</title>
+<meta name="description" content="课程商业平台 - 重点业务模块" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="modules" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">课程商业平台</a>
+        <span class="sep">/</span>
+        <span>重点模块</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">05</span>重点模块</div>
+        <h1 class="page-title">5 大业务域 · 重点功能</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          每个业务域独立成模块，但共享底层的路由、权限、请求、表单和组件。下面按门类逐一过一遍。
+        </p>
+      </header>
+
+      <!-- ========== 01 项目中心 ========== -->
+      <div class="decision">
+        <div class="decision-title">01 · 项目中心 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">template/</span></div>
+        <p style="margin-bottom:10px;">
+          运营做活动的起点。<strong class="em">"一个项目" = 一条落地页 + 它的所有版本</strong>。
+          下设四个子模块：
+        </p>
+        <div class="decision-row">
+          <div class="label">已有项目</div>
+          <div class="val">课程项目 / 导航项目，项目列表 + 版本管理 + 复制 / 编辑 / 预览 / 上线 / 下线。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">模板中心</div>
+          <div class="val">课程落地页模板的集中管理。运营基于模板快速创建项目，大大降低重复配置成本。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">组件库</div>
+          <div class="val">5 种通用组件（弹窗 / 完成页 / 短信 / 表单 / 按钮素材）的独立增删改查，供落地页配置时复用。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">小程序列表</div>
+          <div class="val">加微小程序相关配置的列表化管理。</div>
+        </div>
+      </div>
+
+      <!-- ========== 02 礼品中心 ========== -->
+      <div class="decision">
+        <div class="decision-title">02 · 礼品中心 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">present/</span></div>
+        <p style="margin-bottom:10px;">
+          管"拿来送"的一切东西。商品模型三大类：
+        </p>
+        <div class="decision-row">
+          <div class="label">课程商品</div>
+          <div class="val">课程供应链（SCM）+ 商品中心。把离散的课程 SKU 包成可售卖、可赠送的商品对象，带价格、规格、库存、归属。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">实物商品</div>
+          <div class="val">课程盒子 / 实物盒子 —— 真实物流发货的商品，对接仓储和履约。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">虚拟商品</div>
+          <div class="val">优惠券 —— 创建、发放规则、有效期、使用限制、批次管理。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">深层嵌套表单</span>
+          <span class="tag">批量操作</span>
+          <span class="tag">字段联动</span>
+        </div>
+      </div>
+
+      <!-- ========== 03 小工具 ========== -->
+      <div class="decision">
+        <div class="decision-title">03 · 小工具 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">tools/</span></div>
+        <p style="margin-bottom:10px;">
+          运营日常最高频使用的模块。"小"是相对模块大小说的，对业务的价值很不小。
+        </p>
+        <div class="decision-row">
+          <div class="label">推广工具</div>
+          <div class="val">活动推广链接与二维码的生成 / 管理 / 数据回看。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">定制活动</div>
+          <div class="val">面向非标活动场景的配置入口，把无法走标准流程的定制需求收敛进来。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">渠道活码</div>
+          <div class="val">渠道归因核心能力：一个二维码背后挂多个客服号，扫码自动分配 + 归因统计。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">排查工具</div>
+          <div class="val">给运营和客服用的自助排查面板。输入用户 ID，快速看到下单、优惠券、归因链路，省掉找研发的时间。</div>
+        </div>
+      </div>
+
+      <!-- ========== 04 用户画像 ========== -->
+      <div class="decision">
+        <div class="decision-title">04 · 用户画像 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">user-portrait/</span></div>
+        <p style="margin-bottom:10px;">
+          把"哪些用户能买哪些课"这件事规则化。本质上是一套<strong class="em">规则引擎的前端配置界面</strong>。
+        </p>
+        <div class="decision-row">
+          <div class="label">用户限购</div>
+          <div class="val">按用户标签、身份、消费历史等维度配置限购规则。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">课程限购</div>
+          <div class="val">按课程维度反过来配置：这门课谁能买、每人几份、有没有梯度。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">课程关系</div>
+          <div class="val">定义课程之间的互斥、替代、升级关系。买了 A 是否能买 B，买了高级版能否买入门版，都在这里配。</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">规则引擎前端</span>
+          <span class="tag">Formily 动态 Schema</span>
+          <span class="tag">条件组合器 UI</span>
+        </div>
+      </div>
+
+      <!-- ========== 05 工作台（一笔带过） ========== -->
+      <div class="decision">
+        <div class="decision-title">05 · 工作台（低代码搭建器）<span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">work-space/</span></div>
+        <p>
+          运营自助生成课程落地页的入口。核心能力是<strong class="em">7 步向导 + Formily 驱动的表单配置 + 手机端实时预览 + 保存 / 预览 / 上线闭环</strong>。
+          8 种落地页模板，支持多个投放承载（H5、小程序），带版本管理和草稿机制。
+        </p>
+        <p class="muted" style="margin-top:10px;font-size:13px;">
+          低代码页面搭建是团队的另一个亮点项目（Low-Code Campaign Platform），那边的深度和完整性更高。
+          这里只作为"整个商业后台中的一个模块"存在，故不再展开。如需了解完整的低代码方案，请移步 Low-Code Campaign Platform。
+        </p>
+      </div>
+
+      <h3 class="sub">模块协同上的几个关键设计</h3>
+      <ul class="bullets">
+        <li><strong class="em">同一份权限模型覆盖所有模块</strong> —— access.ts 里几十个权限 key 覆盖菜单、路由、按钮。新模块加一个 key 就接入全站。</li>
+        <li><strong class="em">通用组件跨模块复用</strong> —— 表单搜索组、列表操作下拉、上传、Formily 扩展表单项在所有模块里一致的样子和行为。</li>
+        <li><strong class="em">API 层类型自动生成</strong> —— 后端改接口 → Swagger 拉一次 → 前端编译就能发现不兼容的地方。</li>
+        <li><strong class="em">共享的 Redux 切片</strong> —— config（全局配置）/ user（用户信息）/ checkTool（排查工具状态），跨页面共享状态不用层层透传。</li>
+      </ul>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./architecture.html">
+          <span class="dir">← 上一节</span>
+          <span class="lbl">04 · 技术架构</span>
+        </a>
+        <a class="next" href="./decisions.html">
+          <span class="dir">下一节 →</span>
+          <span class="lbl">06 · 关键决策</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

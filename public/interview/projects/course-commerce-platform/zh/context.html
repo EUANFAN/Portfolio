@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>背景与问题 · 课程商业平台</title>
+<meta name="description" content="课程商业平台 - 背景与问题" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="context" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">课程商业平台</a>
+        <span class="sep">/</span>
+        <span>背景与问题</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">02</span>背景与问题</div>
+        <h1 class="page-title">为什么要做这个后台</h1>
+      </header>
+
+      <h3 class="sub">启动之前的状态</h3>
+      <ul class="bullets">
+        <li>课程商品的维护在一个后台，优惠券在另一个后台，推广活动又是第三个后台 —— <strong class="em">功能散、交互不一致、权限各管各的</strong>。</li>
+        <li>落地页全靠前端手写。每上一个新课程活动就要走"提需求 → 排期 → 开发 → 联调 → 上线"一圈，<strong class="em">3-5 天起步</strong>。</li>
+        <li>限购、渠道归因等业务规则写死在后端代码里，一次调整要走一次发版。</li>
+        <li>各后台的前端工程散落在不同仓库里，<strong class="em">没有统一的组件库、请求封装、权限模型</strong>。新功能意味着从头配一套。</li>
+      </ul>
+
+      <h3 class="sub">带来的具体问题</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">运营效率</div>
+          <div class="mini-desc">一次活动要跨 3-4 个系统操作。运营同学抱怨"光切账号切系统就半天"。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">前端产能</div>
+          <div class="mini-desc">80% 的页面需求是相似结构的落地页，前端团队被重复劳动占满，没精力做平台能力。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">数据一致性</div>
+          <div class="mini-desc">同一份课程数据在多个系统里各维护一份，改了这边没改那边，事故常有。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">权限可控性</div>
+          <div class="mini-desc">老后台权限粗放，基本是"能登就能看能改"。审计和合规都很难做。</div>
+        </div>
+      </div>
+
+      <h3 class="sub">需求的本质</h3>
+      <p>
+        表面上是"做一个新后台"，实际上要解决的是<strong class="em">组织协同</strong>的问题 —— 让运营、产品、前端、
+        后端在同一个系统、同一套数据、同一套权限模型下协作。做好这一点，前端团队才能从"救火"转到"建底座"。
+      </p>
+
+      <h3 class="sub">对前端架构的要求</h3>
+      <ul class="bullets">
+        <li><strong class="em">能扩张</strong>：业务域会持续增加，架构必须支持低成本拉新模块进来。</li>
+        <li><strong class="em">权限细</strong>：要到"按钮级"，不同岗位看到的页面和按钮不一样。</li>
+        <li><strong class="em">表单复杂</strong>：限购规则、渠道配置、商品信息都是深层嵌套的 schema，需要响应式表单方案。</li>
+        <li><strong class="em">多环境可控</strong>：本地 / Mock / 灰度 / 生产各自独立，不串味。</li>
+        <li><strong class="em">工程化规范</strong>：ESLint、Prettier、Stylelint、Husky、lint-staged 一套到位，多人协作不出乱子。</li>
+      </ul>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./index.html">
+          <span class="dir">← 上一节</span>
+          <span class="lbl">01 · 概览</span>
+        </a>
+        <a class="next" href="./role.html">
+          <span class="dir">下一节 →</span>
+          <span class="lbl">03 · 我的职责</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>技术架构 · 课程商业平台</title>
+<meta name="description" content="课程商业平台 - 技术架构、技术栈与关键链路" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="architecture" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">课程商业平台</a>
+        <span class="sep">/</span>
+        <span>技术架构</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">04</span>技术架构</div>
+        <h1 class="page-title">整体架构、技术栈与关键链路</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          一张分层图看清项目 —— 上层是业务模块，中层是平台能力，底层是前端基础设施。
+          所有业务共享一套路由、权限、请求、表单和通用组件。
+        </p>
+      </header>
+
+      <h3 class="sub">整体架构图</h3>
+      <div class="diagram" aria-label="整体架构图">
+
+        <div class="layer">
+          <div class="layer-label">业务模块层</div>
+          <div class="block">
+            项目中心
+            <span class="sub">template</span>
+          </div>
+          <div class="block">
+            礼品中心
+            <span class="sub">present</span>
+          </div>
+          <div class="block">
+            小工具
+            <span class="sub">tools</span>
+          </div>
+          <div class="block">
+            用户画像
+            <span class="sub">user-portrait</span>
+          </div>
+          <div class="block">
+            工作台
+            <span class="sub">work-space</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">平台能力层</div>
+          <div class="block highlight">
+            Formily 表单体系
+            <span class="sub">联动 / 校验 / 自定义表单项</span>
+          </div>
+          <div class="block highlight">
+            拖拽排序
+            <span class="sub">react-sortable-hoc · react-dnd</span>
+          </div>
+          <div class="block highlight">
+            设备预览
+            <span class="sub">react-device-frameset · 二维码扫码</span>
+          </div>
+          <div class="block highlight">
+            通用组件
+            <span class="sub">上传 / 筛选 / 表单搜索 / 列表操作</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">基础设施层</div>
+          <div class="block">
+            Umi Max 4
+            <span class="sub">约定式路由 · access · initialState · layout</span>
+          </div>
+          <div class="block">
+            Redux Toolkit
+            <span class="sub">config / user / checkTool</span>
+          </div>
+          <div class="block">
+            axios 拦截器
+            <span class="sub">SSO token · 401 兜底 · 统一错误</span>
+          </div>
+          <div class="block">
+            Swagger 自动生成
+            <span class="sub">@dandelion/swagger · 类型安全 API</span>
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="sub">技术栈</h3>
+      <div class="stack-grid">
+
+        <div class="stack-group">
+          <div class="stack-group-title">框架与路由</div>
+          <div class="tags">
+            <span class="tag">Umi Max 4</span>
+            <span class="tag">React 18</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Hash Router</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">UI 与主题</div>
+          <div class="tags">
+            <span class="tag">Ant Design 4</span>
+            <span class="tag">Ant Design Pro Components</span>
+            <span class="tag">Less</span>
+            <span class="tag">自定义主题 (#FF3627)</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">表单与复杂交互</div>
+          <div class="tags">
+            <span class="tag">Formily 2</span>
+            <span class="tag">react-sortable-hoc</span>
+            <span class="tag">react-dnd</span>
+            <span class="tag">react-colorful</span>
+            <span class="tag">@uiw/react-codemirror</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">状态与数据</div>
+          <div class="tags">
+            <span class="tag">Redux Toolkit</span>
+            <span class="tag">ahooks</span>
+            <span class="tag">axios</span>
+            <span class="tag">pubsub-js</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">设备模拟与预览</div>
+          <div class="tags">
+            <span class="tag">react-device-frameset</span>
+            <span class="tag">react-qr-code</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">工程化与规范</div>
+          <div class="tags">
+            <span class="tag">ESLint</span>
+            <span class="tag">Prettier</span>
+            <span class="tag">Stylelint</span>
+            <span class="tag">Husky</span>
+            <span class="tag">lint-staged</span>
+            <span class="tag">commitizen</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">构建与环境</div>
+          <div class="tags">
+            <span class="tag">dev</span>
+            <span class="tag">mock</span>
+            <span class="tag">gray</span>
+            <span class="tag">production</span>
+            <span class="tag">cross-env</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">API 与契约</div>
+          <div class="tags">
+            <span class="tag">@dandelion/swagger</span>
+            <span class="tag">Mock</span>
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="sub">关键链路 1：启动与权限</h3>
+      <p class="muted">
+        用户访问页面时，前端的完整启动流程：
+      </p>
+      <div class="flow" aria-label="启动与权限链路">
+        <span class="node accent">SSO 登录</span>
+        <span class="arrow">→</span>
+        <span class="node">token 写入 Cookie</span>
+        <span class="arrow">→</span>
+        <span class="node">getInitialState()</span>
+        <span class="arrow">→</span>
+        <span class="node">拉取菜单 + 功能权限</span>
+        <span class="arrow">→</span>
+        <span class="node">access 配置生成</span>
+        <span class="arrow">→</span>
+        <span class="node accent">路由守卫 + 按钮级鉴权</span>
+      </div>
+      <p style="margin-top:10px;">
+        Umi Max 的 <code>initialState</code> 做一次性权限拉取，<code>access.ts</code> 根据菜单列表
+        生成几十个布尔权限开关（如 <code>canSeePresentCoupon</code>），业务代码通过
+        <code>&lt;Access accessible={access.canSeeXxx}&gt;</code> 或 <code>useAccess()</code>
+        hook 消费，一处配置、全站生效。
+      </p>
+
+      <h3 class="sub">关键链路 2：请求与鉴权</h3>
+      <div class="flow" aria-label="请求链路">
+        <span class="node">业务调用</span>
+        <span class="arrow">→</span>
+        <span class="node">axios 实例</span>
+        <span class="arrow">→</span>
+        <span class="node">请求拦截器注入 token</span>
+        <span class="arrow">→</span>
+        <span class="node accent">后端</span>
+        <span class="arrow">→</span>
+        <span class="node">响应拦截器</span>
+        <span class="arrow">→</span>
+        <span class="node">stat/code 校验 → 统一 message 提示</span>
+      </div>
+      <p style="margin-top:10px;">
+        响应拦截器里把 <strong class="em">401 自动登出 + 跳 SSO</strong> 和
+        <strong class="em">业务错误统一弹 toast</strong> 两件事做掉，业务代码里只需要关心
+        happy path。错误码约定在拦截器里收敛，不扩散到业务层。
+      </p>
+
+      <h3 class="sub">关键链路 3：路由与菜单</h3>
+      <div class="flow" aria-label="路由链路">
+        <span class="node accent">routes/index.ts 集中声明</span>
+        <span class="arrow">→</span>
+        <span class="node">每个节点带 access 字段</span>
+        <span class="arrow">→</span>
+        <span class="node">Umi 生成路由表</span>
+        <span class="arrow">→</span>
+        <span class="node">ProLayout 自动渲染侧边菜单</span>
+        <span class="arrow">→</span>
+        <span class="node">无权限节点自动隐藏</span>
+      </div>
+      <p style="margin-top:10px;">
+        路由表由后端权限数据驱动 —— <strong class="em">一份路由声明，路由跳转、菜单渲染、权限拦截三件事同时搞定</strong>。
+        新增业务模块只需要加一段 route + 对应 <code>access</code> key，不用手动改菜单。
+      </p>
+
+      <h3 class="sub">目录结构概览</h3>
+      <pre style="background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;font-size:12.5px;line-height:1.7;color:var(--text-muted);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;overflow-x:auto;"><code>src/
+├── apis/                 Swagger 自动生成 + 手写 API 层
+├── components/           通用组件（Formily 扩展、上传、筛选、排序、机型预览…）
+├── config/               环境配置（host、mode）
+├── constants/            枚举、常量
+├── hooks/                自定义 hooks（权限校验、下拉枚举、列表搜索…）
+├── layouts/              顶层布局
+├── pages/
+│   ├── template/         项目中心
+│   ├── present/          礼品中心
+│   ├── tools/            小工具
+│   ├── user-portrait/    用户画像
+│   └── work-space/       工作台（页面搭建器）
+├── routes/index.ts       全局路由声明（含 access）
+├── store/                Redux Toolkit: config / user / checkTool
+├── utils/                axios / 登录 / 校验 / 日志 / 日期
+├── access.ts             权限配置
+└── app.tsx               Umi 运行时钩子（rootContainer / layout / getInitialState）</code></pre>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./role.html">
+          <span class="dir">← 上一节</span>
+          <span class="lbl">03 · 我的职责</span>
+        </a>
+        <a class="next" href="./modules.html">
+          <span class="dir">下一节 →</span>
+          <span class="lbl">05 · 重点模块</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

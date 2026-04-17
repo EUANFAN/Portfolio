@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>我的职责 · 企业级低代码活动平台</title>
+<meta name="description" content="企业级低代码活动平台项目梳理 · 我的职责" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="role" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑">
+        <a href="./index.html">企业级低代码活动平台</a>
+        <span class="sep">/</span>
+        <span>我的职责</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">02</span>我的职责</div>
+        <h1 class="page-title">我负责什么，不负责什么</h1>
+      </header>
+
+      <h3 class="sub">我主导的部分</h3>
+      <ul class="bullets">
+        <li>项目整体技术架构——编辑器、渲染引擎、组件库、构建发布链路四条线的方案与落地。</li>
+        <li>JSON schema 的设计本身，以及渲染引擎的契约（一份 schema 如何变成组件树 + 触发器图）。</li>
+        <li>组件库的对外 API、版本管理机制、CDN 加载策略（每个 widget 独立 bundle，带 semver）。</li>
+        <li>平台推广落地——直接对接 4 条业务线的产品与运营，收集反馈、驱动切换。</li>
+        <li>团队的工程规范、脚手架、内部文档和代码评审标准。</li>
+      </ul>
+
+      <h3 class="sub">我协作但不主导的部分</h3>
+      <ul class="bullets">
+        <li>Schema 存储、版本管理、发布工作流的后端服务——由后端同学实现，我负责定义 API 契约。</li>
+        <li>视觉和品牌语言——由设计同学定义，我负责让组件库忠实实现，并在 schema 层把关不允许「破坏性配置」。</li>
+        <li>实验与埋点 SDK——我设计了触发器的 hook 点，平台组负责接入和数据回流。</li>
+      </ul>
+
+      <p class="muted" style="margin-top:16px;">
+        团队：我作为技术负责人 + 3–5 位前端，根据阶段弹性调整。之所以我要同时管编辑器、运行时和推广三件事——
+        因为这类平台的关键设计决策，单看任何一面都会走偏，只有三面一起看才成立。
+      </p>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./index.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">01 · 概览</span>
+        </a>
+        <span></span>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

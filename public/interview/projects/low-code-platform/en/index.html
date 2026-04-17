@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Overview · Low-Code Campaign Platform</title>
+<meta name="description" content="Overview of the Low-Code Campaign Platform deep-dive." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="overview" aria-label="Project sections"></aside>
+
+    <main>
+
+      <header class="page-header">
+        <div class="page-eyebrow">Project Deep-Dive</div>
+        <h1 class="page-title">Low-Code Campaign Platform</h1>
+        <p class="page-lead">
+          A configuration-driven platform that turned campaign delivery from a multi-day
+          frontend job into a self-service workflow — launch cycles went from days to minutes,
+          and the frontend team got its time back for platform work.
+        </p>
+
+        <div class="meta-strip" aria-label="Project meta">
+          <div class="cell"><div class="label">Company</div><div class="val">Xiwangxue</div></div>
+          <div class="cell"><div class="label">Timeline</div><div class="val">2023 — 2025</div></div>
+          <div class="cell"><div class="label">Role</div><div class="val">Tech Lead · 3–5 eng</div></div>
+          <div class="cell"><div class="label">Stack</div><div class="val">React · TypeScript · Vite · Node.js</div></div>
+          <div class="cell"><div class="label">Users</div><div class="val">Product / Ops / Marketing</div></div>
+        </div>
+      </header>
+
+      <div class="section-eyebrow"><span class="num">01</span>Overview</div>
+      <h2 class="section-title" style="font-size:26px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:18px;">What it is, in one sentence</h2>
+
+      <p>
+        A low-code platform where non-engineers compose marketing campaign pages by dragging
+        schema-driven widgets, preview them live on iOS/Android frames, and publish to multiple
+        channels (mobile web, WeChat H5, WeChat Mini Program) without any engineering involvement.
+      </p>
+
+      <dl class="star" aria-label="STAR summary">
+        <dt>Situation</dt>
+        <dd>Every campaign page was hand-built by a frontend engineer. Ops had a steady queue of "change this image, move that button, ship by tomorrow" requests; engineers spent a disproportionate amount of time on repetitive layout work.</dd>
+        <dt>Task</dt>
+        <dd>Take engineering out of the campaign delivery loop without losing brand and visual quality, and support multiple channels from a single source of truth.</dd>
+        <dt>Action</dt>
+        <dd>Designed a JSON schema that fully describes a page and its interactions; built a rendering engine, a versioned widget library loaded from CDN, and a drag-and-drop editor with live multi-device preview. Drove adoption across 4 business lines.</dd>
+        <dt>Result</dt>
+        <dd>Campaign launch time dropped from ~2 days to ~15 minutes. Frontend team shifted from delivery work to platform work — widget library, editor UX, analytics integration.</dd>
+      </dl>
+
+      <h3 class="sub">Key ideas that made it work</h3>
+      <ul class="bullets">
+        <li><strong>Schema is the contract.</strong> One JSON describes layout, widgets, styles, triggers and share config. Editor writes it; runtime reads it. Nothing else crosses the line.</li>
+        <li><strong>Widgets are versioned and CDN-loaded.</strong> Each widget is a self-contained bundle with a semver; the runtime picks the version pinned in the schema, so old pages stay stable when the library evolves.</li>
+        <li><strong>Triggers over code.</strong> Instead of letting ops write JS, we exposed a small set of declarative triggers (<code>onClick</code>, <code>onShow</code>, <code>onScroll</code>) whose actions are also schema — navigation, tracking, share, modal, etc.</li>
+        <li><strong>Cross-channel by construction.</strong> The same schema renders to mobile web, WeChat H5 and Mini Program via channel-specific adapters; ops configures once, publishes everywhere.</li>
+      </ul>
+
+      <footer class="pager" aria-label="Section navigation">
+        <span></span>
+        <a class="next" href="./role.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">02 · My Role &amp; Scope</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

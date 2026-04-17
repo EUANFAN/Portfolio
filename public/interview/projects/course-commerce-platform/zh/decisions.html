@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>关键决策 · 课程商业平台</title>
+<meta name="description" content="课程商业平台 - 关键技术决策与取舍" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="decisions" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">课程商业平台</a>
+        <span class="sep">/</span>
+        <span>关键决策</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">06</span>关键决策</div>
+        <h1 class="page-title">几个节点上的选型与取舍</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          项目起步的时候做了一些影响后续走向的选择。这里把当时权衡的过程、选哪个、为什么选、代价是什么都列出来。
+        </p>
+      </header>
+
+      <!-- ========== 决策 1：集中式路由声明 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 1 · 路由 —— 集中式声明，不用文件约定式</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">Umi Max 同时支持"文件约定式路由"和"集中式配置路由"，新项目起步需要二选一。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">在 <code>src/routes/index.ts</code> 里集中声明所有路由</strong>，每个节点带 name / path / component / access。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            一来后台路由天然带权限字段（access），集中声明让"路由 + 菜单 + 权限"三件事可以一起看、一起审；
+            二来业务层级深（三级菜单常见），集中声明比分散在文件夹里更容易理清层次；
+            三来运营审批新菜单时，给 PM 看一份 routes.ts 就够了。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">加菜单需要同时改 routes 和 access，有一次编辑成本。但换来的是菜单与权限永远对齐。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 2：权限两层模型 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 2 · 权限 —— 菜单权限 + 功能权限 两层模型</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">后台既有"谁能看到这个菜单"的需求，也有"看得到菜单但这个按钮不能点"的需求。能不能用一层搞定？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val">
+            <strong class="em">明确分两层</strong>：菜单/路由一层（<code>menus</code>）、按钮/操作一层（<code>functions</code>）。
+            后端返回一棵树，前端按 type 字段拆成两个数组，分别在 <code>access.ts</code> 里生成对应的开关。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            两层职责边界清楚：菜单权限控的是"进不进得去这个页面"，功能权限控的是"页面里能做什么"；
+            设计权限表和后端沟通时也好对齐。业务层消费也清爽 —— 页面用 <code>&lt;Access&gt;</code>，按钮用 <code>useAuthCheck</code>。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">一个权限变更要同时维护两边；但这种双写是可控的，按业务域划分后每个人只管自己模块。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 3：状态管理 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 3 · 状态管理 —— Redux Toolkit，不用 Mobx / Context</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">需要一个跨页面共享状态的方案（用户信息、全局配置、排查工具上下文等）。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">Redux Toolkit</strong>，搭配 <code>useAppDispatch</code> / <code>useAppSelector</code> 的类型化封装。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            三点：① 团队里大家对 Redux 的心智模型最熟，新人也最容易看懂；
+            ② RTK 已经大幅简化了样板代码（createSlice），不再是"老 Redux"那种冗长；
+            ③ TypeScript 类型支持成熟，DevTools 调试也稳定。对 Mobx 的"响应式魔法"和 Context 的"性能陷阱"暂时都没有刚需。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">相比 zustand / jotai 还是重一些。实际用下来只有 3 个 slice（config / user / checkTool），属于够用不过度。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 4：表单方案 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 4 · 表单 —— Formily，不自研 schema，不裸用 AntD Form</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">限购规则、课程关系、落地页配置，全是深层嵌套 + 字段联动的复杂表单。裸用 antd Form 会写一堆 useEffect 做联动，维护性差。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">Formily 2</strong>（@formily/antd + @formily/core + @formily/react），统一所有复杂表单。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            Formily 的"响应器模型"（字段之间的联动用 reactions 声明）把散落的联动逻辑收敛到 schema 里，
+            避免业务代码里塞 useEffect；而且 schema 可以从接口拉 —— 规则引擎的前端配置界面基本变成"拉 schema + 渲染"。
+            对比自研 schema 方案，不用自己造轮子；对比裸 AntD Form，联动和校验的可维护性高出一个层级。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">Formily 的学习曲线确实陡一点，新人需要一周上手；文档偶尔不完备。但一旦熟了，复杂表单的开发速度显著提升。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 5：API 层 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 5 · API 层 —— Swagger 自动生成，不手写</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">20+ 页面、几十个接口。手写 API 函数 + 请求/响应类型，重复度高、容易和后端对不上。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">用 <code>@dandelion/swagger</code> 从后端 Swagger 文档自动生成 API 函数和 TypeScript 类型</strong>，配合 <code>npm run api</code> 一键同步。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            后端改接口 → 前端跑一下命令 → 编译立刻暴露不兼容的地方。前后端契约问题从"上线后发现"变成"本地编译就发现"。
+            省掉了手写 interface 的工作量，还顺带统一了错误码处理（都走 axios 拦截器）。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">前期需要和后端一起把 Swagger 文档维护规范立起来（注释、必填、枚举等），磨合过一阵。磨合之后是一劳永逸。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 6：通用组件粒度 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 6 · 通用组件 —— 够用就行，不追求"大一统"</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">后台会抽出一批通用组件（筛选、搜索、列表操作、上传、表单项…）。要抽到多细？追求"一个组件覆盖所有场景"还是"80% 场景够用就停"？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">只抽公认的高频模式</strong>，不追求 100% 覆盖；剩下 20% 让业务页面自己写，不硬塞进通用组件。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            过度抽象的通用组件会变成"万能但难用"的怪物，props 数量爆炸，出 bug 还不容易改（改一处影响全站）。
+            保留业务代码自己写的空间，让通用组件聚焦在确实高频的"列表搜索 + 操作列 + 筛选栏"这类模式上。实际效果是：组件数量不多（约 20 个），但每一个都在 10+ 处被复用。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">少数场景业务页面会重复写一点样板代码。可以接受，不是瓶颈。</div>
+        </div>
+      </div>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./modules.html">
+          <span class="dir">← 上一节</span>
+          <span class="lbl">05 · 重点模块</span>
+        </a>
+        <a class="next" href="./challenges.html">
+          <span class="dir">下一节 →</span>
+          <span class="lbl">07 · 难点与方案</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>项目成果 · 课程商业平台</title>
+<meta name="description" content="课程商业平台 - 项目成果与量化指标" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="impact" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">课程商业平台</a>
+        <span class="sep">/</span>
+        <span>项目成果</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">08</span>项目成果</div>
+        <h1 class="page-title">做了这段时间，带来了哪些实际变化</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          一些可以被量化的数字，一些更偏感受但同样真实的变化。坦诚地讲，有的指标是和团队一起完成的，
+          我在其中承担的是前端架构和关键模块的交付。
+        </p>
+      </header>
+
+      <!-- ========== 量化指标 ========== -->
+      <h3 class="sub">量化指标</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-stat">3-5 天 → 数小时</div>
+          <div class="mini-desc">一个新的课程落地页，交付周期从前端手写的 3-5 天，缩短到运营自助完成的几个小时以内。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">业务覆盖</div>
+          <div class="mini-stat">5 大业务域 · 20+ 页面</div>
+          <div class="mini-desc">项目中心 / 礼品中心 / 小工具 / 用户画像 / 工作台。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">权限颗粒度</div>
+          <div class="mini-stat">50+ 权限 key</div>
+          <div class="mini-desc">覆盖菜单级和按钮级，支持 10+ 种岗位的细粒度隔离。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">通用能力沉淀</div>
+          <div class="mini-stat">~20 个通用组件 · 10+ 自定义 Hook</div>
+          <div class="mini-desc">平均每个通用组件被复用 10+ 次。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">列表页开发成本</div>
+          <div class="mini-stat">500+ 行 → ~150 行</div>
+          <div class="mini-desc">CRUD 封装后，新列表页代码量压缩至 1/3 左右，且统一了交互。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">构建环境</div>
+          <div class="mini-stat">4 套环境</div>
+          <div class="mini-desc">dev / mock / gray / prod 互不串味，可独立测试、独立发布。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">前后端契约</div>
+          <div class="mini-stat">100% TypeScript 覆盖</div>
+          <div class="mini-desc">所有 API 通过 Swagger 自动生成类型，后端改接口前端编译即可发现。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">落地页模板</div>
+          <div class="mini-stat">8 种</div>
+          <div class="mini-desc">常规 / 试听 / 半屏 / 广告 / 引流 / 组合 / 长图 / 媒体训练等场景模板。</div>
+        </div>
+      </div>
+
+      <!-- ========== 效率类成果 ========== -->
+      <h3 class="sub">对团队效率的影响</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">运营自助率</div>
+          <div class="mini-desc">落地页搭建从"100% 依赖前端"变为"运营自助 80%+"，前端只需处理模板/组件本身。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">前端产能释放</div>
+          <div class="mini-desc">原来每周被落地页需求占掉 50% 以上的工时，新后台上线后回落到 10% 以内，团队有精力做平台建设。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">新人上手</div>
+          <div class="mini-desc">新同事按模板写列表页 + 表单页，一周内能独立提交第一个业务模块的 PR。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">跨系统切换成本</div>
+          <div class="mini-desc">老链路里运营做一次活动要切 3-4 个后台；新后台上线后收敛为 1 个入口。</div>
+        </div>
+      </div>
+
+      <!-- ========== 稳定性 ========== -->
+      <h3 class="sub">稳定性与质量</h3>
+      <ul class="bullets">
+        <li>上线以来，前端侧<strong class="em">无 P0 级故障</strong>。少数功能性 bug 都在小时级内修复上线。</li>
+        <li>接口契约一致性靠 Swagger 自动生成保证，<strong class="em">上线后因"前后端字段不对齐"导致的 bug 几乎归零</strong>。</li>
+        <li>ESLint + Prettier + Stylelint + Husky 的工程化闭环，让 PR review 的焦点从"格式"回到"逻辑"。</li>
+        <li>覆盖了 5 大业务域的<strong class="em">权限隔离演练</strong>，未发生越权访问。</li>
+      </ul>
+
+      <!-- ========== 架构/组织影响 ========== -->
+      <h3 class="sub">对架构和组织的影响</h3>
+      <div class="decision">
+        <div class="decision-title">三件事被定下来，后续项目直接复用</div>
+        <ul class="bullets" style="margin-top:6px;">
+          <li><strong class="em">"Umi Max + access 两层权限 + axios 拦截器 + Swagger 自动生成"</strong> 这一套基建成为团队新后台项目的起手模板。</li>
+          <li><strong class="em">CRUD 原语的封装思路</strong>（useTableSearch / form-search-group / table-operation-dropdown）被抽成了跨项目的内部模板。</li>
+          <li><strong class="em">Formily 在复杂表单场景的最佳实践</strong>沉淀成文档，后续项目遇到同类场景不再重新摸索。</li>
+        </ul>
+      </div>
+
+      <!-- ========== 个人成长 ========== -->
+      <h3 class="sub">个人的收获</h3>
+      <ul class="bullets">
+        <li>从"写页面"到"搭底座"的一次完整实践 —— 从 0 到 1 拉起一个大中后台的前端架构，深刻体会"约束就是自由"（统一的约定让业务开发反而更快）。</li>
+        <li>对<strong class="em">"什么时候该抽象、什么时候不该抽象"</strong> 有了更清晰的判断。中后台项目最容易过度抽象，克制很重要。</li>
+        <li>和后端、产品、运营四边协作的经验。做 B 端工具的核心不是代码好不好看，而是能不能真正帮到业务同学。</li>
+      </ul>
+
+      <p class="muted" style="margin-top:24px;font-size:13px;">
+        备注：以上数据是项目上线后 12 个月的观察值，部分指标为团队共同结果，不全是个人贡献；
+        表述上尽量给出真实量级，没有做夸大。
+      </p>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./challenges.html">
+          <span class="dir">← 上一节</span>
+          <span class="lbl">07 · 难点与方案</span>
+        </a>
+        <span></span>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

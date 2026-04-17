@@ -76,6 +76,31 @@ html, body {
 }
 .brand-sub { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
 
+/* Language switch pill, sits between brand and contents */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 24px 0;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  background: var(--chip);
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.lang-switch:hover {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border-color: var(--accent);
+}
+.lang-switch svg { width: 12px; height: 12px; opacity: 0.75; }
+.lang-switch:hover svg { opacity: 1; }
+
 .nav-title {
   font-size: 10px; font-weight: 800;
   letter-spacing: 0.2em; text-transform: uppercase;
@@ -393,6 +418,165 @@ ol.bullets li::before {
   background: var(--accent-soft);
   border-color: rgba(14, 165, 233, 0.3);
   color: var(--accent-strong);
+}
+.block .sub {
+  display: block;
+  font-size: 11px; font-weight: 500;
+  color: var(--text-soft);
+  margin-top: 4px;
+  letter-spacing: 0;
+}
+
+/* Tech-stack grouped grid */
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px; margin-top: 14px;
+}
+.stack-group {
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.stack-group-title {
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent-strong);
+  margin-bottom: 10px;
+}
+.stack-group .tags { margin-top: 0; }
+
+/* Flow chain (request / auth / etc) */
+.flow {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 8px; margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  font-size: 12.5px;
+}
+.flow .node {
+  padding: 6px 10px; border-radius: 6px;
+  background: var(--chip); color: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.flow .node.accent { background: var(--accent-soft); color: var(--accent-strong); }
+.flow .arrow { color: var(--text-soft); font-weight: 700; }
+
+/* Code block for inline snippets inside a section */
+.code-block {
+  margin: 12px 0;
+  padding: 14px 16px;
+  background: #0F172A;
+  color: #E2E8F0;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  overflow-x: auto;
+  white-space: pre;
+}
+.code-block .c-kw { color: #7DD3FC; }
+.code-block .c-str { color: #A7F3D0; }
+.code-block .c-fn { color: #FBBF24; }
+.code-block .c-cm { color: #94A3B8; font-style: italic; }
+.code-block .c-prop { color: #F0ABFC; }
+
+.code-caption {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-soft);
+  margin-top: 16px;
+}
+.code-caption.before { color: #DC2626; }
+.code-caption.after { color: #16A34A; }
+
+/* Small in-section heading (question / solution / effect etc.) */
+.sub-h {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent-strong);
+  margin: 22px 0 10px 0;
+}
+.sub-h::before {
+  content: "";
+  display: inline-block;
+  width: 4px; height: 14px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Inline code (for API names / keys in prose) */
+:not(pre) > code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--chip);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--accent-strong);
+  border: 1px solid var(--rule);
+}
+
+/* Interview-prompt block (面试这样说) */
+.pitch {
+  margin: 12px 0;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--accent-softer) 0%, transparent 100%), var(--card);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+}
+.pitch-label {
+  display: inline-block;
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent-strong);
+  background: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+  margin-bottom: 8px;
+}
+.pitch p {
+  margin: 0;
+  font-size: 13.5px; line-height: 1.65;
+  color: var(--text);
+}
+.pitch p + p { margin-top: 8px; }
+
+/* Big challenge heading inside challenges page */
+.challenge-heading {
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.01em; line-height: 1.3;
+  margin: 50px 0 6px 0;
+  padding-top: 32px;
+  border-top: 2px solid var(--accent);
+  position: relative;
+}
+.challenge-heading:first-of-type {
+  margin-top: 10px;
+  padding-top: 0;
+  border-top: none;
+}
+.challenge-heading .num {
+  display: inline-block;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--accent-strong);
+  vertical-align: middle;
+  margin-right: 10px;
+  background: var(--accent-soft);
+  padding: 3px 9px;
+  border-radius: 5px;
+}
+.challenge-lead {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
 /* Q&A accordion */

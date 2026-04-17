@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Overview · Course Commerce Platform</title>
+<meta name="description" content="Overview of the Course Commerce Platform deep-dive." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="overview" aria-label="Project sections"></aside>
+
+    <main>
+
+      <header class="page-header">
+        <div class="page-eyebrow">Project Deep-Dive</div>
+        <h1 class="page-title">Course Commerce Platform</h1>
+        <p class="page-lead">
+          An internal admin tool that lets the operations team build course marketing
+          landing pages without writing any code — drag the blocks, fill in a form,
+          preview on a phone mockup, publish. That's the whole flow.
+        </p>
+
+        <div class="meta-strip" aria-label="Project meta">
+          <div class="cell"><div class="label">Company</div><div class="val">Xiwangxue</div></div>
+          <div class="cell"><div class="label">Timeline</div><div class="val">2022 — 2023</div></div>
+          <div class="cell"><div class="label">Role</div><div class="val">Senior Frontend Engineer</div></div>
+          <div class="cell"><div class="label">Stack</div><div class="val">Umi Max · React · Ant Design Pro · Formily · TypeScript</div></div>
+          <div class="cell"><div class="label">Users</div><div class="val">Internal — ops &amp; marketing team</div></div>
+        </div>
+      </header>
+
+      <div class="section-eyebrow"><span class="num">01</span>Overview</div>
+      <h2 class="section-title" style="font-size:26px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:18px;">What it is, in one sentence</h2>
+
+      <p>
+        A low-code admin system with a visual page builder inside it, so non-engineers
+        on the ops team can ship production course landing pages end-to-end — from
+        assembling the page to configuring forms, previewing on a phone, and hitting
+        publish.
+      </p>
+
+      <dl class="star" aria-label="STAR summary">
+        <dt>Situation</dt>
+        <dd>
+          Every new course needed a new promo landing page. About 80% of the page
+          structure was the same every time — hero, course intro, teacher, pricing,
+          sign-up form. The only real difference was the copy and the course.
+          But because it was all hand-coded, every page took the frontend team
+          3–5 days, and ops had to queue up for us.
+        </dd>
+        <dt>Task</dt>
+        <dd>
+          Move the "building a page" capability from engineering over to ops,
+          without losing page quality, load speed, or design consistency. Basically:
+          let them self-serve, but keep the output production-grade.
+        </dd>
+        <dt>Action</dt>
+        <dd>
+          Built a 7-step wizard that walks ops through basic info → materials →
+          course binding → rules → form → review → share. Plugged in Formily so
+          any form field on the page is just a config, not code. Added an
+          iPhone-frame preview on the right side so ops can see exactly what the
+          user will see, on the correct screen size, with a QR code they can scan
+          to test on a real phone.
+        </dd>
+        <dt>Result</dt>
+        <dd>
+          Ops ships their own course pages in a few hours instead of waiting
+          several days. The frontend team stopped being the bottleneck and shifted
+          focus from "making pages" to "making the tool better." The platform
+          also grew beyond just the builder — template center, component library,
+          product/coupon center, operation tools, and user segmentation all got
+          pulled into the same admin.
+        </dd>
+      </dl>
+
+      <footer class="pager" aria-label="Section navigation">
+        <span></span>
+        <a class="next" href="./role.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">03 · My Role &amp; Scope</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

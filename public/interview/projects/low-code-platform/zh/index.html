@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>概览 · 企业级低代码活动平台</title>
+<meta name="description" content="企业级低代码活动平台项目梳理 · 概览" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="overview" aria-label="项目章节"></aside>
+
+    <main>
+
+      <header class="page-header">
+        <div class="page-eyebrow">项目深度梳理</div>
+        <h1 class="page-title">企业级低代码活动平台</h1>
+        <p class="page-lead">
+          一个面向运营、产品、市场团队的可视化搭建平台。非研发同学通过拖拽组件、配置参数就能产出一张完整的营销活动页，
+          支持多端（移动 Web / 微信 H5 / 微信小程序）一次配置、同步发布，把活动上线周期从「几天」压缩到「十几分钟」。
+        </p>
+
+        <div class="meta-strip" aria-label="项目信息">
+          <div class="cell"><div class="label">公司</div><div class="val">希望学</div></div>
+          <div class="cell"><div class="label">时间</div><div class="val">2023 — 2025</div></div>
+          <div class="cell"><div class="label">角色</div><div class="val">前端负责人 · 3–5 人团队</div></div>
+          <div class="cell"><div class="label">技术栈</div><div class="val">React · TypeScript · Vite · Node.js</div></div>
+          <div class="cell"><div class="label">用户</div><div class="val">运营 / 产品 / 市场</div></div>
+        </div>
+      </header>
+
+      <div class="section-eyebrow"><span class="num">01</span>项目概览</div>
+      <h2 class="section-title" style="font-size:26px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:18px;">一句话讲清楚这个项目</h2>
+
+      <p>
+        一个 <strong>JSON schema 驱动</strong>的低代码活动搭建平台：左侧物料库 + 中间画布 + 右侧属性面板是运营看到的编辑器；
+        底层是一套自研渲染引擎 + 版本化组件库 + 触发器事件系统，让同一份 schema 在多个渠道上都能正确渲染、正确埋点、正确分享。
+      </p>
+
+      <dl class="star" aria-label="STAR 总结">
+        <dt>背景（S）</dt>
+        <dd>早期每个活动页都由前端手写，运营一有「换图、换文案、加个按钮」的需求就得排期。团队里一半的前端人力被消耗在重复的落地页搭建上，上线节奏被研发工期卡死。</dd>
+        <dt>目标（T）</dt>
+        <dd>把前端从活动交付链路中「拿掉」：运营自己配、自己预览、自己发布；同时必须保证多端一致、视觉不走样、数据埋点不丢。</dd>
+        <dt>动作（A）</dt>
+        <dd>设计一套能完整描述页面结构、样式、行为、分享配置的 JSON schema；构建渲染引擎 + CDN 版本化组件库 + 拖拽式编辑器；带动 4 条业务线完成迁移。</dd>
+        <dt>结果（R）</dt>
+        <dd>活动页上线周期从平均 2 天降到约 15 分钟；前端团队从「交付型」转向「平台型」工作——维护物料库、优化编辑器体验、接入实验与埋点能力。</dd>
+      </dl>
+
+      <h3 class="sub">让它真正跑起来的几个关键点</h3>
+      <ul class="bullets">
+        <li><strong>Schema 即契约。</strong>一份 JSON 描述布局、组件、样式、触发器、分享配置。编辑器只负责写它，运行时只负责读它，两边之间没有任何其他耦合。</li>
+        <li><strong>组件版本化 + CDN 加载。</strong>每个 widget 是一个独立 bundle，有自己的 semver；运行时按 schema 里钉住的版本加载，组件升级不会打穿历史活动页。</li>
+        <li><strong>用触发器代替「写代码」。</strong>不让运营写 JS，而是暴露一组声明式触发器（<code>onClick</code>/<code>onShow</code>/<code>onScroll</code>），它们的 action 也是 schema——跳转、埋点、分享、弹窗、跨组件调用。</li>
+        <li><strong>多端天然一致。</strong>同一份 schema 通过渠道适配器分别渲染到 H5、微信 H5、小程序——运营「配一次，发多端」。</li>
+      </ul>
+
+      <footer class="pager" aria-label="章节导航">
+        <span></span>
+        <a class="next" href="./role.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">02 · 我的职责</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

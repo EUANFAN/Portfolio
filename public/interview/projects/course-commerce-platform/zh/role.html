@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>我的职责 · 课程商业平台</title>
+<meta name="description" content="课程商业平台中我的职责与范围" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="role" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">课程商业平台</a>
+        <span class="sep">/</span>
+        <span>我的职责</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">03</span>我的职责</div>
+        <h1 class="page-title">我负责了什么，没负责什么</h1>
+      </header>
+
+      <h3 class="sub">我负责的</h3>
+      <ul class="bullets">
+        <li><strong class="em">前端底座的搭建</strong> —— 基于 Umi Max + React + TypeScript 的工程脚手架、约定式路由配置、主题与布局、多环境构建（dev / mock / gray / prod）。</li>
+        <li><strong class="em">细粒度权限体系的落地</strong> —— 基于 Umi Max 的 access 插件 + initialState，拉菜单权限和功能权限，做路由级和按钮级控制，配合 403 页兜底。</li>
+        <li><strong class="em">统一的请求与鉴权层</strong> —— axios 拦截器集成 SSO token、统一错误提示、401 自动登出并跳 SSO；用 @dandelion/swagger 自动生成 API 类型。</li>
+        <li><strong class="em">通用组件库</strong> —— 表单搜索组、列表操作下拉、上传、筛选、Formily 扩展表单项（级联 / 多选 / 数字 / 开关 / trim 输入等）、排序拖拽、机型预览器。</li>
+        <li><strong class="em">核心业务页面的落地</strong> —— 项目列表、模板中心、商品中心、优惠券、限购规则、推广工具、渠道活码等多个业务页面。</li>
+        <li><strong class="em">工作台（页面搭建器）</strong> —— 作为其中一个业务模块参与了核心流程（7 步向导、Formily 表单、手机端实时预览、保存 / 预览 / 发布闭环）。因为低代码不是本项目的亮点，此处仅列出。</li>
+      </ul>
+
+      <h3 class="sub">我合作 / 不负责的</h3>
+      <ul class="bullets">
+        <li>后端服务 —— 课程 / 优惠券 / 活动等数据模型、业务规则和接口，由后端主导。我参与接口契约评审。</li>
+        <li>权限后端 —— 菜单与功能权限的配置管理，由后端团队维护。我负责在前端消费这套权限。</li>
+        <li>底层设计规范 —— 基于 Ant Design + 公司内部设计团队的定制主题，我做前端适配。</li>
+        <li>SSO 登录系统 —— 独立服务，我对接而非拥有。</li>
+      </ul>
+
+      <h3 class="sub">协作关系</h3>
+      <p class="muted">
+        小型前端团队 + 对接运营、产品、设计、后端多方。我在其中的定位是<strong class="em">"架构负责人 + 主力开发"</strong> ——
+        既要把底座搭好、把规范定住，也要和兄弟们一起扛业务模块的实际交付。
+      </p>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./context.html">
+          <span class="dir">← 上一节</span>
+          <span class="lbl">02 · 背景与问题</span>
+        </a>
+        <a class="next" href="./architecture.html">
+          <span class="dir">下一节 →</span>
+          <span class="lbl">04 · 技术架构</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>
