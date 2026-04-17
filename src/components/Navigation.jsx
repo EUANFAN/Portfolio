@@ -42,12 +42,12 @@ const Navigation = ({ theme, setTheme, lang, setLang }) => {
           <span style={{ color: 'var(--accent)' }}>EF</span>
         </a>
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex gap-8 text-sm font-medium">
+          <div className="hidden md:flex gap-8 text-[0.9375rem] font-semibold tracking-wide">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="link-underline transition-colors"
+                className="link-underline transition-colors opacity-80 hover:opacity-100"
                 style={{ color: 'var(--text-primary)' }}
               >
                 {link.label}
