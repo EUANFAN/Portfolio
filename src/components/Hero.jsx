@@ -42,7 +42,7 @@ const Hero = ({ data, lang }) => {
     <section
       id="hero"
       ref={heroRef}
-      className="min-h-screen flex flex-col justify-center items-center relative px-6 pt-24 pb-12 md:pt-28 md:pb-20"
+      className="min-h-[90vh] flex flex-col justify-center items-center relative px-6 pt-24 pb-20 md:pt-32 md:pb-28"
     >
       <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-12 md:gap-16 lg:gap-20">
         <div className="flex-1 text-center md:text-left order-2 md:order-1 hero-text-block">

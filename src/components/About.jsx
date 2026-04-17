@@ -171,7 +171,7 @@ const About = ({ data, lang }) => {
       </div>
 
       <div className="section-scroll-arrow">
-        <a href="#experience" className="block text-current animate-bounce" aria-label="Scroll to Experience">
+        <a href="#skills" className="block text-current animate-bounce" aria-label="Scroll to Skills">
           <ChevronDown className="w-6 h-6 opacity-60" />
         </a>
       </div>

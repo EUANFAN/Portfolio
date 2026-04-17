@@ -35,7 +35,7 @@ const Footer = ({ data, lang }) => {
   }, []);
 
   return (
-    <footer id="contact" ref={sectionRef} className="min-h-[70vh] flex flex-col justify-center py-20 md:py-28 px-4 sm:px-6 relative">
+    <footer id="contact" ref={sectionRef} className="min-h-[60vh] flex flex-col justify-center py-20 md:py-28 px-6 relative">
       <div className="footer-content max-w-6xl mx-auto text-center w-full">
         <p className="footer-label mb-6 md:mb-8">{ui.connect}</p>
 

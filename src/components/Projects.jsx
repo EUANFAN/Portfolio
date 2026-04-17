@@ -192,7 +192,7 @@ const Projects = ({ data, lang }) => {
       <div className="max-w-6xl mx-auto">
         <h2 className="section-heading mb-10 md:mb-14">{ui.sectionLabel}</h2>
 
-        <div className="space-y-16 md:space-y-20">
+        <div className="space-y-20 md:space-y-24">
           {data.projectList.map((project, index) => {
             const isMobile = project.type === 'mobile';
             const images = getImages(project);
@@ -301,7 +301,7 @@ const Projects = ({ data, lang }) => {
       </div>
 
       <div className="section-scroll-arrow">
-        <a href="#skills" className="block text-current animate-bounce" aria-label="Scroll to Skills">
+        <a href="#contact" className="block text-current animate-bounce" aria-label="Scroll to Contact">
           <ChevronDown className="w-6 h-6 opacity-60" />
         </a>
       </div>

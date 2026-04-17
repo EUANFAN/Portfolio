@@ -63,9 +63,9 @@ function App() {
       <main>
         <Hero data={data} lang={lang} />
         <About data={data} lang={lang} />
+        <Skills data={data} theme={theme} lang={lang} />
         <Experience data={data} lang={lang} />
         <Projects data={data} lang={lang} />
-        <Skills data={data} theme={theme} lang={lang} />
         <Footer data={data} lang={lang} />
       </main>
     </>

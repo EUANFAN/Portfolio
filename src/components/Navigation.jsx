@@ -8,9 +8,9 @@ const Navigation = ({ theme, setTheme, lang, setLang }) => {
   const ui = UI_TEXT[lang].nav;
   const navLinks = [
     { href: '#about', label: ui[0] },
-    { href: '#experience', label: ui[1] },
-    { href: '#projects', label: ui[2] },
-    { href: '#skills', label: ui[3] },
+    { href: '#skills', label: ui[1] },
+    { href: '#experience', label: ui[2] },
+    { href: '#projects', label: ui[3] },
     { href: '#contact', label: ui[4] },
   ];
 

@@ -1,6 +1,6 @@
 const UI_TEXT = {
   en: {
-    nav: ['About', 'Experience', 'Projects', 'Skills', 'Contact'],
+    nav: ['About', 'Skills', 'Experience', 'Projects', 'Contact'],
     hero: { selectedExp: 'Selected Experience', techExpertise: 'Technical Expertise', workAuth: 'Work Authorization' },
     about: {
       sectionLabel: 'About Me',
@@ -38,7 +38,7 @@ const UI_TEXT = {
     }
   },
   zh: {
-    nav: ['关于', '经历', '项目', '技能', '联系'],
+    nav: ['关于', '技能', '经历', '项目', '联系'],
     hero: { selectedExp: '任职经历', techExpertise: '技术方向', workAuth: '工作状态' },
     about: {
       sectionLabel: '关于我',

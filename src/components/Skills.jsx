@@ -114,7 +114,7 @@ const Skills = ({ data, theme, lang }) => {
       </div>
 
       <div className="section-scroll-arrow">
-        <a href="#contact" className="block text-current animate-bounce" aria-label="Scroll to Contact">
+        <a href="#experience" className="block text-current animate-bounce" aria-label="Scroll to Experience">
           <ChevronDown className="w-6 h-6 opacity-60" />
         </a>
       </div>
