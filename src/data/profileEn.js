@@ -124,11 +124,11 @@ const profileDataEn = {
       //   "Repetitive campaign development was consuming significant frontend capacity."
       // ],
       challengesSolved: [
-        "Standardized campaign page building across teams with a unified page data model and a standard component integration workflow.",
-        "Reduced reliance on engineers by giving operations teams a more intuitive visual editing workflow.",
-        "Improved editor interaction consistency through structured state management with MobX.",
-        "Improved performance for user-facing campaign pages through SSR and more efficient rendering and loading strategies.",
-        "Reduced repeated frontend work and improved reuse across components, templates, and historical assets.",
+        "Standardized campaign page development across teams through a unified page schema and a consistent component integration model.",
+        "Reduced repeated frontend work by improving reuse across shared components, templates, and existing campaign assets.",
+        "Improved editor consistency and maintainability through structured MobX-based state management.",
+        "Enabled operations teams to build and launch pages more independently through a more intuitive visual editing workflow.",
+        "Improved user-facing page performance with SSR and more efficient rendering and asset-loading strategies."
       ],
       techStack: [
         "Frontend: React, TypeScript, JavaScript",
@@ -137,12 +137,12 @@ const profileDataEn = {
       outcomeKeywords: ["30 minutes", "low-code", "configuration-driven", "visual editor", "reusable components"],
       roleKeywords: ["frontend lead", "core owner", "design and development", "different business scenarios"],
       backgroundKeywords: [],
-      challengesKeywords: ["unified page data model", "visual editing workflow", "structured state management", "performance", "reuse"]
+      challengesKeywords: ["a unified page schema", "repeated frontend work", "consistency", "maintainability", "visual editing workflow", "performance"]
     },
     {
       title: "Course Commerce Platform",
       type: "web",
-      overview: "A mobile-first course e-commerce platform supporting course purchases, payments, and transactions for millions of users across WeChat, Alipay, and major browsers.",
+      overview: "A unified internal course commerce platform that enables operations teams to manage product setup, promotions, purchase rules, and campaign operations in one place, improving efficiency, consistency, and scalability.",
       screenshots: [
         "images/low-code_platform/toB_1.png",
         "images/low-code_platform/toB_2.png",
@@ -152,14 +152,15 @@ const profileDataEn = {
         "images/low-code_platform/toB_6.png",
       ],
       outcomes: [
-        "Supported the company's core course sales and purchase business, serving millions of users in high-traffic transaction scenarios.",
-        "Delivered frontend infrastructure including a component library, project scaffolding, and UI standards.",
-        "Reduced legacy system maintenance costs and improved delivery efficiency and cross-platform consistency."
+        "Built a unified course commerce platform supporting the company’s core sales business and millions of users in high-traffic transaction scenarios.",
+        "Integrated 4+ previously fragmented operational workflows into one system, reducing cross-system switching, manual coordination, and management overhead.",
+        "Standardized core platform capabilities including permissions, request flow, and complex form handling, improving consistency, maintainability, and operational stability.",
+        "Established a scalable platform foundation for new commerce modules and increasingly complex sales scenarios, improving delivery efficiency as the business grew."
       ],
       role: [
-        "Served as the core project owner, leading the overall architecture design and delivery of key modules.",
-        "Drove code quality, engineering standards, and implementation of critical business flows.",
-        "Contributed deeply to high-complexity modules such as payments and transactions."
+        "Owned the end-to-end design and delivery of the Course Commerce Platform, consolidating multiple fragmented operational workflows into one unified system.",
+        "Defined the frontend architecture and core technical solutions for shared CRUD patterns, permissions, request flow, and complex form handling.",
+        "Led cross-functional collaboration across product, design, backend, and operations teams to align requirements and drive platform adoption."
       ],
       // background: [
       //   "The company needed a mobile sales channel to support online course purchases and conversion on mobile devices.",
@@ -167,18 +168,19 @@ const profileDataEn = {
       //   "As the business scaled, the platform required a more stable and extensible technical foundation."
       // ],
       challengesSolved: [
-        "Solved multi-environment compatibility issues across mobile course pages, including WeChat, Alipay, and major browsers.",
-        "Handled complex payment and transaction logic involving different course types, payment methods, and discount combinations.",
-        "Improved reusability and maintainability across both PC and mobile through a component-driven and modular architecture."
+        "Led CRUD abstraction across 20+ admin modules, reducing repeated frontend work and improving delivery efficiency for operational workflows.",
+        "Built a fine-grained permission system to support secure, role-based access control across complex internal business scenarios.",
+        "Designed the frontend architecture for complex nested forms, enabling maintainable support for products, promotions, and purchase-rule configuration.",
+        "Established a multi-environment build setup to improve release stability and support the platform’s long-term scalability."
       ],
       techStack: [
         "Frontend: React, TypeScript, JavaScript",
         "Backend: Python, MySQL, Redis"
       ],
-      outcomeKeywords: ["millions of users", "frontend infrastructure", "cross-platform"],
-      roleKeywords: ["project owner", "architecture design", "payments"],
+      outcomeKeywords: ["core sales business","millions of users", "Integrated 4+", "into one system", "improving consistency, maintainability, and operational stability", "a scalable platform foundation"],
+      roleKeywords: ["Owned", "one unified system", "frontend architecture", "cross-functional collaboration"],
       backgroundKeywords: ["mobile sales", "high-traffic", "extensible"],
-      challengesKeywords: ["multi-environment", "complex payments", "reusability"]
+      challengesKeywords: ["across 20", "fine-grained permission system", "frontend architecture", "multi-environment", "complex payments", "reusability"]
     }
   ],
 
