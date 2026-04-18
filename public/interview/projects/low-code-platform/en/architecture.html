@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Architecture · Low-Code Campaign Platform</title>
+<meta name="description" content="Architecture, stack, and core delivery flows for the Low-Code Campaign Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="architecture" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Architecture</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">04</span>Architecture</div>
+        <h1 class="page-title">The layers, the stack, and the flows that mattered</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          The easiest way to understand the platform is as four layers: the editor on top, a shared schema in the middle,
+          a Node/Koa publish service behind it, and a consumer runtime that renders the final campaign page.
+        </p>
+      </header>
+
+      <h3 class="sub">High-level architecture</h3>
+      <div class="diagram" aria-label="High-level architecture diagram">
+
+        <div class="layer">
+          <div class="layer-label">Editor</div>
+          <div class="block">Left panel<span class="sub">Pages, widget library, layer tree</span></div>
+          <div class="block">Canvas<span class="sub">Viewport, drag, resize, sort</span></div>
+          <div class="block">Right panel<span class="sub">Dynamic settings and trigger config</span></div>
+          <div class="block highlight">MobX store<span class="sub">Project → Page → Widget → Layer</span></div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Shared Contract</div>
+          <div class="block highlight">PageData schema<span class="sub">Project, pages, widgets, triggers, animation, share config</span></div>
+          <div class="block highlight">Widget contract<span class="sub">type, version, data, config, methods, onRender</span></div>
+          <div class="block highlight">Trigger model<span class="sub">Redirect, Scroll, ChangeWidget, EmitListeners</span></div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Publish Service</div>
+          <div class="block">Schema storage<span class="sub">Project data and version metadata</span></div>
+          <div class="block">SSR pipeline<span class="sub">jsdom, renderToString, template assembly</span></div>
+          <div class="block">CDN output<span class="sub">HTML, JSON, screenshot</span></div>
+          <div class="block">API layer<span class="sub">Koa controllers and publish endpoints</span></div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Consumer Runtime</div>
+          <div class="block">SSR HTML<span class="sub">Fast first paint from CDN</span></div>
+          <div class="block">Hydration<span class="sub">Attach events and restore behavior</span></div>
+          <div class="block">Dynamic widget loading<span class="sub">CDN widget bundles and styles</span></div>
+          <div class="block highlight">Graceful fallback<span class="sub">Render on the client if SSR cannot be used</span></div>
+        </div>
+
+      </div>
+
+      <h3 class="sub">Stack</h3>
+      <div class="stack-grid">
+        <div class="stack-group">
+          <div class="stack-group-title">Frontend core</div>
+          <div class="tags">
+            <span class="tag">React (Class Components)</span>
+            <span class="tag">MobX 4</span>
+            <span class="tag">Ant Design</span>
+            <span class="tag">Less + px2rem</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Editor interaction</div>
+          <div class="tags">
+            <span class="tag">react-rnd</span>
+            <span class="tag">react-sortable-hoc</span>
+            <span class="tag">react-swipeable-views</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Server side</div>
+          <div class="tags">
+            <span class="tag">Node.js</span>
+            <span class="tag">Koa</span>
+            <span class="tag">jsdom</span>
+            <span class="tag">ReactDOMServer</span>
+            <span class="tag">Handlebars</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Storage and infra</div>
+          <div class="tags">
+            <span class="tag">MongoDB</span>
+            <span class="tag">Redis</span>
+            <span class="tag">Webpack</span>
+            <span class="tag">Docker</span>
+            <span class="tag">CDN</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub">Flow 1: adding a widget to the canvas</h3>
+      <div class="flow" aria-label="Editor update flow">
+        <span class="node accent">Pick a widget from the left panel</span>
+        <span class="arrow">→</span>
+        <span class="node">Stage.addChild(widget)</span>
+        <span class="arrow">→</span>
+        <span class="node">Push into an @observable list</span>
+        <span class="arrow">→</span>
+        <span class="node">@observer canvas re-renders</span>
+        <span class="arrow">→</span>
+        <span class="node accent">New widget appears immediately</span>
+      </div>
+      <p style="margin-top:10px;">
+        The same path is used when the right panel edits widget data. That was one of the big benefits of the MobX model:
+        the three surfaces were not “syncing UI” with each other. They were simply reacting to the same state tree.
+      </p>
+
+      <h3 class="sub">Flow 2: publish to production</h3>
+      <div class="flow" aria-label="Publish flow">
+        <span class="node">Ops clicks publish</span>
+        <span class="arrow">→</span>
+        <span class="node">Schema hits the Koa API</span>
+        <span class="arrow">→</span>
+        <span class="node">Node boots jsdom</span>
+        <span class="arrow">→</span>
+        <span class="node">Load external widget bundles</span>
+        <span class="arrow">→</span>
+        <span class="node">renderToString(&lt;App /&gt;)</span>
+        <span class="arrow">→</span>
+        <span class="node">Assemble HTML + PageData</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Push HTML and JSON to CDN</span>
+      </div>
+
+      <h3 class="sub">Flow 3: widget upgrade without breaking old pages</h3>
+      <div class="flow" aria-label="Versioning flow">
+        <span class="node">Ship widget v2</span>
+        <span class="arrow">→</span>
+        <span class="node">Upload to /components/{type}/{version}</span>
+        <span class="arrow">→</span>
+        <span class="node">Old schema still pins v1</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Historic pages stay untouched</span>
+      </div>
+      <p style="margin-top:10px;">
+        The version lived in the schema, not in some global “latest” registry. That was a simple choice, but it made the platform much safer.
+      </p>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./role.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">03 · Role &amp; Ownership</span>
+        </a>
+        <a class="next" href="./modules.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">05 · Core Modules</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

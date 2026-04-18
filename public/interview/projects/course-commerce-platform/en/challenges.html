@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Challenges &amp; Solutions · Course Commerce Platform</title>
+<meta name="description" content="Course Commerce Platform - hard parts, solutions, and interview follow-up questions." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="challenges" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Challenges &amp; Solutions</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">07</span>Challenges &amp; Solutions</div>
+        <h1 class="page-title">Five tough problems, and how we worked through them</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          Each challenge includes:
+          <strong class="em">the problem setup, the architecture diagram, the solution breakdown, code comparison, key details, the result, an interview-ready spoken version, and likely Q&amp;A</strong>.
+          The goal is simple: once you finish one section, you should be able to explain that topic clearly on your own.
+        </p>
+      </header>
+
+
+      <!-- ============================================================ -->
+      <!-- ============   Challenge 1 · CRUD abstraction   ============= -->
+      <!-- ============================================================ -->
+      <h2 class="challenge-heading"><span class="num">01</span>CRUD abstraction</h2>
+      <p class="challenge-lead">With 20+ list pages, how do you avoid rewriting filtering, pagination, and request logic from scratch on every page?</p>
+
+      <div class="sub-h">Problem setup</div>
+      <p>
+        The whole admin had 20+ list pages:
+        course projects, templates, components, coupons, course products, physical goods, promotion tools,
+        channel QR codes, user purchase limits, course purchase limits, and more.
+        The <strong class="em">page skeleton was highly similar</strong>:
+      </p>
+      <ul class="bullets">
+        <li>At the top, a <strong class="em">filter area</strong>: a group of search fields such as name, status, date range, creator, plus Search and Reset buttons.</li>
+        <li>In the middle, a <strong class="em">table</strong>: columns, pagination, sorting, and column visibility.</li>
+        <li>On the right, an <strong class="em">operation column</strong>: view, edit, copy, delete, publish/unpublish, all shown or hidden by permission.</li>
+        <li>At the top or bottom, sometimes a <strong class="em">bulk action area</strong>: after selecting rows, the user can run actions in bulk.</li>
+      </ul>
+      <p>
+        If every page implemented that on its own, it created <strong class="em">three real problems</strong>:
+      </p>
+      <ol class="bullets">
+        <li><strong class="em">Code volume exploded</strong>: a hand-written list page could easily reach 400-500 lines, and around 80% of that was boilerplate.</li>
+        <li><strong class="em">Interaction behavior drifted</strong>: page A reset filters when paging, page B did not; page A searched when you clicked the table header, page B only searched when you clicked a button. Small differences kept growing over time.</li>
+        <li><strong class="em">Maintenance became painful</strong>: if we wanted one global change like “persist filter state to the URL,” we had to touch 20+ files.</li>
+      </ol>
+
+
+      <div class="sub-h">Architecture diagram</div>
+      <div class="diagram" aria-label="CRUD abstraction diagram">
+
+        <div class="layer">
+          <div class="layer-label">Business page layer (thin)</div>
+          <div class="block">
+            CouponList
+            <span class="sub">Only writes COLUMNS + searchFn</span>
+          </div>
+          <div class="block">
+            CourseProjectList
+            <span class="sub">Only writes COLUMNS + searchFn</span>
+          </div>
+          <div class="block">
+            UserLimitList
+            <span class="sub">Only writes COLUMNS + searchFn</span>
+          </div>
+          <div class="block">
+            ... 20+ pages
+            <span class="sub">All use the same pattern</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">CRUD primitive layer (core)</div>
+          <div class="block highlight">
+            useTableSearch
+            <span class="sub">Unifies filters + pagination + request timing</span>
+          </div>
+          <div class="block highlight">
+            useTableSet
+            <span class="sub">Column visibility / width persistence</span>
+          </div>
+          <div class="block highlight">
+            FormSearchGroup
+            <span class="sub">Top filter-bar component</span>
+          </div>
+          <div class="block highlight">
+            FilterComponent
+            <span class="sub">Quick status tab</span>
+          </div>
+          <div class="block highlight">
+            TableOperationDropdown
+            <span class="sub">Operation column (automatic permission filtering)</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Base dependency layer</div>
+          <div class="block">
+            antd Table / ProTable
+          </div>
+          <div class="block">
+            Formily
+            <span class="sub">The search form is driven by it</span>
+          </div>
+          <div class="block">
+            useAuthCheck
+            <span class="sub">Button-level permissions</span>
+          </div>
+          <div class="block">
+            axios · Swagger API
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">Core idea</div>
+      <p>
+        <strong class="em">Pull out the few things every list page has to do anyway, and turn them into 3 hooks plus 3 components.</strong>
+        From that point on, a business page only had to do two things:
+        <strong class="em">1. define the columns</strong> and <strong class="em">2. provide the request function</strong>.
+        Filter state, pagination state, request timing, “keep filters while paging,” “reset current on a new search,” loading state,
+        and column persistence all came from the primitive layer.
+      </p>
+
+
+      <div class="sub-h">Code comparison</div>
+
+      <div class="code-caption before">Before · a hand-written coupon list page (main boilerplate from a ~450-line file)</div>
+<pre class="code-block"><span class="c-kw">const</span> CouponListBefore = () =&gt; {
+  <span class="c-cm">// 筛选表单状态</span>
+  <span class="c-kw">const</span> [params, setParams] = useState({ name: <span class="c-str">''</span>, status: <span class="c-kw">undefined</span> })
+  <span class="c-cm">// 列表数据</span>
+  <span class="c-kw">const</span> [dataSource, setDataSource] = useState([])
+  <span class="c-kw">const</span> [loading, setLoading] = useState(<span class="c-kw">false</span>)
+  <span class="c-cm">// 分页状态</span>
+  <span class="c-kw">const</span> [pagination, setPagination] = useState({ current: 1, pageSize: 20, total: 0 })
+
+  <span class="c-cm">// 请求函数</span>
+  <span class="c-kw">const</span> <span class="c-fn">fetchData</span> = <span class="c-kw">async</span> (p = params, pg = pagination) =&gt; {
+    setLoading(<span class="c-kw">true</span>)
+    <span class="c-kw">try</span> {
+      <span class="c-kw">const</span> res = <span class="c-kw">await</span> <span class="c-fn">getCouponList</span>({ ...p, page: pg.current, size: pg.pageSize })
+      setDataSource(res.list)
+      setPagination({ ...pg, total: res.total })
+    } <span class="c-kw">finally</span> { setLoading(<span class="c-kw">false</span>) }
+  }
+
+  <span class="c-cm">// 初次加载</span>
+  useEffect(() =&gt; { <span class="c-fn">fetchData</span>() }, [])
+
+  <span class="c-cm">// 搜索：回到第一页</span>
+  <span class="c-kw">const</span> <span class="c-fn">handleSearch</span> = () =&gt; <span class="c-fn">fetchData</span>(params, { ...pagination, current: 1 })
+  <span class="c-cm">// 重置：清空筛选 + 回到第一页</span>
+  <span class="c-kw">const</span> <span class="c-fn">handleReset</span> = () =&gt; {
+    <span class="c-kw">const</span> empty = { name: <span class="c-str">''</span>, status: <span class="c-kw">undefined</span> }
+    setParams(empty)
+    <span class="c-fn">fetchData</span>(empty, { ...pagination, current: 1 })
+  }
+  <span class="c-cm">// 翻页：保留筛选</span>
+  <span class="c-kw">const</span> <span class="c-fn">handleChange</span> = (pg) =&gt; <span class="c-fn">fetchData</span>(params, pg)
+
+  <span class="c-cm">// ... 还有 column 持久化、批量操作、权限按钮 等等 200+ 行</span>
+
+  <span class="c-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="c-prop">Form</span>&gt;...搜索字段 JSX...&lt;/<span class="c-prop">Form</span>&gt;
+      &lt;<span class="c-prop">Table</span> dataSource={dataSource} pagination={pagination} loading={loading} onChange={handleChange} /&gt;
+    &lt;/&gt;
+  )
+}</pre>
+
+      <div class="code-caption after">After · the same list page after switching to CRUD primitives (~80 lines)</div>
+<pre class="code-block"><span class="c-kw">const</span> COLUMNS = [
+  { title: <span class="c-str">'优惠券名称'</span>, dataIndex: <span class="c-str">'name'</span> },
+  { title: <span class="c-str">'状态'</span>, dataIndex: <span class="c-str">'status'</span>, render: renderStatus },
+  { title: <span class="c-str">'操作'</span>, render: (_, row) =&gt; &lt;<span class="c-prop">TableOperationDropdown</span> actions={getActions(row)} /&gt; },
+]
+
+<span class="c-kw">const</span> SEARCH_FIELDS = [
+  { name: <span class="c-str">'name'</span>, label: <span class="c-str">'名称'</span>, component: <span class="c-str">'Input'</span> },
+  { name: <span class="c-str">'status'</span>, label: <span class="c-str">'状态'</span>, component: <span class="c-str">'Select'</span>, options: STATUS_OPTIONS },
+]
+
+<span class="c-kw">const</span> CouponListAfter = () =&gt; {
+  <span class="c-cm">// 一行 hook 搞定筛选 + 分页 + 请求时机 + loading</span>
+  <span class="c-kw">const</span> { tableProps, searchFormProps } = <span class="c-fn">useTableSearch</span>({
+    searchFn: getCouponList,
+    defaultParams: { status: <span class="c-str">'active'</span> },
+  })
+
+  <span class="c-cm">// 列显隐持久化到 localStorage</span>
+  <span class="c-kw">const</span> { finalColumns, columnSetter } = <span class="c-fn">useTableSet</span>(COLUMNS, <span class="c-str">'coupon-list'</span>)
+
+  <span class="c-kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="c-prop">FormSearchGroup</span> fields={SEARCH_FIELDS} {...searchFormProps} /&gt;
+      &lt;<span class="c-prop">Table</span> columns={finalColumns} {...tableProps} /&gt;
+    &lt;/&gt;
+  )
+}</pre>
+
+
+      <div class="sub-h">Key details (the things an interviewer is likely to ask about)</div>
+      <ul class="bullets">
+        <li>
+          <strong class="em">The signature of <code>useTableSearch</code></strong>: input was <code>{ searchFn, defaultParams, transform }</code>,
+          and output was <code>{ tableProps, searchFormProps, refresh, params }</code>. <code>tableProps</code> went straight into an antd Table,
+          and <code>searchFormProps</code> went straight into the search-bar component. The outer page did not even need to know what internal state the hook was using.
+        </li>
+        <li>
+          <strong class="em">The paging reset policy was unified</strong>: Search → reset <code>current</code> to 1; paging → keep the filters; Reset → clear params and reset <code>current</code> to 1.
+          Before that, every page wrote its own version. After that, all list pages behaved the same by default.
+        </li>
+        <li>
+          <strong class="em">Request timing</strong>: requests were triggered when <code>defaultParams</code> changed or when the page manually called <code>refresh()</code>.
+          Field changes did <strong class="em">not</strong> auto-search by default, to avoid accidental requests. That was a deliberate default after discussion.
+        </li>
+        <li>
+          <strong class="em">The persistence key for columns</strong>: the second argument in <code>useTableSet(columns, 'coupon-list')</code> became the localStorage key,
+          so one list page would not overwrite another page’s column settings.
+        </li>
+        <li>
+          <strong class="em">Permission filtering in the action column</strong>: <code>TableOperationDropdown</code> accepted an actions array, and each action could carry an
+          <code>authKey</code>. Internally it used <code>useAuthCheck(authKey)</code> to filter out unauthorized items, so business code did not have to repeat button-permission checks by hand.
+        </li>
+      </ul>
+
+
+      <div class="sub-h">Actual effect</div>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">Delivery cost</div>
+          <div class="mini-stat">0.5 person-day → 2 hours</div>
+          <div class="mini-desc">Average time to add one standard list page.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Code size</div>
+          <div class="mini-stat">~450 lines → ~80 lines</div>
+          <div class="mini-desc">Before vs. after on the same page: the coupon list.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Interaction consistency</div>
+          <div class="mini-stat">20+ pages aligned</div>
+          <div class="mini-desc">Paging, search, reset, and column persistence all behaved the same way.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Global change cost</div>
+          <div class="mini-stat">N places → 1 place</div>
+          <div class="mini-desc">For example, a request like “sync filter state to the URL” only needed a hook change.</div>
+        </div>
+      </div>
+
+
+      <div class="pitch">
+        <div class="pitch-label">How I would say this in an interview</div>
+        <p>
+          “In admin projects, list pages are where repetition gets out of control the fastest. We had 20+ list pages, and the structure was almost always the same:
+          filters at the top, a table in the middle, an action column on the right, and sometimes bulk actions as well.
+          If every page is written from scratch, one page quickly grows to four or five hundred lines, and interaction details start drifting apart.”
+        </p>
+        <p>
+          “My answer was to extract a <strong class="em">CRUD primitive layer</strong>:
+          two hooks, <code>useTableSearch</code> and <code>useTableSet</code>,
+          plus three shared components, <code>FormSearchGroup</code>, <code>FilterComponent</code>, and <code>TableOperationDropdown</code>.
+          From that point on, business pages only needed to define <code>columns</code> and <code>searchFn</code>.”
+        </p>
+        <p>
+          “In the end, a new list page dropped from half a day to about two hours, and the same page went from 450 lines down to 80.
+          More importantly, we got <strong class="em">behavior consistency</strong>:
+          users got the same experience on every list page, and that value came directly from the abstraction, not just from saving lines of code.”
+        </p>
+      </div>
+
+
+      <div class="qa" aria-label="Interview follow-up Q and A">
+        <details>
+          <summary>Why not just use Ant Design Pro's ProTable directly?</summary>
+          <div class="answer">
+            ProTable really was the starting point, and we were already using it. But ProTable’s API is relatively “big,” and search, pagination, and requests are tightly coupled inside the same component.
+            Once the business needed finer control, like “keep filters while paging, but reset sorting on a fresh search” or “some fields need debounce, others do not,” it became easy to fight ProTable’s defaults.
+            So we added a thin wrapper of our own hooks and components around it. Simple lists could still stay close to ProTable, while more complex lists used our abstraction. Both layers existed side by side.
+          </div>
+        </details>
+
+        <details>
+          <summary>How was <code>useTableSearch</code> implemented internally?</summary>
+          <div class="answer">
+            At the core, it used <code>useState</code> to manage four pieces of state: params, pagination, dataSource, and loading.
+            It exposed three handlers, <code>onSearch</code>, <code>onReset</code>, and <code>onChange</code>, and used <code>useEffect</code> to trigger <code>searchFn</code> at the right times.
+            Using ahooks <code>useRequest</code> would also have been perfectly fine. We hand-wrote this part because we wanted full control over request timing.
+            The key point was not which library we used. The key point was <strong class="em">defining the rule once and applying it across the whole system</strong>.
+          </div>
+        </details>
+
+        <details>
+          <summary>What if one list page has a non-standard need, like drag-sorting the whole table?</summary>
+          <div class="answer">
+            My rule is <strong class="em">do not force non-standard behavior into a shared component</strong>.
+            If a page needs drag sorting, that page should implement it on its own.
+            Shared components should stay focused on what most list pages genuinely have in common.
+            If you stretch a shared API to fit the odd 10%, the other 90% end up paying for it.
+            Over-abstraction is one of the easiest traps in B-side projects, so restraint matters.
+          </div>
+        </details>
+
+        <details>
+          <summary>Why not always store filter and pagination state in the URL? Otherwise refresh loses it.</summary>
+          <div class="answer">
+            By default we did not, for two reasons: one, the URL gets long and ugly very quickly; two, admin pages are not often shared in the same way as public-facing pages.
+            For the smaller number of pages that really needed it, like “send the filtered result to a teammate,” <code>useTableSearch</code> could enable params → URL sync through a switch.
+            <strong class="em">Simple by default, configurable for edge cases</strong> is my usual way of handling tradeoffs like this.
+          </div>
+        </details>
+
+        <details>
+          <summary>How did you handle column-level permissions, where not everyone is allowed to see a certain column?</summary>
+          <div class="answer">
+            There were two ways.
+            1. A column definition could carry an <code>authKey</code>, and <code>useTableSet</code> would filter out unauthorized columns during initialization through <code>useAuthCheck</code>.
+            2. A business page could also conditionally render columns directly with <code>useAuthCheck</code>.
+            The first way was more unified, and the second was more flexible. We supported both.
+          </div>
+        </details>
+      </div>
+
+
+      <!-- ============================================================ -->
+      <!-- ============   Challenge 2 · Fine-grained permissions   ===== -->
+      <!-- ============================================================ -->
+      <h2 class="challenge-heading"><span class="num">02</span>Fine-grained permission system</h2>
+      <p class="challenge-lead">Three layers of permission: menus, routes, and buttons. With 10+ roles, scattered if/else checks would have been a disaster.</p>
+
+      <div class="sub-h">Problem setup</div>
+      <p>
+        More than 10 roles were using this admin at the same time:
+        operations, marketing, product, customer support, supervisors, administrators, and more.
+        Each role saw a different combination of <strong class="em">menus, pages, and buttons</strong>:
+      </p>
+      <ul class="bullets">
+        <li><strong class="em">Menu level</strong>: a standard ops role should not see the “System Management” menu; a product role should not see the “User Portrait” module.</li>
+        <li><strong class="em">Route level</strong>: someone might be allowed into the “Coupon List” page, but still not be allowed into the “Coupon Configuration” details page.</li>
+        <li><strong class="em">Button level</strong>: on the same page, one role can only view, a supervisor can “approve,” and an administrator can “delete.”</li>
+      </ul>
+      <p>
+        If permission checks were scattered through business code, we would quickly end up with
+        <strong class="em">dozens of conditions like <code>if (user.role === 'admin' || ...)</code></strong>.
+        Once the permission rule changed, we would have to patch many places and would almost certainly miss a button somewhere.
+      </p>
+
+
+      <div class="sub-h">Architecture diagram</div>
+      <div class="diagram" aria-label="Permission system architecture">
+
+        <div class="layer">
+          <div class="layer-label">Data source (backend)</div>
+          <div class="block">
+            Permission API
+            <span class="sub">Returns a permission tree with a <code>type</code> field</span>
+          </div>
+          <div class="block">
+            <code>type</code> classification
+            <span class="sub"><code>type=0/1</code> means menu; other values mean function/button</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Frontend startup (Umi Max)</div>
+          <div class="block">
+            getInitialState()
+            <span class="sub">Fetch permissions during startup in <code>app.tsx</code></span>
+          </div>
+          <div class="block">
+            Recursive split
+            <span class="sub">Split by <code>type</code> into <code>menus[]</code> / <code>functions[]</code></span>
+          </div>
+          <div class="block highlight">
+            initialState
+            <span class="sub"><code>{ menus, functions }</code> available globally</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">access.ts (switch generation)</div>
+          <div class="block highlight">
+            canSeeXxx: menus.includes(...)
+            <span class="sub">Menu-permission switches</span>
+          </div>
+          <div class="block highlight">
+            functions: [...]
+            <span class="sub">Raw button-permission array</span>
+          </div>
+          <div class="block">
+            50+ switches
+            <span class="sub">Grouped by business domain</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Business consumption layer (three ways)</div>
+          <div class="block">
+            Route level
+            <span class="sub"><code>routes[].access = 'canSeeXxx'</code></span>
+          </div>
+          <div class="block">
+            Page level
+            <span class="sub"><code>&lt;Access accessible={xx} fallback={&lt;403/&gt;}&gt;</code></span>
+          </div>
+          <div class="block">
+            Button level
+            <span class="sub"><code>useAuthCheck('xxx-edit')</code></span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="sub-h">Core idea</div>
+      <p>
+        <strong class="em">“One source of data, one place to declare it, three places to consume it.”</strong>
+        All permission data was fetched once during startup; all permission switches were declared once in <code>access.ts</code>;
+        and the business layer had three consumption points: routes, pages, and buttons.
+        They were independent from one another, but all of them read from the same <code>access</code> object.
+        <strong class="em">Business code never touched raw permission data directly</strong>; it only consumed named switches from <code>access</code>.
+      </p>
+
+
+      <div class="sub-h">Code comparison</div>
+
+      <div class="code-caption before">Before · permission checks scattered throughout business code</div>
+<pre class="code-block"><span class="c-kw">const</span> CouponListPage = () =&gt; {
+  <span class="c-kw">const</span> { userInfo } = useUserContext()
+
+  <span class="c-cm">// 菜单权限（其实进都进不来应该就看不到，但以防万一）</span>
+  <span class="c-kw">if</span> (!userInfo.menus.includes(<span class="c-str">'gift-virtual-goods-coupon'</span>)) {
+    <span class="c-kw">return</span> &lt;<span class="c-prop">NoAccessible</span> /&gt;
+  }
+
+  <span class="c-cm">// 按钮权限散落在各处</span>
+  <span class="c-kw">const</span> canEdit = userInfo.functions.includes(<span class="c-str">'coupon-edit'</span>)
+  <span class="c-kw">const</span> canDelete = userInfo.functions.includes(<span class="c-str">'coupon-delete'</span>)
+  <span class="c-kw">const</span> canPublish = userInfo.functions.includes(<span class="c-str">'coupon-publish'</span>)
+
+  <span class="c-kw">return</span> (
+    &lt;&gt;
+      {canEdit &amp;&amp; &lt;<span class="c-prop">Button</span>&gt;编辑&lt;/<span class="c-prop">Button</span>&gt;}
+      {canDelete &amp;&amp; &lt;<span class="c-prop">Button</span>&gt;删除&lt;/<span class="c-prop">Button</span>&gt;}
+      {canPublish &amp;&amp; &lt;<span class="c-prop">Button</span>&gt;发布&lt;/<span class="c-prop">Button</span>&gt;}
+    &lt;/&gt;
+  )
+}
+<span class="c-cm">// Just imagine it: 20+ pages all written like this, with raw permission strings scattered through hundreds of files.</span></pre>
+
+      <div class="code-caption after">After · centralized declaration, and business code only uses semantic switches</div>
+<pre class="code-block"><span class="c-cm">// 1) access.ts — raw permission strings only appear here once</span>
+<span class="c-kw">export default</span> (initialState) =&gt; {
+  <span class="c-kw">const</span> { menus, functions } = initialState
+  <span class="c-kw">return</span> {
+    <span class="c-cm">// 菜单级</span>
+    canSeePresentCoupon: menus.includes(<span class="c-str">'gift-virtual-goods-coupon'</span>),
+    canSeeWorkspace: menus.includes(<span class="c-str">'workspace'</span>),
+    <span class="c-cm">// ... 50+ 个菜单开关</span>
+    functions,
+  }
+}
+
+<span class="c-cm">// 2) 路由级 — routes/index.ts</span>
+{
+  name: <span class="c-str">'优惠券'</span>,
+  path: <span class="c-str">'/present/virtualGoods/coupon'</span>,
+  component: <span class="c-str">'./present/coupon'</span>,
+  access: <span class="c-str">'canSeePresentCoupon'</span>, <span class="c-cm">// ← Umi Max automatically blocks the route + hides the menu</span>
+}
+
+<span class="c-cm">// 3) 页面级 — 业务组件外层</span>
+<span class="c-kw">const</span> Page = () =&gt; {
+  <span class="c-kw">const</span> access = <span class="c-fn">useAccess</span>()
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-prop">Access</span> accessible={access.canSeePresentCoupon} fallback={&lt;<span class="c-prop">NoAccessible</span> /&gt;}&gt;
+      &lt;<span class="c-prop">CouponList</span> /&gt;
+    &lt;/<span class="c-prop">Access</span>&gt;
+  )
+}
+
+<span class="c-cm">// 4) 按钮级 — 自封装的 hook</span>
+<span class="c-kw">const</span> Toolbar = () =&gt; {
+  <span class="c-kw">const</span> canEdit = <span class="c-fn">useAuthCheck</span>(<span class="c-str">'coupon-edit'</span>)
+  <span class="c-kw">const</span> canDelete = <span class="c-fn">useAuthCheck</span>(<span class="c-str">'coupon-delete'</span>)
+  <span class="c-kw">return</span> (
+    &lt;&gt;
+      {canEdit &amp;&amp; &lt;<span class="c-prop">Button</span>&gt;编辑&lt;/<span class="c-prop">Button</span>&gt;}
+      {canDelete &amp;&amp; &lt;<span class="c-prop">Button</span>&gt;删除&lt;/<span class="c-prop">Button</span>&gt;}
+    &lt;/&gt;
+  )
+}</pre>
+
+
+      <div class="sub-h">The full startup flow</div>
+      <div class="flow" aria-label="Permission startup flow">
+        <span class="node accent">SSO login</span>
+        <span class="arrow">→</span>
+        <span class="node">Write token into cookie</span>
+        <span class="arrow">→</span>
+        <span class="node">getInitialState()</span>
+        <span class="arrow">→</span>
+        <span class="node">Fetch permission tree</span>
+        <span class="arrow">→</span>
+        <span class="node">Split by <code>type</code></span>
+        <span class="arrow">→</span>
+        <span class="node accent">access.ts generates 50+ switches</span>
+        <span class="arrow">→</span>
+        <span class="node">Route guard + menu render + button visibility</span>
+      </div>
+
+
+      <div class="sub-h">Key details</div>
+      <ul class="bullets">
+        <li>
+          <strong class="em">The <code>type</code> convention</strong>: in the backend permission nodes, <code>type=0</code> and <code>type=1</code> meant menus,
+          and the other values, like <code>type=2</code>, meant function buttons.
+          The frontend recursively split those in <code>getInitialState</code> and pushed them into either <code>menus[]</code> or <code>functions[]</code>.
+          That split was a contract agreed with the backend.
+        </li>
+        <li>
+          <strong class="em">initialState was only fetched once at startup</strong>; we did not build real-time subscription.
+          Permission changes were not frequent enough to justify that, so refresh or re-login was enough.
+          If we ever needed real-time updates, Umi’s <code>setInitialState</code> could refresh the whole permission set.
+        </li>
+        <li>
+          <strong class="em">Frontend permission was not the security boundary</strong>.
+          We were explicit with the backend team about that: frontend interception only improved the UI,
+          by hiding inaccessible entry points and avoiding pointless requests.
+          The real security boundary was still enforced independently on the backend APIs.
+          Even if a user manually edited the URL and bypassed the frontend shell, the actual data request would still be rejected by the backend.
+        </li>
+        <li>
+          <strong class="em">The cost of <code>useAuthCheck</code></strong> was tiny: at the end of the day it was just <code>Array.includes</code> on a string array.
+          Even with a thousand keys, the cost would still be microseconds. Performance was not a concern here.
+        </li>
+        <li>
+          <strong class="em">New-module onboarding cost</strong>: add one node in <code>routes/index.ts</code> and one switch in <code>access.ts</code>,
+          and the module joined the system-wide permission model.
+          No extra framework code needed to be touched.
+        </li>
+      </ul>
+
+
+      <div class="sub-h">Actual effect</div>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">Permission granularity</div>
+          <div class="mini-stat">50+ switches</div>
+          <div class="mini-desc">Menu-level + button-level, enough to separate 10+ roles.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Zero raw permission strings in business code</div>
+          <div class="mini-stat">0 places</div>
+          <div class="mini-desc">All raw permission strings appeared only once, in <code>access.ts</code>.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Permission incidents</div>
+          <div class="mini-stat">0</div>
+          <div class="mini-desc">No frontend-side over-permission incidents after launch.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">New-module onboarding</div>
+          <div class="mini-stat">2 edits</div>
+          <div class="mini-desc">routes + access, with no other framework code changes.</div>
+        </div>
+      </div>
+
+
+      <div class="pitch">
+        <div class="pitch-label">How I would say this in an interview</div>
+        <p>
+          “The biggest risk in B-side admin permissions is scattering permission logic through business code.
+          Once you start writing <code>if (user.role === 'xxx')</code> across dozens of pages, the moment the rule changes,
+          you have to patch a whole bunch of places and you still end up missing a button somewhere.”
+        </p>
+        <p>
+          “So my answer was <strong class="em">one source of data, one place to declare it, three places to consume it</strong>.
+          Fetch the permission tree once at startup, split it by <code>type</code>, feed it into Umi Max’s <code>initialState</code>,
+          then generate 50+ semantic switches in <code>access.ts</code>, like <code>canSeePresentCoupon</code>.
+          Routes use those switches, pages use <code>&lt;Access&gt;</code>, and buttons use <code>useAuthCheck</code>.”
+        </p>
+        <p>
+          “The benefit is that when the permission rule changes, I only update one place, <code>access.ts</code>.
+          <strong class="em">No raw permission strings appear anywhere in business code</strong>.
+          A new teammate can open <code>access.ts</code> and immediately understand what permissions the system has and what each one controls.
+          And we were also explicit that frontend permissions only improve the UI. The real security boundary still belongs to the backend APIs.”
+        </p>
+      </div>
+
+
+      <div class="qa" aria-label="Interview follow-up Q and A">
+        <details>
+          <summary>What if permission changes have to take effect immediately, like an admin removing a permission and the button should disappear right away?</summary>
+          <div class="answer">
+            The default solution here was “refresh or re-login to take effect.”
+            If real-time updates had become a requirement, we could have:
+            1. added long-polling or WebSocket notifications for permission changes;
+            2. called Umi’s <code>setInitialState</code> when the notification arrived;
+            3. let <code>access</code> re-compute against the new initial state, so business code would automatically react through <code>useAccess</code>.
+            We did not add that extra layer in this project because permission changes were not frequent enough.
+          </div>
+        </details>
+
+        <details>
+          <summary>How did you stop people from forgetting permission config when they added a new page?</summary>
+          <div class="answer">
+            We had two checks:
+            1. in <code>routes/index.ts</code>, code review required every new route node to carry an <code>access</code> field;
+            2. if a route path existed but the permission tree did not grant access, the fallback behavior was a 403 page.
+            So even if a newcomer forgot the config, the worst outcome was a 403 for the user, not accidental access to a page they should not see.
+          </div>
+        </details>
+
+        <details>
+          <summary>Did 50+ switches in <code>access.ts</code> become hard to maintain?</summary>
+          <div class="answer">
+            In practice, no. The reason was simple:
+            <strong class="em">we grouped them by business domain and commented them clearly</strong>.
+            Project Center, Gift Center, Tools, and so on each had their own section.
+            Adding a new switch was basically copy one line and rename it.
+            That is still much cheaper than raw permission strings being scattered through hundreds of business files.
+          </div>
+        </details>
+
+        <details>
+          <summary>What is the difference between <code>useAuthCheck</code> and the <code>&lt;Access&gt;</code> component? When do you use which?</summary>
+          <div class="answer">
+            <code>&lt;Access&gt;</code> comes from Umi Max and consumes boolean switches from the <code>access</code> object.
+            It is usually for <strong class="em">a whole page or a whole block of UI</strong>, often with a <code>fallback</code>.
+            <code>useAuthCheck</code> was our own wrapper around the raw <code>functions</code> array, and it was mainly for
+            <strong class="em">buttons or operation items</strong> where we just needed a boolean for conditional rendering.
+            So: coarse-grained permission → <code>&lt;Access&gt;</code>; fine-grained permission → <code>useAuthCheck</code>.
+          </div>
+        </details>
+
+        <details>
+          <summary>If permissions are fetched at startup, what about first-load performance? Does the page feel slow?</summary>
+          <div class="answer">
+            Umi Max’s <code>getInitialState</code> is a Promise, so before it resolves, the app renders a loading component, usually <code>loading.tsx</code>.
+            In practice the permission call took around 200-400ms, so the user only felt a small loading flash, which was acceptable.
+            If we wanted to optimize further, two directions were possible:
+            1. HTTP caching + ETag on the permission API;
+            2. write a localStorage cache after one successful fetch, then boot from cache first and refresh in the background.
+            In this project, we only used the first direction.
+          </div>
+        </details>
+      </div>
+
+
+      <!-- ============================================================ -->
+      <!-- ============   Challenge 3 · SSO login and request flow   ==== -->
+      <!-- ============================================================ -->
+      <h2 class="challenge-heading"><span class="num">03</span>SSO login and a unified request flow</h2>
+      <p class="challenge-lead">How do you get the token, where do you store it, and what happens when it expires? Business code should not have to care about any of that.</p>
+
+      <div class="sub-h">Problem setup</div>
+      <p>
+        The company used SSO for single sign-on, and multiple internal systems shared the same login state.
+        On the frontend, we had to solve at least four things:
+      </p>
+      <ul class="bullets">
+        <li><strong class="em">Getting login state</strong>: when a user visits for the first time, or jumps back from another subsystem with a token in the URL.</li>
+        <li><strong class="em">Injecting the token</strong>: every request needs to carry the login credential.</li>
+        <li><strong class="em">Showing business errors consistently</strong>: the backend had conventions around fields like <code>stat</code> and <code>code</code>; if a request failed at the business layer, we needed one shared message pattern.</li>
+        <li><strong class="em">Handling expired login</strong>: on 401, the user should be logged out through SSO, and after signing back in, land on the original page through <code>redirect_url</code>.</li>
+      </ul>
+
+
+      <div class="sub-h">Architecture diagram</div>
+      <div class="diagram" aria-label="Request flow architecture">
+
+        <div class="layer">
+          <div class="layer-label">Startup</div>
+          <div class="block">
+            Read token from URL
+            <span class="sub">On SSO callback with <code>?token=xxx</code></span>
+          </div>
+          <div class="block">
+            Write cookie
+            <span class="sub"><code>setToken(token)</code></span>
+          </div>
+          <div class="block">
+            checkLogin()
+            <span class="sub">Fetch user info / permissions</span>
+          </div>
+          <div class="block">
+            No login → redirect to SSO
+            <span class="sub">With <code>redirect_url</code></span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Request interceptor</div>
+          <div class="block highlight">
+            Inject Authorization
+            <span class="sub">Read token from cookie</span>
+          </div>
+          <div class="block highlight">
+            baseURL by environment
+            <span class="sub"><code>config.host</code></span>
+          </div>
+          <div class="block highlight">
+            Add <code>isDebug: 1</code> in dev
+            <span class="sub">Skip part of login flow during local integration</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Response interceptor</div>
+          <div class="block">
+            Unwrap <code>data.data</code>
+            <span class="sub">Business code does not have to peel the response shell every time</span>
+          </div>
+          <div class="block">
+            <code>stat !== 1</code> → show message
+            <span class="sub">Unified handling of business errors</span>
+          </div>
+          <div class="block highlight">
+            401 → SSO logout + redirect back
+            <span class="sub">Return to the original page through <code>redirect_url</code></span>
+          </div>
+          <div class="block">
+            Other network errors → “system error”
+            <span class="sub">Fallback message</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="sub-h">Core idea</div>
+      <p>
+        <strong class="em">“Business code should only care about the happy path.”</strong>
+        Everything related to auth and error handling was pulled into the two interceptors on our axios instance.
+        A business call should feel almost like a local function call:
+        <code>const user = await getUserInfo()</code>.
+        It returns a typed <code>UserInfo</code> directly,
+        without the page worrying about response nesting, error-message rules, or whether the token has expired.
+      </p>
+
+
+      <div class="sub-h">Code example</div>
+
+      <div class="code-caption">axios instance + request / response interceptors</div>
+<pre class="code-block"><span class="c-cm">// utils/axios.ts</span>
+<span class="c-kw">const</span> instance = axios.create({
+  baseURL: config.host,
+  timeout: 15000,
+  withCredentials: <span class="c-kw">true</span>,
+  headers: process.env.NODE_ENV !== <span class="c-str">'production'</span> ? { isDebug: 1 } : {},
+})
+
+<span class="c-cm">// —— 请求拦截器：注入 token</span>
+instance.interceptors.request.use((conf) =&gt; {
+  conf.headers = { ...conf.headers, Authorization: <span class="c-fn">getToken</span>() }
+  <span class="c-kw">return</span> conf
+})
+
+<span class="c-cm">// —— 响应拦截器：剥壳 + 业务错误 + 401 跳 SSO</span>
+instance.interceptors.response.use(
+  (response) =&gt; {
+    <span class="c-cm">// 401：token 过期</span>
+    <span class="c-kw">if</span> (response.data?.code === 401) {
+      message.<span class="c-fn">error</span>(<span class="c-str">'用户未登录'</span>)
+      <span class="c-kw">return</span> response.data.data
+    }
+    <span class="c-cm">// 业务错误（约定 stat=1 才算成功）</span>
+    <span class="c-kw">if</span> (response.data?.stat !== 1) {
+      message.<span class="c-fn">error</span>(response.data?.msg || <span class="c-str">'内部错误'</span>)
+      <span class="c-kw">return</span> Promise.<span class="c-fn">reject</span>(response.data)
+    }
+    <span class="c-cm">// 成功：剥壳返回 data.data —— 业务代码直接拿业务数据</span>
+    <span class="c-kw">return</span> response.data.data
+  },
+  (error) =&gt; {
+    <span class="c-kw">if</span> (error?.response?.status === 401) {
+      <span class="c-cm">// token 过期：清 token + 跳 SSO logout，带 redirect_url 回跳</span>
+      message.<span class="c-fn">error</span>({
+        content: <span class="c-str">'登录已过期，请重新登录'</span>,
+        onClose: () =&gt; {
+          <span class="c-fn">postLogout</span>().<span class="c-fn">then</span>((res) =&gt; {
+            <span class="c-fn">clearToken</span>()
+            window.location.href = <span class="c-str">`${ssoLogout}?path=${encodeURIComponent(res.redirectUrl)}`</span>
+          })
+        },
+      })
+    } <span class="c-kw">else</span> {
+      message.<span class="c-fn">error</span>(<span class="c-str">'系统异常'</span>)
+      <span class="c-kw">return</span> Promise.<span class="c-fn">reject</span>(error)
+    }
+  },
+)</pre>
+
+      <div class="code-caption">A business page call site (no auth or error-handling boilerplate at all)</div>
+<pre class="code-block"><span class="c-cm">// 类型通过 Swagger 自动生成</span>
+<span class="c-kw">const</span> Page = () =&gt; {
+  <span class="c-kw">const</span> [user, setUser] = useState&lt;UserInfo&gt;()
+
+  useEffect(() =&gt; {
+    <span class="c-cm">// 一行 —— 成功拿数据，失败已经弹过 toast，401 已经自动跳 SSO</span>
+    <span class="c-fn">getUserInfo</span>().<span class="c-fn">then</span>(setUser)
+  }, [])
+
+  <span class="c-kw">return</span> &lt;<span class="c-prop">div</span>&gt;{user?.name}&lt;/<span class="c-prop">div</span>&gt;
+}</pre>
+
+
+      <div class="sub-h">Key details</div>
+      <ul class="bullets">
+        <li>
+          <strong class="em">Token in cookie, not localStorage</strong>: a cookie can be written cross-domain by the SSO service, with the right domain setting,
+          and it also makes backend access easier.
+          localStorage can only be written after frontend JS runs, which leaves a gap in the middle.
+          We did not use HttpOnly because the frontend still needed to read the cookie. That was the tradeoff.
+        </li>
+        <li>
+          <strong class="em">Unwrapping <code>response.data.data</code></strong>: the backend response shape was fixed:
+          <code>{ stat, code, msg, data, traceid }</code>.
+          The interceptor always returned <code>response.data.data</code>, so business code worked directly with the business object.
+          Combined with Swagger-generated types, the business layer ended up feeling almost like local function calls.
+        </li>
+        <li>
+          <strong class="em"><code>isDebug=1</code> in development</strong>: this was a debug header we agreed on with the backend.
+          When present, the backend skipped part of the login check, which made local integration much smoother.
+          Production never sent it, so there was no security issue there.
+        </li>
+        <li>
+          <strong class="em">The <code>redirect_url</code> on 401</strong>: we used <code>encodeURIComponent(window.location.href)</code> to pass the current URL to SSO.
+          After the user signed back in, SSO would send them back.
+          URL query state, like filters, could survive, but in-memory form drafts would still be lost.
+          That was an obvious place for future improvement through localStorage drafts.
+        </li>
+        <li>
+          <strong class="em">Why we did not reject on business-level <code>code=401</code></strong>: that was a backend convention.
+          Their <code>code=401</code> meant “not logged in, but return null quietly and let the business decide whether to show a message.”
+          That is different from a network-layer HTTP 401, which the outer error handler treated as “jump back to SSO.”
+        </li>
+      </ul>
+
+
+      <div class="pitch">
+        <div class="pitch-label">How I would say this in an interview</div>
+        <p>
+          “We were using the company’s SSO, and several subsystems shared one login state.
+          On the frontend we had to solve four things:
+          get login state, inject the token, handle business errors consistently, and recover when the token expires.
+          If every call site touches that logic, the codebase turns into hundreds of repeated lines very quickly.”
+        </p>
+        <p>
+          “So I pulled all auth and error handling into the two interceptors on our axios instance:
+          the request interceptor reads the token from cookie and injects it into the <code>Authorization</code> header;
+          the response interceptor unwraps <code>data.data</code> so business code stays clean, then handles <code>stat</code> and <code>code</code> in one place —
+          business failures show a toast, and HTTP 401 clears the token, jumps back through SSO, and carries a <code>redirect_url</code> so the user returns to the same page.”
+        </p>
+        <p>
+          “That lets business code read almost like a local function call:
+          <code>const user = await getUserInfo()</code>.
+          It gets a typed <code>UserInfo</code> directly, with no auth branching and no repeated error boilerplate.
+          Combined with Swagger-generated types, the whole chain stays type-safe.”
+        </p>
+      </div>
+
+
+      <div class="qa" aria-label="Interview follow-up Q and A">
+        <details>
+          <summary>What if a user is on a long form, the token expires, and they lose their form state after re-login?</summary>
+          <div class="answer">
+            That really was a pain point we discussed at the time.
+            Right now, URL query state survives because <code>redirect_url</code> carries the full URL back, but in-memory form state still gets lost.
+            The next improvement would be localStorage drafts for long forms.
+            We already had drafts in the workspace / page-builder module, but not yet in every other place.
+            If an interviewer asks, I would answer that honestly rather than pretend it was fully solved.
+          </div>
+        </details>
+
+        <details>
+          <summary>What if the business wants to handle an error quietly instead of letting the interceptor show a toast?</summary>
+          <div class="answer">
+            That is an edge case. By default, the interceptor shows the toast and rejects the Promise, and business code only needs to handle it in <code>.catch</code>.
+            For the smaller number of scenarios where a toast is not desirable, like “the user really does not need to see this error,”
+            a custom request config flag like <code>silent: true</code> can tell the interceptor not to show the toast.
+            That follows the same principle as elsewhere in the project: simple by default, but switchable for the smaller set of special cases.
+          </div>
+        </details>
+
+        <details>
+          <summary>Why not use axios <code>config.validateStatus</code> for all non-2xx responses?</summary>
+          <div class="answer">
+            <code>validateStatus</code> only works at the HTTP status level.
+            Our business success rule was <code>response.data.stat === 1</code>.
+            That means the HTTP response can be 200, but the business result is still a failure.
+            So we still had to handle the business layer in the response interceptor.
+            Network errors, like HTTP 4xx/5xx, were handled by axios’s error flow. The two layers stayed cleanly separated.
+          </div>
+        </details>
+
+        <details>
+          <summary>How did the Swagger-generated types line up with your response-unwrapping logic?</summary>
+          <div class="answer">
+            The Swagger generator knew the backend returned <code>{ stat, code, data, ... }</code>, and the generated API function types matched the inner <code>data.data</code>,
+            not the outer response shell.
+            That meant a call like <code>const user = await getUserInfo()</code> gave the business layer a <code>UserInfo</code> directly,
+            which matched the interceptor’s unwrap behavior exactly.
+          </div>
+        </details>
+      </div>
+
+
+      <!-- ============================================================ -->
+      <!-- ============   Challenge 4 · Complex Formily forms   ======== -->
+      <!-- ============================================================ -->
+      <h2 class="challenge-heading"><span class="num">04</span>Complex nested forms</h2>
+      <p class="challenge-lead">Scenarios like purchase-limit rules and course relationships involved deep nesting plus heavy field linkage.</p>
+
+      <div class="sub-h">Problem setup</div>
+      <p>
+        A few kinds of forms in this admin were much more complex than a normal CRUD page:
+      </p>
+      <ul class="bullets">
+        <li><strong class="em">Purchase-limit rules</strong>: conditions combine user type, grade, historical order count, purchase time, and more, often with AND/OR relationships.</li>
+        <li><strong class="em">Course relationships</strong>: mutual exclusion, substitution, and upgrade relationships between courses, and one course can belong to several relationship chains.</li>
+        <li><strong class="em">Channel configuration</strong>: one channel can carry several customer-service accounts, and each account has its own service and attribution rules.</li>
+      </ul>
+      <p>
+        If we had built those directly with raw AntD Form, we would have ended up with:
+      </p>
+      <ul class="bullets">
+        <li>Field linkage implemented through <code>useEffect</code> + <code>form.getFieldValue</code> + <code>form.setFieldValue</code>, which means too many side effects and poor traceability.</li>
+        <li>Dynamic add/remove logic for nested items, like adding and removing conditions inside one rule, becoming manual state-management code that is easy to break.</li>
+        <li>The form structure getting tightly coupled to the component implementation, so moving the rule schema to backend configuration later would mean code changes again.</li>
+      </ul>
+
+
+      <div class="sub-h">Architecture diagram</div>
+      <div class="diagram" aria-label="Formily form architecture">
+
+        <div class="layer">
+          <div class="layer-label">Data layer</div>
+          <div class="block">
+            Schema (JSON)
+            <span class="sub">Describes field structure + linkage rules</span>
+          </div>
+          <div class="block">
+            Form Model
+            <span class="sub">Reactive model created by <code>@formily/core</code></span>
+          </div>
+          <div class="block">
+            values
+            <span class="sub">Flattened form data</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Formily render layer</div>
+          <div class="block highlight">
+            &lt;SchemaField schema={schema} /&gt;
+            <span class="sub">Auto-renders based on schema</span>
+          </div>
+          <div class="block highlight">
+            Reactions
+            <span class="sub">Declarative field linkage</span>
+          </div>
+          <div class="block highlight">
+            validators
+            <span class="sub">Built-in + custom validation</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Custom fields (<code>components/formily/</code>)</div>
+          <div class="block">Cascader</div>
+          <div class="block">MultipleSelect</div>
+          <div class="block">StepNumberInput</div>
+          <div class="block">TrimInput</div>
+          <div class="block">Upload</div>
+          <div class="block">Switch</div>
+          <div class="block">Segmented</div>
+          <div class="block">SingleCheckBox</div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">UI layer</div>
+          <div class="block">
+            Ant Design 4
+            <span class="sub">The final render still uses antd components</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="sub-h">Core idea</div>
+      <p>
+        <strong class="em">Use Formily’s “reaction model” to turn field linkage from imperative <code>useEffect</code> code into declarative reactions.</strong>
+        The schema describes things like:
+        when field A changes, how should field B’s visibility, default value, or options change?
+        All linkage rules stay in the schema instead of being scattered through the business component.
+        Going one step further, the schema itself can be fetched from the backend, which makes the rules configurable.
+      </p>
+
+
+      <div class="sub-h">Code comparison</div>
+
+      <div class="code-caption before">Before · raw AntD Form + <code>useEffect</code> for linkage</div>
+<pre class="code-block"><span class="c-kw">const</span> RuleFormBefore = () =&gt; {
+  <span class="c-kw">const</span> [form] = Form.<span class="c-fn">useForm</span>()
+  <span class="c-kw">const</span> [subOptions, setSubOptions] = useState([])
+
+  <span class="c-cm">// 监听 type 变化，更新 subType 的选项</span>
+  useEffect(() =&gt; {
+    <span class="c-kw">const</span> type = form.<span class="c-fn">getFieldValue</span>(<span class="c-str">'type'</span>)
+    <span class="c-kw">if</span> (!type) <span class="c-kw">return</span>
+    <span class="c-fn">fetchSubOptions</span>(type).<span class="c-fn">then</span>((opts) =&gt; {
+      setSubOptions(opts)
+      form.<span class="c-fn">setFieldValue</span>(<span class="c-str">'subType'</span>, <span class="c-kw">undefined</span>) <span class="c-cm">// 清空 subType</span>
+    })
+  }, [form.<span class="c-fn">getFieldValue</span>(<span class="c-str">'type'</span>)])
+
+  <span class="c-cm">// 监听 subType 变化，控制 detail 字段是否显示</span>
+  <span class="c-kw">const</span> subType = Form.<span class="c-fn">useWatch</span>(<span class="c-str">'subType'</span>, form)
+  <span class="c-kw">const</span> showDetail = subType === <span class="c-str">'advanced'</span>
+
+  <span class="c-kw">return</span> (
+    &lt;<span class="c-prop">Form</span> form={form}&gt;
+      &lt;<span class="c-prop">Item</span> name=<span class="c-str">"type"</span>&gt;&lt;<span class="c-prop">Select</span> options={TYPE_OPTIONS} /&gt;&lt;/<span class="c-prop">Item</span>&gt;
+      &lt;<span class="c-prop">Item</span> name=<span class="c-str">"subType"</span>&gt;&lt;<span class="c-prop">Select</span> options={subOptions} /&gt;&lt;/<span class="c-prop">Item</span>&gt;
+      {showDetail &amp;&amp; &lt;<span class="c-prop">Item</span> name=<span class="c-str">"detail"</span>&gt;&lt;<span class="c-prop">Input</span> /&gt;&lt;/<span class="c-prop">Item</span>&gt;}
+    &lt;/<span class="c-prop">Form</span>&gt;
+  )
+}
+<span class="c-cm">// The linkage logic is scattered through the component, which makes reuse, testing, and configuration much harder.</span></pre>
+
+      <div class="code-caption after">After · use Formily reactions to describe linkage declaratively</div>
+<pre class="code-block"><span class="c-kw">const</span> schema = {
+  type: <span class="c-str">'object'</span>,
+  properties: {
+    type: {
+      type: <span class="c-str">'string'</span>,
+      title: <span class="c-str">'类型'</span>,
+      <span class="c-str">'x-component'</span>: <span class="c-str">'Select'</span>,
+      enum: TYPE_OPTIONS,
+    },
+    subType: {
+      type: <span class="c-str">'string'</span>,
+      title: <span class="c-str">'子类型'</span>,
+      <span class="c-str">'x-component'</span>: <span class="c-str">'Select'</span>,
+      <span class="c-cm">// 联动：依赖 type，type 变化时异步拉选项 + 清空自己</span>
+      <span class="c-str">'x-reactions'</span>: {
+        dependencies: [<span class="c-str">'type'</span>],
+        fulfill: {
+          run: <span class="c-str">'$self.setState({ loading: true })'</span>,
+          state: {
+            dataSource: <span class="c-str">'{{$deps[0] ? fetchSubOptions($deps[0]) : []}}'</span>,
+            value: <span class="c-str">'{{$deps[0] !== $self.modified ? undefined : $self.value}}'</span>,
+          },
+        },
+      },
+    },
+    detail: {
+      type: <span class="c-str">'string'</span>,
+      title: <span class="c-str">'详情'</span>,
+      <span class="c-str">'x-component'</span>: <span class="c-str">'Input'</span>,
+      <span class="c-cm">// 联动：依赖 subType，subType=advanced 时才显示</span>
+      <span class="c-str">'x-reactions'</span>: {
+        dependencies: [<span class="c-str">'subType'</span>],
+        fulfill: {
+          state: { visible: <span class="c-str">'{{$deps[0] === "advanced"}}'</span> },
+        },
+      },
+    },
+  },
+}
+
+<span class="c-kw">const</span> RuleFormAfter = () =&gt; (
+  &lt;<span class="c-prop">FormProvider</span> form={form}&gt;
+    &lt;<span class="c-prop">SchemaField</span> schema={schema} /&gt;
+  &lt;/<span class="c-prop">FormProvider</span>&gt;
+)
+<span class="c-cm">// All linkage rules are now concentrated in the schema, and the whole schema could even move to backend configuration.</span></pre>
+
+
+      <div class="sub-h">Key details</div>
+      <ul class="bullets">
+        <li>
+          <strong class="em">What reactions really are</strong>: an observer model between fields.
+          <code>dependencies</code> says “whose changes do I care about?” and <code>fulfill</code> says “what should I do when that change happens?”
+          Formily keeps an internal dependency graph, so only fields that genuinely depend on the change get recalculated, which is good for performance.
+        </li>
+        <li>
+          <strong class="em">Custom field registration</strong>: we wrapped project-specific fields like Cascader and MultipleSelect under <code>components/formily/</code>,
+          then registered them through <code>SchemaField.register</code>.
+          After that, a schema could use them directly with something like <code>'x-component': 'Cascader'</code>.
+        </li>
+        <li>
+          <strong class="em">Dynamic schema</strong>: the schema itself is just JSON, so it can be fetched from an API.
+          For example, purchase-limit schemas could be delivered from a backend configuration center, and the frontend could render them directly.
+          That means new rules can go live without code changes.
+        </li>
+        <li>
+          <strong class="em">Validation</strong>: Formily already supports common validators like required, format, max, min, and pattern,
+          and it also supports custom validator functions.
+          We registered shared project validators under <code>utils/validator.ts</code>, things like mobile number validation, ID validation, and duplicate checks.
+        </li>
+        <li>
+          <strong class="em">Performance</strong>: Formily updates at a fine-grained level, so changing one field only re-renders fields that actually depend on it.
+          Our biggest forms reached 60+ fields and still felt smooth.
+        </li>
+      </ul>
+
+
+      <div class="pitch">
+        <div class="pitch-label">How I would say this in an interview</div>
+        <p>
+          “This admin had a few kinds of forms that were much more complex than normal CRUD forms:
+          purchase-limit rules, course relationships, channel configuration.
+          They had deep nesting and a lot of field linkage. If we had built that with raw AntD Form, we would have ended up with a pile of <code>useEffect</code>,
+          <code>getFieldValue</code>, and <code>setFieldValue</code>, with linkage logic scattered all over the business component.”
+        </p>
+        <p>
+          “So I chose <strong class="em">Formily’s reaction model</strong>.
+          Every linkage rule lives in schema —
+          who depends on whom, and what changes when that dependency changes.
+          The whole schema is plain JSON, which even leaves room to move it into backend configuration later,
+          so new rules can go live without a code change.”
+        </p>
+        <p>
+          “We also built a small library of project-specific fields under <code>components/formily/</code>:
+          Cascader, multi-select, step-number input, trim input, and so on.
+          So when business code writes a schema, it can just say <code>'x-component': 'Cascader'</code>.
+          Together with Formily’s validation system, that gave us large 60+ field forms that still felt smooth, readable, and testable.”
+        </p>
+      </div>
+
+
+      <div class="qa" aria-label="Interview follow-up Q and A">
+        <details>
+          <summary>Formily has a real learning curve. How did you get the team comfortable with it?</summary>
+          <div class="answer">
+            Honestly, there was a learning curve. A new teammate usually needed about a week to build their first complex Formily form.
+            I did three things:
+            1. wrote down the high-frequency Formily patterns from this project as internal notes;
+            2. paired with a few teammates early on and used PR review to explain reactions and lifecycle behavior;
+            3. whenever a tricky linkage case came up, I took it first and then wrote the solution back into the docs.
+            After roughly two weeks, the team was in a much more comfortable place.
+          </div>
+        </details>
+
+        <details>
+          <summary>Why not build your own schema-based form system?</summary>
+          <div class="answer">
+            We did evaluate that.
+            The upside of building our own would have been “perfect fit for the business,” but the downside was obvious:
+            we would have had to build the reaction model, validation, dynamic add/remove, and other base infrastructure ourselves.
+            Formily was already mature in those areas, and we did not have a business need unique enough to justify building our own wheel.
+            In B-side work, it is important to stay disciplined about not building unnecessary infrastructure.
+          </div>
+        </details>
+
+        <details>
+          <summary>What is the real difference between Formily and raw AntD Form?</summary>
+          <div class="answer">
+            AntD Form is imperative:
+            you call <code>getFieldValue</code>, <code>setFieldValue</code>, and usually glue linkage together with <code>useEffect</code>.
+            Formily is declarative plus reactive:
+            the schema declares dependencies between fields, and Formily internally manages the dependency graph so changes propagate automatically.
+            The biggest practical difference is <strong class="em">where the linkage logic lives</strong>:
+            with raw AntD Form, it is scattered through the business component; with Formily, it is concentrated in the schema.
+          </div>
+        </details>
+
+        <details>
+          <summary>How are the expression strings inside <code>x-reactions</code> evaluated? Is there a security risk?</summary>
+          <div class="answer">
+            Formily uses its own expression engine, not raw <code>eval</code>.
+            Those expressions can access scoped values like <code>$self</code>, <code>$deps</code>, and <code>$form</code>,
+            and we can also register our own custom scope helpers.
+            Because the evaluation is controlled, it does not open the door to arbitrary code execution.
+          </div>
+        </details>
+
+        <details>
+          <summary>How did you guarantee performance on large forms? Didn’t 60+ fields feel slow?</summary>
+          <div class="answer">
+            Formily uses fine-grained reactivity:
+            only fields that actually depend on the changed value re-render, instead of re-rendering the whole form.
+            Our biggest forms had 60+ fields, and we could not feel input lag.
+            If we ever had to go much further, into hundreds of fields, we could still optimize with things like <code>&lt;FormConsumer&gt;</code> for partial subscriptions or virtualized rendering inside <code>&lt;ArrayItems&gt;</code>.
+          </div>
+        </details>
+      </div>
+
+
+      <!-- ============================================================ -->
+      <!-- ============   Challenge 5 · Multi-environment builds   ===== -->
+      <!-- ============================================================ -->
+      <h2 class="challenge-heading"><span class="num">05</span>Multi-environment builds</h2>
+      <p class="challenge-lead">Four environments: dev, mock, gray, and prod. They had to stay cleanly separated.</p>
+
+      <div class="sub-h">Problem setup</div>
+      <p>
+        We had four environments:
+        <strong class="em">dev</strong> (development), <strong class="em">mock</strong> (mock data),
+        <strong class="em">gray</strong> (staging / gray release), and <strong class="em">prod</strong> (production).
+        Each one had its own backend domain, SSO address, and log-reporting address.
+        <strong class="em">We could not let someone accidentally point local startup at production and write dirty data into the real environment</strong>,
+        and we also could not let a gray build accidentally talk to the dev backend.
+      </p>
+
+
+      <div class="sub-h">Architecture diagram</div>
+      <div class="diagram" aria-label="Multi-environment build architecture">
+
+        <div class="layer">
+          <div class="layer-label">Start commands (<code>package.json</code> scripts)</div>
+          <div class="block">
+            npm run dev
+            <span class="sub">mode=dev</span>
+          </div>
+          <div class="block">
+            npm run dev-mock
+            <span class="sub">mode=mock</span>
+          </div>
+          <div class="block">
+            npm run gray
+            <span class="sub">mode=gray</span>
+          </div>
+          <div class="block">
+            npm run build
+            <span class="sub">mode=production</span>
+          </div>
+          <div class="block">
+            npm run build-gray
+            <span class="sub">mode=gray · build artifact</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Environment injection (cross-env)</div>
+          <div class="block highlight">
+            process.env.mode
+            <span class="sub">Injected by cross-env</span>
+          </div>
+          <div class="block highlight">
+            hostEnum
+            <span class="sub">Declared centrally in <code>src/config/index.ts</code></span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Runtime consumption</div>
+          <div class="block">
+            axios baseURL
+            <span class="sub"><code>config.host</code></span>
+          </div>
+          <div class="block">
+            SSO address
+            <span class="sub"><code>config.sso</code></span>
+          </div>
+          <div class="block">
+            proxy target (development)
+            <span class="sub"><code>/proxyApi</code> in <code>.umirc.ts</code></span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="sub-h">Core idea</div>
+      <p>
+        <strong class="em">Explicit injection, centralized declaration, and one runtime consumption point.</strong>
+        No vague defaults, and no overloading something fuzzy like <code>NODE_ENV</code> to mean too many things.
+        We explicitly injected <code>mode=xxx</code> through <code>cross-env</code>,
+        then defined all environment differences centrally through <code>hostEnum</code> in <code>src/config/index.ts</code>,
+        and let business code read only from <code>config</code>.
+      </p>
+
+
+      <div class="sub-h">Code example</div>
+
+<pre class="code-block"><span class="c-cm">// package.json scripts</span>
+{
+  <span class="c-str">"dev"</span>: <span class="c-str">"cross-env mode=dev max dev"</span>,
+  <span class="c-str">"dev-mock"</span>: <span class="c-str">"cross-env mode=mock max dev"</span>,
+  <span class="c-str">"gray"</span>: <span class="c-str">"cross-env mode=gray max dev"</span>,
+  <span class="c-str">"build"</span>: <span class="c-str">"cross-env mode=production max build"</span>,
+  <span class="c-str">"build-dev"</span>: <span class="c-str">"cross-env mode=dev max build"</span>,
+  <span class="c-str">"build-gray"</span>: <span class="c-str">"cross-env mode=gray max build"</span>,
+}
+
+<span class="c-cm">// src/config/index.ts</span>
+<span class="c-kw">export const</span> hostEnum = {
+  mock:       <span class="c-str">'http://localhost:3001/mock'</span>,
+  dev:        <span class="c-str">'https://api-dev.xxx.com'</span>,
+  gray:       <span class="c-str">'https://api-gray.xxx.com'</span>,
+  production: <span class="c-str">'https://api.xxx.com'</span>,
+}
+
+<span class="c-kw">export default</span> {
+  host: hostEnum[process.env.mode <span class="c-kw">as keyof typeof</span> hostEnum] ?? hostEnum.dev,
+}
+
+<span class="c-cm">// .umirc.ts — the development proxy uses the same hostEnum</span>
+<span class="c-kw">const</span> proxy = {
+  <span class="c-str">'/proxyApi'</span>: {
+    target: process.env.mode ? hostEnum[process.env.mode <span class="c-kw">as keyof typeof</span> hostEnum] : <span class="c-str">''</span>,
+    changeOrigin: <span class="c-kw">true</span>,
+    rewrite: (path) =&gt; path.<span class="c-fn">replace</span>(/^\/proxyApi/, <span class="c-str">''</span>),
+  },
+}</pre>
+
+
+      <div class="sub-h">Key details</div>
+      <ul class="bullets">
+        <li>
+          <strong class="em">cross-env made env injection cross-platform</strong>: Windows, Mac, and Linux all handle environment-variable syntax differently, and the team had Windows users.
+          That made cross-env genuinely important here.
+        </li>
+        <li>
+          <strong class="em">CI scripts were self-explanatory at a glance</strong>: if the release script said <code>npm run build-gray</code> or <code>npm run build</code>,
+          everyone could tell immediately which environment the build belonged to.
+          There was no “I’m not actually sure which environment this artifact is for.”
+        </li>
+        <li>
+          <strong class="em">Business code did not need to understand environment details</strong>:
+          need the host? read <code>import config from '@/config'</code>.
+          Need to check whether it is dev? read <code>process.env.NODE_ENV</code>.
+          No random if/else branches all over the project.
+        </li>
+      </ul>
+
+
+      <div class="qa" aria-label="Interview follow-up Q and A">
+        <details>
+          <summary>How was the mock environment implemented?</summary>
+          <div class="answer">
+            We used Umi’s built-in mock capability.
+            We put mock handlers under the <code>mock/</code> directory, and when <code>npm run dev-mock</code> started up,
+            Umi intercepted matching requests and returned mock data.
+            The upside was that it integrated naturally with Umi’s route system and needed almost no extra setup.
+            We did not bring in something like MSW — MSW is more useful when you are building a frontend component library in isolation,
+            and for a large internal admin we did not need that extra layer.
+          </div>
+        </details>
+
+        <details>
+          <summary>If something breaks after a gray release, how do you locate it quickly?</summary>
+          <div class="answer">
+            Gray-environment requests carried an <code>X-Env: gray</code> header, so backend logs could distinguish them.
+            Frontend log reporting also carried the mode field.
+            When something went wrong, we used the troubleshooting tool, the <code>check-tool</code> module,
+            entered a user ID, pulled the recent request chain, and filtered it by environment.
+            That was much faster than trying to inspect production logs directly.
+          </div>
+        </details>
+      </div>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./decisions.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">06 · Key Decisions</span>
+        </a>
+        <a class="next" href="./impact.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">08 · Impact</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Core Modules · Low-Code Campaign Platform</title>
+<meta name="description" content="The five core modules of the Low-Code Campaign Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="modules" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Core Modules</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">05</span>Core Modules</div>
+        <h1 class="page-title">The five parts that carried most of the engineering weight</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          The platform looked like one product, but the engineering depth was not evenly distributed.
+          These were the five areas where most of the real architecture work happened.
+        </p>
+      </header>
+
+      <div class="decision">
+        <div class="decision-title">01 · Editor core <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">One shared MobX state tree</span></div>
+        <p style="margin-bottom:10px;">
+          The visible layout was a classic three-pane editor. The interesting part was how the three panes stayed in sync.
+          We used one MobX-driven <code>StageStore</code> instead of event buses or Redux-heavy plumbing.
+        </p>
+        <div class="decision-row"><div class="label">Model</div><div class="val"><code>StageStore → Project → Pages → Widgets → Layers</code>, all restored as observable objects.</div></div>
+        <div class="decision-row"><div class="label">Communication</div><div class="val">The left panel, canvas, and settings panel were all <code>@observer</code> views over the same state tree.</div></div>
+        <div class="decision-row"><div class="label">Pain point</div><div class="val">MobX 4 does not track dynamically added object fields the way people expect, so we wrapped widget data updates to force safe reference replacement.</div></div>
+        <div class="decision-row"><div class="label">Why it mattered</div><div class="val">This kept editor interactions direct and low-friction even with nested objects and many small updates.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">02 · Canvas architecture <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">Flow layout and freeform placement together</span></div>
+        <p style="margin-bottom:10px;">
+          Campaign builders needed two mental models at once: “stack content from top to bottom” and “place this exactly here.”
+          We supported both on the same canvas.
+        </p>
+        <div class="decision-row"><div class="label">Flow layout</div><div class="val">Used for list-like content, built with sortable interactions and document-flow ordering.</div></div>
+        <div class="decision-row"><div class="label">Freeform layout</div><div class="val">Used for floating buttons, decorations, and precision layout, built on drag + resize.</div></div>
+        <div class="decision-row"><div class="label">Multi-level viewport</div><div class="val">Users could drill from project to page to container layer as separate editing spaces instead of one huge DOM tree.</div></div>
+        <div class="decision-row"><div class="label">Workspace tooling</div><div class="val">Rulers, selection box, and viewport switching turned the canvas into an actual editing surface rather than a plain preview area.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">03 · Widget platform <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">Built-in, internal, and external tiers</span></div>
+        <p style="margin-bottom:10px;">
+          Widgets were the platform’s most active asset, so we needed a model that balanced stability with extensibility.
+        </p>
+        <div class="decision-row"><div class="label">Built-in widgets</div><div class="val">Core primitives like image, text, and container shipped in the main bundle.</div></div>
+        <div class="decision-row"><div class="label">Internal widgets</div><div class="val">Business-specific widgets were split into their own bundles and loaded from CDN at runtime.</div></div>
+        <div class="decision-row"><div class="label">External widgets</div><div class="val">Other teams could build and publish widgets through a scaffolded CLI flow and versioned CDN contract.</div></div>
+        <div class="decision-row"><div class="label">Unified protocol</div><div class="val">Every widget exposed the same shape: <code>type</code>, <code>version</code>, <code>data</code>, <code>config</code>, <code>methods</code>, and <code>onRender</code>.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">04 · Declarative triggers <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">No custom scripting for ops</span></div>
+        <p style="margin-bottom:10px;">
+          We were intentional about not giving operators a “write your own JS” escape hatch. Instead, interactions were expressed as event + action declarations.
+        </p>
+        <div class="decision-row"><div class="label">Events</div><div class="val"><code>onClick</code>, <code>onShow</code>, <code>onScroll</code>, and custom events covered most campaign interactions.</div></div>
+        <div class="decision-row"><div class="label">Actions</div><div class="val">Redirects, scroll, cross-widget updates, share behavior, and pub/sub style custom events.</div></div>
+        <div class="decision-row"><div class="label">Tradeoff</div><div class="val">This was less flexible than arbitrary scripting, but far safer for security, debugging, and long-term maintenance.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">05 · SSR publish path <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">Fast paint with graceful fallback</span></div>
+        <p style="margin-bottom:10px;">
+          This was the densest part of the system. It involved browser simulation on the server, external widget loading, React SSR, asset assembly, and failure fallback.
+        </p>
+        <div class="decision-row"><div class="label">Server simulation</div><div class="val">jsdom provided a browser-like environment so widget code could execute during SSR.</div></div>
+        <div class="decision-row"><div class="label">Widget preload</div><div class="val">Used schema metadata to fetch widget bundles from CDN and register them before rendering.</div></div>
+        <div class="decision-row"><div class="label">HTML output</div><div class="val">Rendered React to string, injected HTML and PageData into a template, then pushed the result to CDN.</div></div>
+        <div class="decision-row"><div class="label">Fallback</div><div class="val">If SSR failed at any point, the page still published and rendered client-side. Shipping the page mattered more than preserving SSR.</div></div>
+      </div>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./architecture.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">04 · Architecture</span>
+        </a>
+        <a class="next" href="./decisions.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">06 · Key Decisions</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

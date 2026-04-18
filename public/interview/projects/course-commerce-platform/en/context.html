@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Context &amp; Problem · Course Commerce Platform</title>
+<meta name="description" content="Context and problems behind the Course Commerce Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" data-active="context" aria-label="Project sections"></aside>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Context &amp; Problem</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">02</span>Context &amp; Problem</div>
+        <h1 class="page-title">Why we needed to build this admin</h1>
+      </header>
+
+      <h3 class="sub">What things looked like before we started</h3>
+      <ul class="bullets">
+        <li>Course product maintenance lived in one admin, coupons in another, and promo activities in yet another. <strong class="em">The capabilities were scattered, the interactions were inconsistent, and each system handled permissions in its own way.</strong></li>
+        <li>Landing pages still relied on frontend engineers to write them by hand. Every new course campaign meant the usual full loop of request → scheduling → development → integration → release, and <strong class="em">3-5 days was the normal starting point</strong>.</li>
+        <li>Business rules like purchase limits and channel attribution were hardcoded on the backend, so even a simple adjustment meant a release.</li>
+        <li>The frontend projects for those older admins lived in different repos, with <strong class="em">no shared component library, no shared request layer, and no shared permission model</strong>. Every new feature meant wiring up a fresh stack from scratch.</li>
+      </ul>
+
+      <h3 class="sub">What problems that created</h3>
+      <div class="card-grid problems">
+        <div class="mini-card">
+          <div class="mini-title">Low ops efficiency</div>
+          <div class="mini-desc">Running one campaign meant working across 3-4 systems. The ops team used to joke that just switching accounts and systems already took half a day.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Frontend capacity got squeezed</div>
+          <div class="mini-desc">Around 80% of the incoming work was still landing pages with very similar structure, so the team stayed stuck doing repetitive delivery work instead of platform work.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Poor data consistency</div>
+          <div class="mini-desc">The same course data was maintained in multiple systems. If one side was updated and another was not, production issues were almost guaranteed.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Permissions were too coarse</div>
+          <div class="mini-desc">Older back-office systems were basically “if you can log in, you can probably view and edit.” That made both auditing and compliance hard.</div>
+        </div>
+      </div>
+
+      <h3 class="sub">What the real need was</h3>
+      <p>
+        On the surface, the ask sounded like “build a new admin.” But the real problem was <strong class="em">cross-team collaboration</strong>.
+        We needed ops, product, frontend, and backend to work inside the same system, with the same data model and the same permission model.
+        If we got that right, the frontend team could finally move from firefighting to building real platform capability.
+      </p>
+
+      <h3 class="sub">What that meant for the frontend architecture</h3>
+      <ul class="bullets">
+        <li><strong class="em">It had to scale.</strong> More business domains were definitely coming, so the architecture had to make it cheap to bring new modules in.</li>
+        <li><strong class="em">Permissions had to be fine-grained.</strong> Not just at the page level, but all the way down to buttons and operations.</li>
+        <li><strong class="em">Forms were going to be complex.</strong> Purchase-limit rules, channel configuration, and product setup all needed a reactive form solution that could handle deeply nested schemas.</li>
+        <li><strong class="em">Multi-environment control had to stay clean.</strong> Local, mock, gray, and production needed to stay separate and predictable.</li>
+        <li><strong class="em">Engineering discipline had to be there from day one.</strong> ESLint, Prettier, Stylelint, Husky, and lint-staged all needed to be in place early so multi-person collaboration would not turn messy.</li>
+      </ul>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./index.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">01 · Overview</span>
+        </a>
+        <a class="next" href="./role.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">03 · Role &amp; Ownership</span>
+        </a>
+      </footer>
+    </main>
+  </div>
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>
