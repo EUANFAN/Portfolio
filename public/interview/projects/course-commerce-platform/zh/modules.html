@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>重点模块 · 课程商业平台</title>
-<meta name="description" content="课程商业平台 - 5 个重点技术模块" />
+<meta name="description" content="课程商业平台 - 重点业务模块" />
 <meta name="robots" content="noindex, nofollow" />
 <link rel="stylesheet" href="../styles.css" />
 </head>
@@ -26,199 +26,128 @@
         <div class="section-eyebrow"><span class="num">05</span>重点模块</div>
         <h1 class="page-title">5 个重点模块，逐一拆解</h1>
         <p class="page-lead" style="margin-top:12px;">
-          这里不是按业务域讲，而是按<strong class="em">技术能力 / 工程抽象</strong>讲 ——
-          项目里真正有复用度、有沉淀、也最能经受追问的 5 个模块：
-          <strong>权限</strong>、<strong>CRUD 开发框架</strong>、<strong>复杂表单</strong>、<strong>OSS 上传</strong>、<strong>规则引擎前端</strong>。
-          低代码工作台作为其中一个业务模块存在，文末一笔带过。
+          每个业务域独立成模块，但共享底层的路由、权限、请求、表单和组件。下面按门类逐一过一遍。
         </p>
       </header>
 
-      <!-- ========== 01 权限模块 ========== -->
+      <!-- ========== 01 项目中心 ========== -->
       <div class="decision">
-        <div class="decision-title">01 · 权限模块
-          <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">src/access.ts · src/hooks/useAuthCheck.ts</span>
-        </div>
+        <div class="decision-title">01 · 项目中心 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">template/</span></div>
         <p style="margin-bottom:10px;">
-          后端权限列表直接驱动前端的<strong class="em">路由 + 菜单 + 按钮</strong>。
-          <strong class="em">菜单权限和功能权限明确分层</strong>，边界清楚不串线。
+          运营做活动的起点。<strong class="em">"一个项目" = 一条落地页 + 它的所有版本</strong>。
+          下设四个子模块：
         </p>
         <div class="decision-row">
-          <div class="label">数据源</div>
-          <div class="val">Umi Max 的 <code>getInitialState()</code> 里一次性拉 <code>{ menus, permissions }</code>，按 <code>type=0/1</code>（菜单）和其他（按钮）拆成两棵树。</div>
+          <div class="label">已有项目</div>
+          <div class="val">课程项目 / 导航项目，项目列表 + 版本管理 + 复制 / 编辑 / 预览 / 上线 / 下线。</div>
         </div>
         <div class="decision-row">
-          <div class="label">路由 + 菜单</div>
-          <div class="val"><code>access.ts</code> 生成几十个布尔开关（如 <code>canSeePresentCoupon</code>），<code>&lt;Access&gt;</code> 做路由守卫，ProLayout 自动按 access 过滤菜单，无权限节点自动隐藏。</div>
+          <div class="label">模板中心</div>
+          <div class="val">课程落地页模板的集中管理。运营基于模板快速创建项目，大大降低重复配置成本。</div>
         </div>
         <div class="decision-row">
-          <div class="label">按钮级</div>
-          <div class="val"><code>useAuthCheck('project-center-project-list-course-edit')</code> 返回 boolean，控制按钮 / Tab / 表格操作列的可见性。</div>
+          <div class="label">组件库</div>
+          <div class="val">5 种通用组件（弹窗 / 完成页 / 短信 / 表单 / 按钮素材）的独立增删改查，供落地页配置时复用。</div>
         </div>
         <div class="decision-row">
-          <div class="label">兜底</div>
-          <div class="val">手动 URL 访问越权节点时走 403 页兜底；岗位变更时 <code>initialState</code> 可主动刷新。</div>
-        </div>
-        <div class="tags" style="margin-top:10px;">
-          <span class="tag">Umi Max access</span>
-          <span class="tag">initialState</span>
-          <span class="tag">ProLayout</span>
-          <span class="tag">50+ 权限 key</span>
-          <span class="tag">10+ 岗位隔离</span>
+          <div class="label">小程序列表</div>
+          <div class="val">加微小程序相关配置的列表化管理。</div>
         </div>
       </div>
 
-      <!-- ========== 02 CRUD 开发框架 ========== -->
+      <!-- ========== 02 礼品中心 ========== -->
       <div class="decision">
-        <div class="decision-title">02 · CRUD 开发框架
-          <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">src/hooks/useTableSearch · useTableSet</span>
-        </div>
+        <div class="decision-title">02 · 礼品中心 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">present/</span></div>
         <p style="margin-bottom:10px;">
-          20+ 列表页共享的底层能力。写一个新列表页只需要声明 <code>columns + searchForm + fetchFn</code>，<strong class="em">搜索 / 分页 / 列持久化 / URL 同步全部由 Hook 接管</strong>。
+          管"拿来送"的一切东西。商品模型三大类：
         </p>
         <div class="decision-row">
-          <div class="label">useTableSearch</div>
-          <div class="val">返回 <code>{ search, reset, formValue }</code>。搜索时自动 <code>reset current</code>，翻页时保留筛选，重置时清 params，并把搜索条件同步到 URL —— 刷新页面状态不丢。</div>
+          <div class="label">课程商品</div>
+          <div class="val">课程供应链（SCM）+ 商品中心。把离散的课程 SKU 包成可售卖、可赠送的商品对象，带价格、规格、库存、归属。</div>
         </div>
         <div class="decision-row">
-          <div class="label">useTableSet</div>
-          <div class="val">接管自定义列：列宽、列显隐、操作列渲染。返回 <code>{ width, render }</code>，用户调整的列配置走 <code>localStorage</code> 持久化，换人换浏览器不掉。</div>
+          <div class="label">实物商品</div>
+          <div class="val">课程盒子 / 实物盒子 —— 真实物流发货的商品，对接仓储和履约。</div>
         </div>
         <div class="decision-row">
-          <div class="label">配合方式</div>
-          <div class="val">和 ahooks 的 <code>useAntdTable</code> 组合 —— 数据源 useAntdTable 管、搜索分页 useTableSearch 管、列配置 useTableSet 管，三者职责互不重叠。</div>
-        </div>
-        <div class="decision-row">
-          <div class="label">实际效果</div>
-          <div class="val">新列表页<strong class="em">从 500+ 行压到 ~150 行</strong>，20+ 页面交互行为开箱一致，业务开发不用再"想一次默认行为"。</div>
+          <div class="label">虚拟商品</div>
+          <div class="val">优惠券 —— 创建、发放规则、有效期、使用限制、批次管理。</div>
         </div>
         <div class="tags" style="margin-top:10px;">
-          <span class="tag">ahooks.useAntdTable</span>
-          <span class="tag">ProTable</span>
-          <span class="tag">URL 同步</span>
-          <span class="tag">localStorage 持久化</span>
-          <span class="tag">20+ 列表页复用</span>
+          <span class="tag">深层嵌套表单</span>
+          <span class="tag">批量操作</span>
+          <span class="tag">字段联动</span>
         </div>
       </div>
 
-      <!-- ========== 03 复杂表单模块 ========== -->
+      <!-- ========== 03 小工具 ========== -->
       <div class="decision">
-        <div class="decision-title">03 · 复杂表单模块
-          <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">src/components/formily/</span>
-        </div>
+        <div class="decision-title">03 · 小工具 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">tools/</span></div>
         <p style="margin-bottom:10px;">
-          优惠券、限购规则、商品这类<strong class="em">深层嵌套 + 字段联动 + 大量校验</strong>的场景，用 Formily 把状态管理让渡给框架，业务代码只关心数据结构。
+          运营日常最高频使用的模块。"小"是相对模块大小说的，对业务的价值很不小。
         </p>
         <div class="decision-row">
-          <div class="label">声明式 schema</div>
-          <div class="val">嵌套结构、字段依赖、条件显隐、校验规则全部在 schema 里声明，避免手写 onChange + 一堆 if 维护表单状态。</div>
+          <div class="label">推广工具</div>
+          <div class="val">活动推广链接与二维码的生成 / 管理 / 数据回看。</div>
         </div>
         <div class="decision-row">
-          <div class="label">Effects 做联动</div>
-          <div class="val">用 <code>onFieldValueChange</code> 监听字段、<code>setFieldState</code> 改下游状态，复杂联动（如优惠券类型切换触发 10+ 字段显隐）用 20 行代码搞定。</div>
+          <div class="label">定制活动</div>
+          <div class="val">面向非标活动场景的配置入口，把无法走标准流程的定制需求收敛进来。</div>
         </div>
         <div class="decision-row">
-          <div class="label">自研扩展表单项</div>
-          <div class="val">级联选择、多选、Trim 输入、数字输入、开关、颜色选择器（react-colorful）、代码编辑器（@uiw/react-codemirror）、标签选择器等 <strong class="em">15+ 个 Formily 适配组件</strong>。</div>
+          <div class="label">渠道活码</div>
+          <div class="val">渠道归因核心能力：一个二维码背后挂多个客服号，扫码自动分配 + 归因统计。</div>
         </div>
         <div class="decision-row">
-          <div class="label">下拉枚举统一</div>
-          <div class="val"><code>useSelectEnum()</code> 统一所有下拉选项数据源，枚举更新一处、全站同步。</div>
-        </div>
-        <div class="tags" style="margin-top:10px;">
-          <span class="tag">Formily 2</span>
-          <span class="tag">onFieldValueChange / setFieldState</span>
-          <span class="tag">react-colorful</span>
-          <span class="tag">@uiw/react-codemirror</span>
-          <span class="tag">15+ 扩展表单项</span>
+          <div class="label">排查工具</div>
+          <div class="val">给运营和客服用的自助排查面板。输入用户 ID，快速看到下单、优惠券、归因链路，省掉找研发的时间。</div>
         </div>
       </div>
 
-      <!-- ========== 04 OSS 上传模块 ========== -->
+      <!-- ========== 04 用户画像 ========== -->
       <div class="decision">
-        <div class="decision-title">04 · OSS 上传模块
-          <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">src/components/upload-component/ · src/hooks/useOssData.ts</span>
-        </div>
+        <div class="decision-title">04 · 用户画像 <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">user-portrait/</span></div>
         <p style="margin-bottom:10px;">
-          图片 / 视频 / 文件 / Excel 导入全部走同一套<strong class="em">签名直传方案</strong>，前端直接 POST 到 OSS，<strong class="em">不经过业务服务器中转</strong>。
-        </p>
-        <div class="decision-row">
-          <div class="label">统一入口</div>
-          <div class="val"><code>&lt;ImgUpload&gt;</code> / <code>&lt;VideoUpload&gt;</code> / <code>&lt;Dragger&gt;</code> / Formily 适配版，统一封装签名、校验、进度、回显逻辑。</div>
-        </div>
-        <div class="decision-row">
-          <div class="label">签名直传</div>
-          <div class="val">
-            <code>getOssToken()</code> 拿 <code>{ OSSAccessKeyId, signature, policy, host, dir }</code>
-            → <code>FormData</code> 带上 <code>key / policy / signature</code> 直接 POST 到 OSS host
-            → 返回 <code>fileUrl</code> 后拼成 <code>OSS_CDN_NAME/OSS_PUBLIC_PATH/fileUrl</code> 写回字段。
-          </div>
-        </div>
-        <div class="decision-row">
-          <div class="label">视频处理</div>
-          <div class="val">封面直接用 <code>?x-oss-process=video/snapshot,t_0,f_jpg,w_110,h_110</code> 生成，无需后端二次转码。</div>
-        </div>
-        <div class="decision-row">
-          <div class="label">CSV 导入校验</div>
-          <div class="val">文件导入场景上传后后端返回 <code>{ result, list }</code>，前端直接表格回显校验结果；校验失败时通过 <code>isValidate</code> 字段联动阻塞表单提交。</div>
-        </div>
-        <div class="tags" style="margin-top:10px;">
-          <span class="tag">OSS 签名直传</span>
-          <span class="tag">前端零转发</span>
-          <span class="tag">x-oss-process</span>
-          <span class="tag">CSV 校验表格</span>
-          <span class="tag">Formily 适配</span>
-        </div>
-      </div>
-
-      <!-- ========== 05 规则引擎前端 ========== -->
-      <div class="decision">
-        <div class="decision-title">05 · 规则引擎前端
-          <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">src/pages/user-portrait/ · src/components/rules/</span>
-        </div>
-        <p style="margin-bottom:10px;">
-          把"哪些用户能买哪些课"从后端硬编码变成前端可配置的规则树。
-          <strong class="em">用户限购 / 课程限购 / 课程关系</strong>三个正交视角，合起来就是一套完整的营销准入策略。
+          把"哪些用户能买哪些课"这件事规则化。本质上是一套<strong class="em">规则引擎的前端配置界面</strong>。
         </p>
         <div class="decision-row">
           <div class="label">用户限购</div>
-          <div class="val">按用户标签、身份、消费历史等维度组合规则。规则语义：「满足某组条件 → 命中限购」。</div>
+          <div class="val">按用户标签、身份、消费历史等维度配置限购规则。</div>
         </div>
         <div class="decision-row">
           <div class="label">课程限购</div>
-          <div class="val">从课程维度反过来配：这门课谁能买、每人几份、是否有阶梯定价、是否有老带新折扣。</div>
+          <div class="val">按课程维度反过来配置：这门课谁能买、每人几份、有没有梯度。</div>
         </div>
         <div class="decision-row">
           <div class="label">课程关系</div>
-          <div class="val">互斥 / 替代 / 升级三种关系：买了高级版能否买入门版、买了 A 是否就不能买 B，下单校验时后端读这张关系表。</div>
-        </div>
-        <div class="decision-row">
-          <div class="label">规则组合器 UI</div>
-          <div class="val">Formily 动态 schema 递归渲染规则树，AND / OR 嵌套 + 条件项。前端吐 JSON DSL，后端解析执行 —— <strong class="em">新增一种规则类型只扩 schema，不改 UI</strong>。</div>
+          <div class="val">定义课程之间的互斥、替代、升级关系。买了 A 是否能买 B，买了高级版能否买入门版，都在这里配。</div>
         </div>
         <div class="tags" style="margin-top:10px;">
-          <span class="tag">Formily 动态 Schema</span>
-          <span class="tag">JSON DSL</span>
-          <span class="tag">条件组合器 UI</span>
           <span class="tag">规则引擎前端</span>
+          <span class="tag">Formily 动态 Schema</span>
+          <span class="tag">条件组合器 UI</span>
         </div>
       </div>
 
-      <!-- ========== 低代码工作台（一笔带过） ========== -->
-      <h3 class="sub">补充：低代码工作台</h3>
-      <p class="muted" style="font-size:13px;">
-        <code>src/pages/work-space/</code> 是整个后台中的一个业务模块 ——
-        <strong>7 步向导 + Formily 表单 + 手机端实时预览 + 保存 / 预览 / 上线闭环</strong>，支持 8 种落地页模板和多端投放（H5 / 小程序）。
-        因为低代码能力在团队的另一个亮点项目
-        <a href="../../low-code-platform/zh/">Low-Code Campaign Platform</a>
-        里深度和完整性更高，这里不再展开。
-      </p>
+      <!-- ========== 05 工作台（一笔带过） ========== -->
+      <div class="decision">
+        <div class="decision-title">05 · 工作台（低代码搭建器）<span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">work-space/</span></div>
+        <p>
+          运营自助生成课程落地页的入口。核心能力是<strong class="em">7 步向导 + Formily 驱动的表单配置 + 手机端实时预览 + 保存 / 预览 / 上线闭环</strong>。
+          8 种落地页模板，支持多个投放承载（H5、小程序），带版本管理和草稿机制。
+        </p>
+        <p class="muted" style="margin-top:10px;font-size:13px;">
+          低代码页面搭建是团队的另一个亮点项目（Low-Code Campaign Platform），那边的深度和完整性更高。
+          这里只作为"整个商业后台中的一个模块"存在，故不再展开。如需了解完整的低代码方案，请移步 Low-Code Campaign Platform。
+        </p>
+      </div>
 
       <h3 class="sub">模块协同上的几个关键设计</h3>
       <ul class="bullets">
-        <li><strong class="em">一套权限模型覆盖全站</strong> —— 50+ 权限 key 同时管住菜单、路由、按钮，新模块加一个 key 就接入全站。</li>
-        <li><strong class="em">通用组件跨模块一致</strong> —— 表单搜索组、列表操作下拉、上传、Formily 扩展表单项在所有模块里是同一个样子、同一种行为。</li>
-        <li><strong class="em">API 契约自动同步</strong> —— 后端改接口 → Swagger 拉一次 → 前端编译就能发现不兼容的地方，不用靠联调。</li>
-        <li><strong class="em">共享的 Redux 切片</strong> —— <code>config</code>（全局配置）/ <code>user</code>（用户信息）/ <code>checkTool</code>（排查工具状态），跨页面共享不层层透传。</li>
+        <li><strong class="em">同一份权限模型覆盖所有模块</strong> —— access.ts 里几十个权限 key 覆盖菜单、路由、按钮。新模块加一个 key 就接入全站。</li>
+        <li><strong class="em">通用组件跨模块复用</strong> —— 表单搜索组、列表操作下拉、上传、Formily 扩展表单项在所有模块里一致的样子和行为。</li>
+        <li><strong class="em">API 层类型自动生成</strong> —— 后端改接口 → Swagger 拉一次 → 前端编译就能发现不兼容的地方。</li>
+        <li><strong class="em">共享的 Redux 切片</strong> —— config（全局配置）/ user（用户信息）/ checkTool（排查工具状态），跨页面共享状态不用层层透传。</li>
       </ul>
 
       <footer class="pager" aria-label="章节导航">
