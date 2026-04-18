@@ -131,14 +131,14 @@
   }
 
   .section {
-    margin-top: 3.8mm;
+    margin-top: 3.2mm;
   }
 
   .section-title {
-    margin: 0 0 1.5mm;
-    font-size: 9.8pt;
+    margin: 0 0 1.2mm;
+    font-size: 10.8pt;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     font-weight: 800;
     color: var(--text);
   }
@@ -149,7 +149,7 @@
   }
 
   .item {
-    margin-bottom: 3mm;
+    margin-bottom: 2.4mm;
   }
 
   .item:last-child {
@@ -163,12 +163,15 @@
     align-items: baseline;
     break-after: avoid;
     page-break-after: avoid;
+    flex-wrap: nowrap;
   }
 
   .item-title {
     margin: 0;
     font-size: 10.9pt;
     font-weight: 800;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .item-title .sub {
@@ -182,11 +185,12 @@
     color: var(--text);
     font-size: 10pt;
     font-weight: 700;
+    flex: 0 0 auto;
   }
 
   .meta {
-    margin: 0.4mm 0 0.9mm;
-    color: var(--soft);
+    margin: 0.35mm 0 0.75mm;
+    color: #5b6b7f;
     font-size: 9.5pt;
     font-style: italic;
   }
@@ -197,7 +201,7 @@
   }
 
   li {
-    margin: 0 0 0.6mm;
+    margin: 0 0 0.45mm;
     color: var(--text);
   }
 
@@ -210,9 +214,10 @@
   }
 
   .project-stack {
-    margin-top: 0.8mm;
-    color: var(--soft);
+    margin-top: 0.65mm;
+    color: #607287;
     font-size: 9.1pt;
+    font-weight: 500;
   }
 
   .education-row {
@@ -241,7 +246,17 @@
   }
 
   .summary-block {
-    margin-top: 4mm;
+    margin-top: 3.2mm;
+  }
+
+  .section.projects .item {
+    padding-bottom: 1.8mm;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  }
+
+  .section.projects .item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   @media (max-width: 900px) {
@@ -261,7 +276,6 @@
       justify-content: flex-start;
     }
 
-    .item-head,
     .education-row {
       flex-direction: column;
       align-items: flex-start;
@@ -300,6 +314,27 @@
     .section-title {
       break-after: avoid;
       page-break-after: avoid;
+    }
+
+    .section {
+      margin-top: 3mm;
+    }
+
+    .item {
+      margin-bottom: 2.2mm;
+    }
+
+    .contact {
+      text-align: center !important;
+    }
+
+    .contact-line {
+      width: 100%;
+      display: flex;
+      justify-content: center !important;
+      align-items: center;
+      flex-wrap: wrap;
+      text-align: center;
     }
   }
 </style>
@@ -405,7 +440,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section projects">
       <h2 class="section-title">Selected Projects</h2>
       <div class="item">
         <div class="item-head">
