@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Interview Materials · Euan Fan</title>
+<meta name="description" content="Interview materials hub — resumes, cover letters, and project deep-dives." />
+<meta name="robots" content="noindex, nofollow" />
+<style>
+  :root {
+    --accent: #0EA5E9;
+    --accent-strong: #0369A1;
+    --accent-soft: rgba(14, 165, 233, 0.08);
+    --text: #0F172A;
+    --text-muted: #475569;
+    --text-soft: #64748B;
+    --rule: #E2E8F0;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 56px 24px;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, var(--accent-soft) 0%, transparent 60%);
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  h1 .accent {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .lead {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: 60ch;
+    margin-bottom: 40px;
+  }
+
+  .group {
+    margin-bottom: 36px;
+  }
+
+  .group-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 20px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -12px rgba(14, 165, 233, 0.22);
+    border-color: var(--accent);
+  }
+  .card:hover::before { width: 100%; }
+  .card[aria-disabled="true"] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+  }
+  .card-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+  .card-badge.soon {
+    background: #F1F5F9;
+    color: var(--text-soft);
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-top: 4px;
+  }
+  .card-foot svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  .footer {
+    margin-top: auto;
+    padding-top: 40px;
+    font-size: 12px;
+    color: var(--text-soft);
+    text-align: center;
+  }
+  .footer a { color: var(--text-muted); text-decoration: none; }
+  .footer a:hover { color: var(--accent-strong); }
+
+  @media (max-width: 640px) {
+    body { padding: 32px 18px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+
+    <div class="eyebrow">Interview Materials</div>
+    <h1>Materials for <span class="accent">interviews &amp; outreach</span>.</h1>
+    <p class="lead">
+      A lightweight hub of print-ready documents. Every page is a static HTML file optimized
+      for browser → PDF export, so I can fork a file, tailor it to a role, and share it in minutes.
+    </p>
+
+    <!-- ===== Resume ===== -->
+    <section class="group">
+      <div class="group-title">Resume</div>
+      <div class="grid">
+        <a class="card" href="./resume.html">
+          <div class="card-head">
+            <div class="card-title">Master Resume · EN</div>
+            <span class="card-badge">Ready</span>
+          </div>
+          <p class="card-desc">Single-page A4 résumé optimized for browser printing and PDF export.</p>
+          <div class="card-foot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>resume.html · A4 · 1 page</span>
+          </div>
+        </a>
+
+        <a class="card" aria-disabled="true">
+          <div class="card-head">
+            <div class="card-title">Resume · ZH</div>
+            <span class="card-badge soon">Planned</span>
+          </div>
+          <p class="card-desc">Chinese version of the master resume, tuned for domestic roles.</p>
+          <div class="card-foot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Coming soon</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== Cover Letters ===== -->
+    <section class="group">
+      <div class="group-title">Cover Letters</div>
+      <div class="grid">
+        <a class="card" href="./cover-letter.html">
+          <div class="card-head">
+            <div class="card-title">Cover Letter Template</div>
+            <span class="card-badge">Ready</span>
+          </div>
+          <p class="card-desc">A reusable one-pager with highlighted placeholders for company, role, and hook — swap a few fields and print.</p>
+          <div class="card-foot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>cover-letter.html · A4 · 1 page</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== Project Deep-Dives ===== -->
+    <section class="group">
+      <div class="group-title">Project Deep-Dives</div>
+      <div class="grid">
+        <a class="card" href="./projects/low-code-platform/en/">
+          <div class="card-head">
+            <div class="card-title">Low-Code Campaign Platform</div>
+            <span class="card-badge">Ready · EN · 中文</span>
+          </div>
+          <p class="card-desc">Schema-driven campaign builder for ops — drag-and-drop editor, versioned widget library, multi-channel publishing (H5 / WeChat / Mini Program).</p>
+          <div class="card-foot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+            <span>Bilingual · multi-page · printable</span>
+          </div>
+        </a>
+
+        <a class="card" href="./projects/course-commerce-platform/en/">
+          <div class="card-head">
+            <div class="card-title">Course Commerce Platform</div>
+            <span class="card-badge">Ready · EN · 中文</span>
+          </div>
+          <p class="card-desc">Low-code admin tool that lets the ops team ship course landing pages without writing code — Umi Max, Formily, iPhone preview.</p>
+          <div class="card-foot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+            <span>Bilingual · multi-page · printable</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="footer">
+      Static files served from <code>public/interview/</code> · back to
+      <a href="../../">Portfolio</a>
+    </div>
+  </div>
+
+</body>
+</html>

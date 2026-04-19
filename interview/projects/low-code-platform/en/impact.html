@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Impact · Low-Code Campaign Platform</title>
+<meta name="description" content="Impact and outcomes of the Low-Code Campaign Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="impact" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Impact</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">08</span>Impact</div>
+        <h1 class="page-title">What actually changed after we shipped it</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          I try to describe the results in five buckets: delivery speed, business coverage, performance, stability,
+          and team-level impact. That usually gives interviewers a much clearer picture than a generic “the platform worked well.”
+        </p>
+      </header>
+
+      <h3 class="sub">Delivery speed</h3>
+      <div class="card-grid">
+        <div class="mini-card"><div class="mini-title">Campaign launch cycle</div><div class="mini-stat">~2 days → ~15 minutes</div><div class="mini-desc">The workflow moved from engineering delivery to self-serve publishing.</div></div>
+        <div class="mini-card"><div class="mini-title">Minor page changes</div><div class="mini-stat">Hours → minutes</div><div class="mini-desc">Copy and image swaps stopped needing a full dev-test-release loop.</div></div>
+        <div class="mini-card"><div class="mini-title">Frontend effort on campaigns</div><div class="mini-stat">4-5 people → 0-1</div><div class="mini-desc">Most frontend capacity moved from repetitive delivery into platform work.</div></div>
+        <div class="mini-card"><div class="mini-title">Widget onboarding</div><div class="mini-stat">~1 week → same day</div><div class="mini-desc">Other teams could publish through the CLI and CDN contract instead of waiting on a platform release.</div></div>
+      </div>
+
+      <h3 class="sub">Business coverage</h3>
+      <div class="card-grid">
+        <div class="mini-card"><div class="mini-title">Business lines covered</div><div class="mini-stat">4</div><div class="mini-desc">The platform rolled out across the company’s main campaign-heavy lines.</div></div>
+        <div class="mini-card"><div class="mini-title">Campaign pages served</div><div class="mini-stat">1500+</div><div class="mini-desc">That was the accumulated page count over the lifetime of the platform.</div></div>
+        <div class="mini-card"><div class="mini-title">External widgets integrated</div><div class="mini-stat">80+</div><div class="mini-desc">This covered everything from course cards to countdowns and referral widgets.</div></div>
+        <div class="mini-card"><div class="mini-title">Multi-channel delivery</div><div class="mini-stat">30% → 90%+</div><div class="mini-desc">A much larger share of campaigns started shipping through one schema to multiple channels.</div></div>
+      </div>
+
+      <h3 class="sub">Performance and UX</h3>
+      <div class="card-grid">
+        <div class="mini-card"><div class="mini-title">LCP</div><div class="mini-stat">3.2s → 1.4s</div><div class="mini-desc">SSR moved first paint into an acceptable range for traffic pages.</div></div>
+        <div class="mini-card"><div class="mini-title">TTI</div><div class="mini-stat">4.5s → 2.1s</div><div class="mini-desc">Hydration was much cheaper than rebuilding the whole page on the client.</div></div>
+        <div class="mini-card"><div class="mini-title">White-screen rate</div><div class="mini-stat">2.3% → 0.15%</div><div class="mini-desc">SSR plus graceful fallback materially improved reliability.</div></div>
+        <div class="mini-card"><div class="mini-title">Client bundle size</div><div class="mini-stat">~180KB stable</div><div class="mini-desc">The three-tier widget strategy prevented the base bundle from growing with every new component.</div></div>
+      </div>
+
+      <h3 class="sub">Stability and quality</h3>
+      <div class="card-grid">
+        <div class="mini-card"><div class="mini-title">Publish success rate</div><div class="mini-stat">99.9%+</div><div class="mini-desc">SSR issues did not block release because the pipeline was designed with fallback.</div></div>
+        <div class="mini-card"><div class="mini-title">Historic pages broken by upgrades</div><div class="mini-stat">0 in 2 years</div><div class="mini-desc">Version pinning in the schema kept old pages stable.</div></div>
+        <div class="mini-card"><div class="mini-title">Visual mismatch bugs</div><div class="mini-stat">3-5/week → &lt;1/month</div><div class="mini-desc">Shared rendering logic between editor and runtime paid off noticeably.</div></div>
+        <div class="mini-card"><div class="mini-title">Runtime JS error rate</div><div class="mini-stat">0.8% → 0.1%</div><div class="mini-desc">The declarative trigger model narrowed the error surface.</div></div>
+      </div>
+
+      <h3 class="sub">Team and org impact</h3>
+      <ul class="bullets">
+        <li><strong>The frontend team changed shape.</strong> We went from campaign delivery work to owning reusable platform capability.</li>
+        <li><strong>Ops became genuinely self-serve.</strong> Most campaigns no longer needed frontend scheduling to go live.</li>
+        <li><strong>Other teams joined the widget ecosystem.</strong> That turned the platform into more of an internal marketplace than a closed tool.</li>
+        <li><strong>The core schema and rendering model were reused elsewhere.</strong> Other internal page-building scenarios borrowed the same ideas.</li>
+      </ul>
+
+      <h3 class="sub">What I personally got out of it</h3>
+      <ul class="bullets">
+        <li>I got to drive a true platform project end to end, not just build a feature inside somebody else’s system.</li>
+        <li>I built stronger judgment around reactive state management, SSR in non-standard environments, and dynamic module systems.</li>
+        <li>I learned that platform work is only half technical. Adoption, training, and boundary-setting matter just as much.</li>
+        <li>I became much more deliberate about restraint: saying “we will not support that” is often what keeps a platform healthy.</li>
+      </ul>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./challenges.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">07 · Challenges &amp; Solutions</span>
+        </a>
+        <span></span>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

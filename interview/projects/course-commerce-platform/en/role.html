@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Role &amp; Ownership · Course Commerce Platform</title>
+<meta name="description" content="My role and scope on the Course Commerce Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" data-active="role" aria-label="Project sections"></aside>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Role &amp; Ownership</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">03</span>Role &amp; Ownership</div>
+        <h1 class="page-title">What I actually did on this project</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          I was the <strong class="em">frontend lead</strong> on this project, responsible for
+          <strong class="em">the overall frontend architecture and the delivery of the core modules</strong>.
+          In practice, that meant setting up the Umi Max foundation, pulling permissions, requests, forms, and shared components into a real engineering model,
+          and then personally taking several key business pages all the way to production.
+        </p>
+      </header>
+
+      <h3 class="sub">Overall frontend architecture</h3>
+      <ul class="bullets">
+        <li><strong class="em">Built the frontend foundation</strong> — the project scaffold on top of Umi Max + React + TypeScript, centralized route config, theme and layout, and multi-environment builds for dev / mock / gray / prod.</li>
+        <li><strong class="em">Implemented the fine-grained permission model</strong> — based on Umi Max access plus <code>initialState</code>, we aligned menu permissions and function permissions, and applied them at both route level and button level, with a 403 fallback page.</li>
+        <li><strong class="em">Built the unified request and auth layer</strong> — axios interceptors handled SSO token injection, global error messaging, and automatic logout plus SSO redirect on 401. <code>@dandelion/swagger</code> generated API types, so the frontend barely had to handwrite the API layer.</li>
+        <li><strong class="em">Set the engineering conventions</strong> — ESLint, Prettier, Stylelint, Husky, lint-staged, and commitizen were all put in place, and we also fixed the directory layering and naming conventions at this stage.</li>
+      </ul>
+
+      <h3 class="sub">Core module delivery</h3>
+      <ul class="bullets">
+        <li><strong class="em">Shared component layer</strong> — search groups, table action dropdowns, upload components, filters, Formily field extensions such as cascaders, multi-selects, numeric fields, switches, trim inputs, sortable drag-and-drop, and the device previewer. Roughly 20 shared components in total.</li>
+        <li><strong class="em">CRUD abstraction</strong> — hooks like <code>useTableSearch</code> and <code>useTableSet</code>, which centralized filtering, paging, sorting, column persistence, and URL sync. More than 20 list pages went from 500+ lines down to about 150 lines.</li>
+        <li><strong class="em">Key business pages</strong> — I directly worked on the frontend delivery and launch of project lists, template center, product center, coupons, purchase-limit rules, promotion tools, and channel QR code flows.</li>
+        <li><strong class="em">Workspace / page builder</strong> — I also participated in the core flow of that module, including the 7-step wizard, Formily forms, live mobile preview, and the save / preview / publish loop. It is listed here as one business module, but low-code itself is not the main highlight of this project.</li>
+      </ul>
+
+      <p class="muted" style="margin-top:18px;">
+        In short: <strong class="em">I set the architecture direction, and I also wrote the key modules myself</strong>.
+        It was a small team, spread across several business domains, so the role was very much “build the foundation and still go fight the actual business battles.”
+      </p>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./context.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">02 · Context &amp; Problem</span>
+        </a>
+        <a class="next" href="./architecture.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">04 · Architecture</span>
+        </a>
+      </footer>
+    </main>
+  </div>
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

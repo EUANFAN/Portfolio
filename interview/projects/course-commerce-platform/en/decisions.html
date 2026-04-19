@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Key Decisions · Course Commerce Platform</title>
+<meta name="description" content="Key technical decisions in the Course Commerce Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" data-active="decisions" aria-label="Project sections"></aside>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Key Decisions</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">06</span>Key Decisions</div>
+        <h1 class="page-title">The tradeoffs we made at the key decision points</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          Early in the project, we made a few choices that shaped everything that came after.
+          This section lays out what we chose, why we chose it, and what we knowingly paid for it.
+        </p>
+      </header>
+
+      <div class="decision">
+        <div class="decision-title">Decision 1 · Routing: centralized route config, not file-based routing</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">Umi Max supports both file-based routing and centralized route config, so we had to choose one.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val"><strong class="em">Declare all routes centrally in <code>src/routes/index.ts</code></strong>, and let every route carry <code>name / path / component / access</code>.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">This was a back-office system, and routes naturally carried permission information. With centralized config, routing, menus, and permissions could be reviewed together in one place. It also made deep menu hierarchies much easier to reason about.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">Adding a menu meant touching both routes and access config. That extra edit cost was real, but it kept menus and permissions aligned.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 2 · Permissions: a two-layer model for menus and functions</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">We needed to answer both “can this person see this menu?” and “this person can see the page, but can they click this button?”</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val"><strong class="em">Split permissions into two layers</strong>: one for menus and routes, one for buttons and in-page operations. The backend returned one tree, and the frontend split it by type.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">The responsibilities stayed clean. Menu permissions controlled whether a page could be entered at all, while function permissions controlled what you could do once you were inside. That made both backend contract design and frontend usage much clearer.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">A permission change might need to be reflected in both places, but that duplication stayed manageable once each person only owned their own business domain.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 3 · State management: Redux Toolkit, not MobX or Context</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">We still needed a shared state solution for cross-page data like user info, global config, and troubleshooting context.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val"><strong class="em">Redux Toolkit</strong>, wrapped with typed <code>useAppDispatch</code> and <code>useAppSelector</code>.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">The team already understood Redux best, RTK removed a lot of the old boilerplate, TypeScript support was mature, and DevTools debugging stayed straightforward. We did not have a strong enough reason to pay for MobX’s reactive magic or Context’s performance pitfalls.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">It was still heavier than lighter stores like zustand or jotai. In practice we only had three slices, so the weight stayed acceptable.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 4 · Forms: Formily, not a homegrown schema system and not raw AntD Form</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">Purchase-limit rules, course relationships, and page-builder config were all deep, nested, highly reactive forms. Raw AntD Form would have meant a lot of ad hoc linkage logic in effects.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val"><strong class="em">Formily 2</strong> as the standard form solution for all complex forms.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">Formily’s reaction model let us pull field linkage back into schema and keep the business code focused on the data structure itself. Compared with building our own schema engine, it saved us from reinventing the wheel; compared with raw AntD Form, the maintainability of linkage and validation was much better.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">The learning curve was real, and new teammates usually needed about a week to feel comfortable with it. The docs were not always perfect either.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 5 · API layer: generated from Swagger, not handwritten</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">With 20+ pages and dozens of interfaces, handwritten API functions and handwritten request and response types were too repetitive and too easy to drift out of sync.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val"><strong class="em">Use <code>@dandelion/swagger</code> to generate request functions and TypeScript types from the backend Swagger docs</strong>, and sync them with one command.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">The moment the backend changed an API, the frontend could regenerate and immediately see type mismatches at compile time. That moved contract problems much earlier and also cut out a lot of repetitive interface-writing work.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">We had to spend some time with the backend team making the Swagger docs disciplined enough to generate clean contracts. Once that was in place, it paid off for the rest of the project.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 6 · Shared components: enough abstraction, not maximum abstraction</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">A back-office system always ends up with a shared component layer: search groups, filters, uploads, table actions, form fields, and so on. The question was how far to push that abstraction.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val"><strong class="em">Only abstract patterns that were clearly high-frequency</strong>, and stop there. We did not try to force 100% coverage with “one universal component.”</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">Over-abstracted admin components quickly turn into “universal but painful” monsters with too many props and too much hidden logic. We wanted shared components to stay focused on patterns like list search, action columns, and filter bars that were actually stable and reused.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">Some lower-frequency scenarios still ended up with a bit of repeated page code. That was acceptable, because it was not the bottleneck.</div></div>
+      </div>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./modules.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">05 · Core Modules</span>
+        </a>
+        <a class="next" href="./challenges.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">07 · Challenges &amp; Solutions</span>
+        </a>
+      </footer>
+    </main>
+  </div>
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

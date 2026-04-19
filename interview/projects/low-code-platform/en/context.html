@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Context &amp; Problem · Low-Code Campaign Platform</title>
+<meta name="description" content="Business context and core problems behind the Low-Code Campaign Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="context" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Context &amp; Problem</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">02</span>Context &amp; Problem</div>
+        <h1 class="page-title">Why we built it in the first place</h1>
+      </header>
+
+      <h3 class="sub">What the world looked like before the platform</h3>
+      <ul class="bullets">
+        <li>Every campaign page was still hand-built by frontend engineers. Even a fairly simple page usually took <strong class="em">1-2 days</strong> from request to launch.</li>
+        <li>Common building blocks like hero images, rich text, fixed CTA buttons, and signup modals were rewritten again and again, so code quality and styling drifted over time.</li>
+        <li>Multi-channel delivery was painful. The same campaign often had to work in mobile web, WeChat H5, app WebView, and Mini Program WebView, each with slightly different runtime behavior.</li>
+        <li>Tracking, redirects, share config, and mini-program jumps were implemented differently from project to project, which created both data inconsistency and debugging overhead.</li>
+        <li>The frontend team was stuck in a delivery loop. Anything more strategic, like a widget ecosystem, SSR, or better tooling, kept getting pushed out by campaign work.</li>
+      </ul>
+
+      <h3 class="sub">What that caused in practice</h3>
+      <div class="card-grid problems">
+        <div class="mini-card">
+          <div class="mini-title">Ops moved too slowly</div>
+          <div class="mini-desc">Simple changes like swapping copy or changing a banner still needed a frontend slot, so fast-turn campaigns were hard to execute.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Frontend time was wasted</div>
+          <div class="mini-desc">A lot of engineering effort was going into repetitive layout work instead of reusable platform capability.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Quality was inconsistent</div>
+          <div class="mini-desc">Visual polish, event tracking, and cross-channel behavior depended too much on people remembering conventions.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Risk kept accumulating</div>
+          <div class="mini-desc">There was no version discipline for campaign components, so a “small” shared change could accidentally affect older live pages.</div>
+        </div>
+      </div>
+
+      <h3 class="sub">What problem we were actually solving</h3>
+      <p>
+        On the surface, this looked like “build an internal editor.” But the real problem was delivery mode.
+        We wanted to move campaign production from <strong class="em">“every page needs frontend engineering”</strong>
+        to <strong class="em">“ops can assemble and publish pages themselves, while the platform guarantees quality”</strong>.
+      </p>
+      <p>
+        Buying an off-the-shelf SaaS tool was not a great fit either. The education business had heavy customization around data,
+        enrollment flows, teacher cards, referral widgets, and share behavior. In practice, a generic page builder would still need
+        a lot of custom engineering, so we chose to build it ourselves.
+      </p>
+
+      <h3 class="sub">What the frontend architecture had to guarantee</h3>
+      <ul class="bullets">
+        <li><strong class="em">It had to scale with business variation.</strong> The schema and widget system needed to support new campaign types without rewriting the platform core.</li>
+        <li><strong class="em">What you see in the editor had to match production closely.</strong> That meant a fixed editor canvas and a runtime that could translate the same styling to real devices.</li>
+        <li><strong class="em">Performance was not optional.</strong> These pages were traffic entry points, so SSR and CDN delivery were baseline requirements, not nice-to-haves.</li>
+        <li><strong class="em">Publishing needed a fallback story.</strong> If SSR failed, the page still had to ship and still had to render correctly on the client.</li>
+        <li><strong class="em">Ops could not be writing JavaScript.</strong> Interactions had to be expressed through declarative triggers, not custom scripts.</li>
+        <li><strong class="em">A small team had to be able to keep it alive.</strong> The design had to stay understandable with 3-5 engineers, not depend on tribal knowledge.</li>
+      </ul>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./index.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">01 · Overview</span>
+        </a>
+        <a class="next" href="./role.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">03 · Role &amp; Ownership</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

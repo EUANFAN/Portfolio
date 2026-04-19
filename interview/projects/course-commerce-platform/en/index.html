@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Overview · Course Commerce Platform</title>
+<meta name="description" content="Overview of the Course Commerce Platform deep-dive." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="overview" aria-label="Project sections"></aside>
+
+    <main>
+
+      <header class="page-header">
+        <div class="page-eyebrow">Project Deep-Dive</div>
+        <h1 class="page-title">Course Commerce Platform</h1>
+        <p class="page-lead">
+          A B-side operations platform for the internal ops team. It pulled all the scattered
+          “make money” workflows in the course business into one admin system: product setup,
+          marketing tools, user rules, and landing-page creation. Under the hood, it was built on
+          <strong>centralized routing in Umi Max + a two-layer permission model</strong>,
+          <strong>reusable CRUD and form abstractions</strong>, and
+          <strong>Swagger-generated API contracts</strong>, so 5 business domains and 20+ pages could still
+          share one interaction model, one permission model, and one data contract.
+        </p>
+
+        <div class="meta-strip" aria-label="Project meta">
+          <div class="cell"><div class="label">Company</div><div class="val">Xiwangxue</div></div>
+          <div class="cell"><div class="label">Timeline</div><div class="val">2022 — 2023</div></div>
+          <div class="cell"><div class="label">Role</div><div class="val">Frontend Lead · Core IC · 3-5 eng</div></div>
+          <div class="cell"><div class="label">Frontend Stack</div><div class="val">Umi Max 4 · React 18 · TypeScript · Ant Design Pro</div></div>
+          <div class="cell"><div class="label">Key Libraries</div><div class="val">Formily 2 · Redux Toolkit · ahooks · @dandelion/swagger</div></div>
+        </div>
+      </header>
+
+      <div class="section-eyebrow"><span class="num">01</span>Overview</div>
+      <h2 class="section-title" style="font-size:26px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:18px;">What this project was, in one sentence</h2>
+
+      <p>
+        <strong class="em">A commercial operations platform for the internal ops team</strong>,
+        built to bring all the revenue-related workflows in the course business into one admin:
+        product setup for courses, boxes, and coupons; marketing tools like promotion links, channel codes,
+        and custom campaigns; user rules like purchase limits and user portrait rules; and finally landing-page
+        setup and publishing. On the frontend side, we used Umi Max routing plus the access plugin for permissions,
+        Redux Toolkit for global state, Formily for complex forms, ahooks for async and interaction flows, and
+        <strong>Swagger-generated API contracts</strong> so frontend and backend stayed aligned on both types and semantics.
+      </p>
+
+      <h3 class="sub">Business domains</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">Project Center</div>
+          <div class="mini-desc">Course projects, navigation projects, template center, component library, and mini programs. This was the entry point for landing-page work.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Gift Center</div>
+          <div class="mini-desc">Course products, physical goods, and virtual goods like coupons.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Tools</div>
+          <div class="mini-desc">Promotion tools, custom campaigns, channel QR codes, and troubleshooting tools. Basically the everyday toolkit for marketing ops.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">User Portrait</div>
+          <div class="mini-desc">User purchase limits, course purchase limits, and course relationships. This is where we controlled who could buy what.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Workspace</div>
+          <div class="mini-desc">The landing-page builder, built around a 7-step wizard, Formily forms, and real-device preview.</div>
+        </div>
+      </div>
+
+      <dl class="star" aria-label="STAR summary">
+        <dt>Situation</dt>
+        <dd>
+          The operational workflow for the course business was spread across several old admin systems. Products were in one system,
+          coupons in another, landing pages were still hand-built by frontend engineers, and purchase-limit rules required backend code changes.
+          Every campaign meant hopping across 3-4 systems, while frontend was stuck patching one-off workflows with no consistent interaction model or data contract.
+        </dd>
+        <dt>Task</dt>
+        <dd>
+          Pull those scattered capabilities into one admin, give the business a consistent interaction model, a consistent permission model,
+          and a consistent data contract, and let non-engineering ops teammates handle most of the daily workflow on their own.
+          The bigger goal was to get the frontend team out of repetitive delivery work.
+        </dd>
+        <dt>Action</dt>
+        <dd>
+          Built the frontend foundation on top of <strong>Umi Max</strong>. We used centralized routes plus the access plugin to support
+          <strong>menu-level and button-level permissions</strong>. We split the project into three layers: business modules, platform capability, and infrastructure.
+          We abstracted common CRUD patterns into hooks like <code>useTableSearch</code> and <code>useTableSet</code>, used Redux Toolkit for global state,
+          <strong>Formily</strong> for deeply nested forms, ahooks for async interaction flows, and <strong>@dandelion/swagger</strong> for generated API contracts.
+          Axios interceptors handled auth, errors, and toast behavior in one place.
+        </dd>
+        <dt>Result</dt>
+        <dd>
+          One admin ended up covering 5 business domains and 20+ secondary pages. Ops no longer had to keep switching across old systems.
+          Landing pages moved from “wait for frontend scheduling” to “ops can handle it,” and the frontend team shifted from “build pages” to “build the platform.”
+        </dd>
+      </dl>
+
+      <h3 class="sub">Four things that really made it work</h3>
+      <ul class="bullets">
+        <li>
+          <strong>Centralized routing plus a two-layer permission model.</strong>
+          One <code>routes.ts</code> declared all routes, and every node carried an <code>access</code> key.
+          Umi Max then used that in one place to drive menu rendering, route blocking, and button-level auth.
+          Pages used <code>&lt;Access&gt;</code>, buttons used <code>useAuthCheck(authKey)</code>, and menu permissions stayed clearly separated from function permissions.
+        </li>
+        <li>
+          <strong>CRUD scenarios were abstracted into hooks instead of copied page by page.</strong>
+          More than 20 list pages only needed to define <code>columns</code> and <code>searchFn</code>.
+          Search, paging, sorting, column persistence, and URL sync all came from <code>useTableSearch</code> and <code>useTableSet</code>.
+          A new list page went from 500+ lines down to roughly 150, and the behavior stayed consistent.
+        </li>
+        <li>
+          <strong>Formily carried the complex nested forms.</strong>
+          Coupons, products, and rules all had deep nesting, field linkage, and heavy validation.
+          Formily let us describe those as schemas and reactions instead of writing a mess of <code>onChange</code> and conditional state code by hand.
+        </li>
+        <li>
+          <strong>Swagger generation plus axios interceptors kept the contract layer clean.</strong>
+          <code>@dandelion/swagger</code> generated TypeScript types and request functions from OpenAPI, so frontend barely wrote API wrappers by hand.
+          Axios interceptors took care of 401 → SSO redirect, unified business-error toasts, and header injection, so business code mostly stayed on the happy path.
+        </li>
+      </ul>
+
+      <h3 class="sub">A few details that were easy to miss, but mattered a lot</h3>
+      <ul class="bullets">
+        <li>
+          <strong>The permission model was explicitly split.</strong>
+          In the backend permission list, <code>type=0/1</code> meant menu permissions and everything else meant function permissions.
+          Menu permissions drove access and routing; function permissions drove buttons. That boundary was clear right at the frontend entry point, so the logic did not get tangled later.
+        </li>
+        <li>
+          <strong>One codebase, four build outputs.</strong>
+          We used <code>cross-env mode=dev|mock|gray|prod</code> to run four environments.
+          Mock let frontend work independently, gray handled staged rollout, and prod was the real release build. Same source, different outputs, no extra branches.
+        </li>
+        <li>
+          <strong>List-page behavior was standardized by default.</strong>
+          Search reset <code>current</code>, paging preserved filters, reset cleared <code>params</code>, and column order and visibility were persisted in <strong>localStorage</strong>.
+          All of that lived inside the hooks, so every new list page got the same default behavior for free.
+        </li>
+      </ul>
+
+      <p class="muted" style="margin-top:14px;font-size:13px;">
+        Note: the workspace module in this project also included a low-code landing-page builder, but the team had a separate low-code platform
+        that was much deeper and is presented as its own highlight project
+        (<a href="../../low-code-platform/en/">Low-Code Campaign Platform</a>).
+        Here it is treated as one module inside the larger commerce admin, not the main story.
+      </p>
+
+      <footer class="pager" aria-label="Section navigation">
+        <span></span>
+        <a class="next" href="./context.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">02 · Context &amp; Problem</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

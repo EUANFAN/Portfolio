@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Core Modules · Course Commerce Platform</title>
+<meta name="description" content="Core modules of the Course Commerce Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" data-active="modules" aria-label="Project sections"></aside>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Core Modules</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">05</span>Core Modules</div>
+        <h1 class="page-title">Five key modules, one by one</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          Each business area was its own module, but they all shared the same routing,
+          permission, request, form, and component foundation. This section walks through them one by one.
+        </p>
+      </header>
+
+      <div class="decision">
+        <div class="decision-title">01 · Project Center <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">template/</span></div>
+        <p style="margin-bottom:10px;">
+          This was the starting point for ops to run campaigns.
+          <strong class="em">One project meant one landing page plus all of its versions</strong>.
+          It contained four sub-modules:
+        </p>
+        <div class="decision-row">
+          <div class="label">Existing projects</div>
+          <div class="val">Course projects and navigation projects, with list pages, version management, copy, edit, preview, publish, and unpublish actions.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Template Center</div>
+          <div class="val">Centralized management of course landing-page templates. Ops could create projects from templates instead of repeating the same setup work.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Component Library</div>
+          <div class="val">Independent CRUD for 5 reusable component types such as popup, completion page, SMS, form, and button material, all reused in landing-page configuration.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Mini Program List</div>
+          <div class="val">List-based management for mini-program related configuration.</div>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">02 · Gift Center <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">present/</span></div>
+        <p style="margin-bottom:10px;">
+          This module handled everything the business could “give” or sell.
+          It broke down into three product types:
+        </p>
+        <div class="decision-row">
+          <div class="label">Course products</div>
+          <div class="val">Course supply chain plus product center. It wrapped scattered course SKUs into real commercial product objects, with pricing, spec, inventory, and ownership.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Physical goods</div>
+          <div class="val">Course boxes and physical boxes, meaning real shipped goods that connected to warehousing and fulfillment.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Virtual goods</div>
+          <div class="val">Coupons, including creation, distribution rules, validity windows, usage restrictions, and batch management.</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">Deeply nested forms</span>
+          <span class="tag">Batch operations</span>
+          <span class="tag">Field linkage</span>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">03 · Tools <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">tools/</span></div>
+        <p style="margin-bottom:10px;">
+          This was one of the highest-frequency areas for daily ops work.
+          “Small tools” only described the module size, not the business value.
+        </p>
+        <div class="decision-row">
+          <div class="label">Promotion tools</div>
+          <div class="val">Generate, manage, and review campaign links and QR codes.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Custom campaigns</div>
+          <div class="val">A configuration entry point for non-standard campaign scenarios, so one-off needs could still be absorbed into the platform instead of handled ad hoc.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Channel QR codes</div>
+          <div class="val">A core attribution capability: one QR code could sit behind multiple customer-service accounts, with automatic distribution and attribution tracking.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Troubleshooting tools</div>
+          <div class="val">A self-service panel for ops and customer support. Enter a user ID and quickly inspect orders, coupons, and attribution flow without pulling in engineering.</div>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">04 · User Portrait <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">user-portrait/</span></div>
+        <p style="margin-bottom:10px;">
+          This module turned “which users can buy which courses” into a configurable rule system.
+          In practice, it was a <strong class="em">frontend configuration layer for a rule engine</strong>.
+        </p>
+        <div class="decision-row">
+          <div class="label">User purchase limits</div>
+          <div class="val">Rules based on user labels, identity, purchase history, and similar dimensions.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Course purchase limits</div>
+          <div class="val">The same idea from the course side: who can buy this course, how many copies per user, and whether there is any tiering.</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">Course relationships</div>
+          <div class="val">Relationships such as mutual exclusion, substitution, and upgrade paths between courses. For example, if a user bought A, can they still buy B?</div>
+        </div>
+        <div class="tags" style="margin-top:10px;">
+          <span class="tag">Rule-engine frontend</span>
+          <span class="tag">Dynamic Formily schema</span>
+          <span class="tag">Condition-builder UI</span>
+        </div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">05 · Workspace (low-code builder) <span style="font-weight:500;color:var(--text-soft);font-size:12px;margin-left:6px;">work-space/</span></div>
+        <p>
+          This was the entry point for ops to build course landing pages by themselves.
+          The core capability was a <strong class="em">7-step wizard + Formily-driven page configuration + real-time mobile preview + save / preview / publish loop</strong>.
+          It supported 8 landing-page templates, multiple delivery carriers like H5 and mini programs, plus version management and drafts.
+        </p>
+        <p class="muted" style="margin-top:10px;font-size:13px;">
+          Low-code page building is a separate highlight project in the portfolio, and that project goes much deeper and more complete.
+          Here it only appears as one module inside the larger commerce admin, so I do not expand it further in this project.
+        </p>
+      </div>
+
+      <h3 class="sub">A few design choices that mattered across modules</h3>
+      <ul class="bullets">
+        <li><strong class="em">One permission model covered all modules</strong> — dozens of permission keys in <code>access.ts</code> drove menus, routes, and buttons together. A new module only needed to plug in one key to enter the whole system.</li>
+        <li><strong class="em">Shared components were reused across modules</strong> — form search groups, table action dropdowns, upload components, and Formily field extensions all behaved the same everywhere.</li>
+        <li><strong class="em">The API layer was type-generated</strong> — backend changes an interface, frontend regenerates Swagger types, and incompatibilities show up during compile instead of later.</li>
+        <li><strong class="em">Shared Redux slices handled cross-page state</strong> — config, user info, and troubleshooting state were shared globally instead of being passed through page trees.</li>
+      </ul>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./architecture.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">04 · Architecture</span>
+        </a>
+        <a class="next" href="./decisions.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">06 · Key Decisions</span>
+        </a>
+      </footer>
+    </main>
+  </div>
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

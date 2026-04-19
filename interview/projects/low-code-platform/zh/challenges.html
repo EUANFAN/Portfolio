@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>难点与方案 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台 - 五个核心难点与解决方案，适合面试场景讲解" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="challenges" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">企业级低代码活动搭建平台</a>
+        <span class="sep">/</span>
+        <span>难点与方案</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">07</span>难点与方案</div>
+        <h1 class="page-title">五个真正难的点，以及我怎么把它们落下来</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          这部分我按面试表达方式来组织：每一节都讲清楚
+          <strong class="em">为什么难、难在哪里、我怎么拆问题、最终方案是什么、关键数据结构和链路怎么设计、效果如何验证</strong>。
+          如果面试官追问，我也能顺着 schema、渲染链路和发布链路继续展开。
+        </p>
+      </header>
+
+      <h2 class="challenge-heading"><span class="num">01</span>统一 Schema：用一套工程模型承接多样化活动</h2>
+      <p class="challenge-lead">难点不在“存一个 JSON”，而在于这套 JSON 既要能描述不同业务，又要同时服务编辑器、预览端、发布端和组件体系。</p>
+
+      <div class="sub-h">为什么这是个难点</div>
+      <p>
+        低代码平台最先遇到的问题不是拖拽，而是<strong class="em">页面到底怎么描述</strong>。如果 schema 设计得太薄，只能表达静态 UI；
+        如果设计得太重，编辑器很难维护、运行时也会变复杂。我们面对的是多种活动形态：
+      </p>
+      <ul class="bullets">
+        <li>有的页面是单页长滚动，有的是多页切换。</li>
+        <li>有的组件是普通原子组件，有的是带内部面板的容器型组件。</li>
+        <li>有的内容是静态配置，有的是请求接口后填充。</li>
+        <li>有的交互是页面级行为，有的是组件级行为、动画、条件显示。</li>
+        <li>同一套数据不仅要让编辑器能改，还要让 C 端能渲染、SSR 能执行、外部组件能接入。</li>
+      </ul>
+      <p>
+        所以我的判断是：这套 schema 不能只描述“长什么样”，而要描述一个完整活动工程，包括
+        <strong class="em">结构、布局、样式、行为、动画、变量、数据源、平台配置</strong>。
+      </p>
+
+      <div class="sub-h">核心数据结构</div>
+      <div class="diagram" aria-label="统一 schema 分层结构图">
+
+        <div class="layer">
+          <div class="layer-label">Project</div>
+          <div class="block highlight">
+            pages[]
+            <span class="sub">页面列表，项目主结构</span>
+          </div>
+          <div class="block">
+            variableStore / pageState
+            <span class="sub">项目变量、运行态变量</span>
+          </div>
+          <div class="block">
+            dataBox / componentPlat / dynamicLoadScript
+            <span class="sub">数据源和平台配置</span>
+          </div>
+          <div class="block">
+            rulesConfig / shareConfig / thirdPartyConfig
+            <span class="sub">规则、分享、第三方接入</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Page</div>
+          <div class="block">
+            width / height / isFullPage
+            <span class="sub">页面尺寸与滚动模式</span>
+          </div>
+          <div class="block">
+            bgColor / bgImage / bgSize
+            <span class="sub">页面背景样式</span>
+          </div>
+          <div class="block highlight">
+            widgets[]
+            <span class="sub">页面内组件树入口</span>
+          </div>
+          <div class="block">
+            triggers[] / variableStore / dataBox
+            <span class="sub">页面行为、页面变量、页面级接口</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Widget</div>
+          <div class="block highlight">
+            type / version / data / config
+            <span class="sub">业务能力和组件协议核心</span>
+          </div>
+          <div class="block">
+            layout / location / top / left / width / height
+            <span class="sub">布局与定位</span>
+          </div>
+          <div class="block">
+            bg / border / shadow / padding / margin
+            <span class="sub">视觉样式</span>
+          </div>
+          <div class="block">
+            triggers[] / animations[] / condition
+            <span class="sub">交互、动画、显示条件</span>
+          </div>
+          <div class="block">
+            hasLayers / layers[]
+            <span class="sub">容器型组件的内部面板</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Layer</div>
+          <div class="block">
+            width / height / widgets[]
+            <span class="sub">容器内部的子视口</span>
+          </div>
+          <div class="block">
+            isFullPage / bgColor
+            <span class="sub">子层级容器的展示形态</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">Schema 示例</div>
+<pre class="code-block"><span class="c-kw">const</span> projectSchema = {
+  name: <span class="c-str">'秋季招生会场'</span>,
+  componentPlat: <span class="c-str">'h5'</span>,
+  dynamicLoadScript: <span class="c-kw">false</span>,
+  variableStore: {
+    PAGE_VARIABLE: { city: <span class="c-str">'北京'</span> }
+  },
+  pages: [
+    {
+      id: <span class="c-str">'page_1'</span>,
+      name: <span class="c-str">'首页'</span>,
+      width: <span class="c-str">375</span>,
+      height: <span class="c-str">1200</span>,
+      isFullPage: <span class="c-kw">false</span>,
+      widgets: [
+        {
+          id: <span class="c-str">'w_banner'</span>,
+          type: <span class="c-str">'Image'</span>,
+          layout: <span class="c-str">'flow'</span>,
+          version: <span class="c-str">'1.0.0'</span>,
+          data: { url: <span class="c-str">'https://cdn/banner.png'</span> },
+          triggers: [],
+          animations: []
+        },
+        {
+          id: <span class="c-str">'w_tab'</span>,
+          type: <span class="c-str">'Container'</span>,
+          layout: <span class="c-str">'normal'</span>,
+          top: <span class="c-str">420</span>,
+          left: <span class="c-str">20</span>,
+          width: <span class="c-str">335</span>,
+          height: <span class="c-str">320</span>,
+          hasLayers: <span class="c-kw">true</span>,
+          layers: [
+            {
+              id: <span class="c-str">'layer_1'</span>,
+              name: <span class="c-str">'面板-1'</span>,
+              widgets: [{ type: <span class="c-str">'NormalText'</span>, data: { text: <span class="c-str">'课程介绍'</span> } }]
+            },
+            {
+              id: <span class="c-str">'layer_2'</span>,
+              name: <span class="c-str">'面板-2'</span>,
+              widgets: [{ type: <span class="c-str">'NormalText'</span>, data: { text: <span class="c-str">'师资介绍'</span> } }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+</pre>
+
+      <div class="sub-h">我当时的设计取舍</div>
+      <ul class="bullets">
+        <li><strong>Project / Page / Widget / Layer 分层建模</strong>。这样容器、页面、组件虽然类型不同，但都能在编辑器里被统一操作。</li>
+        <li><strong>业务字段统一下沉到 widget.data</strong>。平台只关心协议，不关心组件内部业务语义。</li>
+        <li><strong>行为、动画、条件不揉进样式结构</strong>。这样编辑器面板、运行时执行器、SSR 都能分别消费。</li>
+        <li><strong>变量和数据源放进 schema，而不是只存在运行时</strong>。这样预览、SSR、客户端渲染才能对齐。</li>
+      </ul>
+
+      <div class="sub-h">为什么这套模型能支持不同业务</div>
+      <div class="flow" aria-label="统一 schema 支持不同业务的路径">
+        <span class="node">统一 Project/Page/Widget/Layer 结构</span>
+        <span class="arrow">→</span>
+        <span class="node">组件差异收敛到 type + version + data</span>
+        <span class="arrow">→</span>
+        <span class="node">交互差异收敛到 triggers / animations / condition</span>
+        <span class="arrow">→</span>
+        <span class="node">数据差异收敛到 variableStore / dataBox</span>
+        <span class="arrow">→</span>
+        <span class="node accent">编辑器、运行时、SSR 共用一套 schema</span>
+      </div>
+
+      <div class="pitch">
+        <div class="pitch-label">面试这样说</div>
+        <p>
+          “这个平台最关键的一步不是把编辑器做出来，而是先把 schema 定义对。我的思路不是定义一个页面 JSON，而是定义一个完整活动工程：
+          Project 下面有 Page，Page 下面有 Widget，容器类 Widget 下面还能继续挂 Layer。再把行为、动画、变量、数据源和平台配置都纳入这棵树。”
+        </p>
+        <p>
+          “这样带来的好处是，编辑器、预览端、发布端和外部组件体系都能围绕同一套协议工作。业务差异不需要改平台主结构，只需要改 widget.type 和 widget.data 就行。” 
+        </p>
+      </div>
+
+      <div class="qa" aria-label="统一 schema 追问 Q&A">
+        <details>
+          <summary>为什么不是做一套更简单的页面 JSON，而是做成 Project / Page / Widget / Layer 这种工程模型？</summary>
+          <div class="answer">
+            因为我们做的不是静态页面渲染器，而是完整的活动工程。除了 UI 结构本身，还要承载页面切换、容器钻层、组件行为、运行时变量、数据源和发布态信息。
+            如果只做一个轻量页面 JSON，编辑器、预览、SSR、外部组件接入很快就会出现信息缺口。工程模型虽然更重，但能让整条链路围绕同一套协议工作。
+          </div>
+        </details>
+        <details>
+          <summary>为什么把业务字段放在 widget.data，而不是直接挂在 widget 顶层？</summary>
+          <div class="answer">
+            平台字段和业务字段要分开。像 top、left、width、layout 这类字段是平台需要统一理解的；而 url、courseId、teacherList 这类字段只属于具体组件。
+            下沉到 data 以后，平台不会被具体业务污染，外部组件也能复用同一个协议。
+          </div>
+        </details>
+        <details>
+          <summary>如果今天让你重做这套 schema，你还会坚持现在这种分层吗？</summary>
+          <div class="answer">
+            大方向会坚持，但我会更早把 schema 文档化和版本化。现在这套结构本身是对的，问题更多在于早期字段增长比较快，部分配置语义是从业务里倒逼出来的。
+            如果重做，我会把平台字段、业务字段、运行态字段的边界定义得更明确，让后续接入方更容易理解。
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">02</span>编辑器内核：三栏协同与多层视口</h2>
+      <p class="challenge-lead">真正难的不是摆出左中右三栏，而是让左边入口、中间画布、右边配置围绕同一个编辑上下文实时联动。</p>
+
+      <div class="sub-h">为什么这是个难点</div>
+      <p>
+        用户看到的是一个标准三栏编辑器，但底层有几个复杂点同时存在：
+      </p>
+      <ul class="bullets">
+        <li>左边不只是组件库，还有页面管理和图层树，入口本身就是多态的。</li>
+        <li>中间画布不是一个简单 div，而是 page、container、layer 之间来回切换的多层视口。</li>
+        <li>右边配置面板要根据“当前 stage + 当前选中对象数量”动态切换显示内容。</li>
+        <li>组件既有 flow 布局，也有 normal 布局，两种交互模型完全不同。</li>
+      </ul>
+      <p>
+        如果没有统一的编辑上下文模型，左边改了页面，中间和右边就容易错位；进入容器再退回页面，状态也会很乱。
+      </p>
+      <p>
+        这里还有一个非常关键的技术点：<strong class="em">MobX 实际上承担了三栏协同的“实时同步层”</strong>。
+        编辑器的很多交互不是一次性提交，而是持续变化的对象状态，比如当前页面、当前选中组件、组件坐标、属性值、当前视口层级。
+        如果这些变化靠事件广播或手动同步 UI，很快就会出现链路分散和状态错位的问题。
+      </p>
+
+      <div class="sub-h">三栏协作架构图</div>
+      <div class="diagram" aria-label="三栏编辑器协作与 MobX 状态驱动图">
+
+        <div class="layer">
+          <div class="layer-label">左栏</div>
+          <div class="block">
+            页面列表
+            <span class="sub">选页、排序、新建、删页</span>
+          </div>
+          <div class="block">
+            组件库
+            <span class="sub">拖入或点击插入组件</span>
+          </div>
+          <div class="block">
+            图层树
+            <span class="sub">查看当前上下文结构</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">中栏</div>
+          <div class="block highlight">
+            WorkSpace
+            <span class="sub">Selector + Ruler + SwipeableViews</span>
+          </div>
+          <div class="block highlight">
+            Stage
+            <span class="sub">flow 排序 + normal 拖拽缩放</span>
+          </div>
+          <div class="block">
+            多层视口
+            <span class="sub">page / widget / layer 上下文切换</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">右栏</div>
+          <div class="block">
+            属性面板
+            <span class="sub">项目 / 页面 / 组件 / 面板配置</span>
+          </div>
+          <div class="block">
+            图层 / 动画 / 行为 / 条件
+            <span class="sub">按选中状态动态切换</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">共享状态层（MobX）</div>
+          <div class="block highlight">
+            StageStore
+            <span class="sub">@observable project + stages + swiperIndex + activeTab</span>
+          </div>
+          <div class="block highlight">
+            Project / Page / Widget / Layer
+            <span class="sub">恢复成可观察对象树</span>
+          </div>
+          <div class="block highlight">
+            Stage
+            <span class="sub">统一 page / widget / layer 的增删改选排序操作</span>
+          </div>
+          <div class="block">
+            左栏 / 中栏 / 右栏都是 @observer
+            <span class="sub">改数据即可驱动三栏联动</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">编辑器主结构</div>
+<pre class="code-block"><span class="c-kw">return</span> (
+  &lt;<span class="c-prop">Editor</span>&gt;
+    &lt;<span class="c-prop">EditorNavbar</span> /&gt;         <span class="c-cm">// 顶部导航</span>
+    &lt;<span class="c-prop">EditorLeftTabContainer</span> /&gt;<span class="c-cm">// 左栏：页面 / 组件 / 图层</span>
+    &lt;<span class="c-prop">WorkSpace</span> /&gt;              <span class="c-cm">// 中栏：多层画布</span>
+    &lt;<span class="c-prop">SettingsPanel</span> /&gt;         <span class="c-cm">// 右栏：配置 / 行为 / 动画 / 图层</span>
+  &lt;/<span class="c-prop">Editor</span>&gt;
+)
+</pre>
+
+      <div class="sub-h">从 MobX 视角理解这套编辑器</div>
+<pre class="code-block"><span class="c-cm">// 编辑器共享状态中心</span>
+<span class="c-kw">class</span> <span class="c-fn">StageStore</span> {
+  @observable project
+  @observable stages = []
+  @observable swiperIndex = <span class="c-str">0</span>
+  @observable activeTab = <span class="c-str">'attribute'</span>
+}
+
+<span class="c-cm">// 左栏：切换页面 / 图层</span>
+stageStore.setCurrentStage(page, <span class="c-str">'page'</span>)
+
+<span class="c-cm">// 中栏：选中组件 / 进入容器 / 拖拽缩放</span>
+widget.isSelected = <span class="c-kw">true</span>
+widget.modify({ left: <span class="c-str">20</span>, top: <span class="c-str">40</span> })
+
+<span class="c-cm">// 右栏：修改属性</span>
+widget.modifyData(<span class="c-str">'title'</span>, <span class="c-str">'秋季课程'</span>)
+
+<span class="c-cm">// 三栏只需要作为 @observer 观察这棵状态树，不需要额外派发 UI 同步事件</span>
+</pre>
+
+      <div class="sub-h">中栏为什么要做“多层视口”</div>
+      <p>
+        我们不是把所有层级都平铺在一个画布里，而是把 page 和 layer 做成真正可切换的 viewport。
+        这样进入容器型组件时，用户不是在一个巨大的 DOM 树里“找子节点”，而是进入一个新的编辑空间。
+      </p>
+      <div class="flow" aria-label="多层视口切换链路">
+        <span class="node">选中容器组件</span>
+        <span class="arrow">→</span>
+        <span class="node">StageStore.setCurrentStage(widget, 'widget')</span>
+        <span class="arrow">→</span>
+        <span class="node">选中默认 layer</span>
+        <span class="arrow">→</span>
+        <span class="node">StageStore.setCurrentStage(layer, 'layer')</span>
+        <span class="arrow">→</span>
+        <span class="node accent">WorkSpace 切到新的 Swipeable viewport</span>
+      </div>
+
+      <div class="sub-h">为什么还要抽象 Stage</div>
+      <p>
+        Page、Layer、Container Widget 虽然类型不同，但在编辑器操作上其实很像：
+        都要支持<strong class="em">新增子节点、删除、排序、选中、取消选中</strong>。所以我没有在各个业务类里到处写 if/else，
+        而是做了一个 Stage 抽象，把当前上下文对应的 children 统一映射成一个 list。
+      </p>
+<pre class="code-block"><span class="c-kw">class</span> <span class="c-fn">Stage</span> {
+  constructor(component, type) {
+    <span class="c-kw">this</span>.component = component
+    <span class="c-kw">this</span>.type = type
+    <span class="c-kw">this</span>.list = component.pages || component.widgets || component.layers || []
+  }
+
+  addChild()
+  removeChildren()
+  selectChildren()
+  sortChildren()
+}
+</pre>
+
+      <div class="sub-h">左中右三栏的联动逻辑</div>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">左栏</div>
+          <div class="mini-stat">改变入口上下文</div>
+          <div class="mini-desc">切页、拖入组件、查看图层树，本质上都是在修改当前 stage 或当前 page。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">中栏</div>
+          <div class="mini-stat">操作当前上下文</div>
+          <div class="mini-desc">flow 组件走排序，normal 组件走拖拽缩放，容器组件还能继续钻层。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">右栏</div>
+          <div class="mini-stat">解释当前上下文</div>
+          <div class="mini-desc">没选中组件时配置 page/layer，单选组件时展示属性/行为/动画，多选时只显示公共操作。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">共享状态</div>
+          <div class="mini-stat">StageStore</div>
+          <div class="mini-desc">三栏都不直接互相通信，只读写同一个 stageStore。</div>
+        </div>
+      </div>
+
+      <div class="sub-h">为什么 MobX 在这里特别合适</div>
+      <ul class="bullets">
+        <li><strong>状态天然是一棵对象树</strong>。Project、Page、Widget、Layer 和编辑器本身的上下文栈是嵌套关系，MobX 更贴近这种数据形态。</li>
+        <li><strong>交互频率高、粒度细</strong>。选中、拖拽、缩放、切页、切层、改属性都在频繁发生，MobX 的“改对象即更新”更适合这类场景。</li>
+        <li><strong>三栏协同是观察式问题</strong>。左栏、中栏、右栏不需要互相知道彼此怎么实现，只需要观察同一份状态。</li>
+        <li><strong>能避免样板代码膨胀</strong>。如果用更重的 dispatch 模型，每个交互动作都要穿过 action / reducer / selector，编辑器心智成本会更高。</li>
+      </ul>
+
+      <div class="sub-h">我重点解决的几个交互问题</div>
+      <ul class="bullets">
+        <li><strong>flow 和 normal 并存</strong>。flow 适合运营顺序排版，normal 适合自由布局，两个模型要在一个画布里共存。</li>
+        <li><strong>容器进入与返回</strong>。进入容器后不是 modal，而是 viewport 切换，带 breadcrumb，用户更容易理解当前层级。</li>
+        <li><strong>框选和多选</strong>。画布空白区取消选中，拖拽框选只选中当前 stage 内元素，不跨层级误选。</li>
+        <li><strong>右键上下文菜单</strong>。复制、剪切、删除、置顶置底、进入容器都通过当前 stage 操作，避免分散逻辑。</li>
+      </ul>
+
+      <div class="pitch">
+        <div class="pitch-label">面试这样说</div>
+        <p>
+          “这个编辑器表面上是左中右三栏，真正难的是三栏背后要共享一个统一编辑上下文。我做了一个 StageStore，里面维护 project、本次编辑路径 stages、当前 swiperIndex 和右侧 activeTab。
+          左边切页面、点组件、看图层树，中间画布拖拽缩放和钻进容器，右边属性配置切换，本质上都只是在读写同一个 stageStore。”
+        </p>
+        <p>
+          “这里 MobX 的作用非常关键。因为三栏联动的本质不是‘谁通知谁’，而是‘三栏都观察同一棵状态树’。页面切换、组件选中、属性修改、容器钻层，本质上都是 observable 对象上的变化。
+          左中右作为 observer 自动响应，所以我不需要额外再搭一套事件广播机制来同步 UI。”
+        </p>
+        <p>
+          “另外我把 Page、Layer、容器 Widget 的子节点操作统一抽象成 Stage，这样增删改选排都能复用一套逻辑，避免到处写 if/else。进入容器时我没有用弹窗，而是用 SwipeableViews 做多层视口，用户心智会更清楚。” 
+        </p>
+      </div>
+
+      <div class="qa" aria-label="编辑器交互追问 Q&A">
+        <details>
+          <summary>为什么要同时支持 flow 和 normal 两种布局，而不是统一成一种？</summary>
+          <div class="answer">
+            不行。运营活动页里既有顺序排版场景，也有绝对定位场景。全部做 flow，复杂视觉排版做不出来；全部做 absolute，长页面维护成本很高。
+            所以平台必须同时支持这两种布局，只是底层交互模型要分开处理。
+          </div>
+        </details>
+        <details>
+          <summary>为什么进入容器要做成新视口，而不是直接在原画布里展开编辑？</summary>
+          <div class="answer">
+            因为容器内部结构一旦复杂，直接在原画布里展开会让选中关系、图层树、拖拽边界都很混乱。做成新视口以后，当前 stage 的边界是清晰的，
+            用户知道自己正在编辑哪个 layer，返回路径也清晰。
+          </div>
+        </details>
+        <details>
+          <summary>为什么这里用 MobX + StageStore 这种方式，而不是 Redux 或事件总线？</summary>
+          <div class="answer">
+            因为编辑器的核心问题是高频、细粒度、跨三栏联动。事件总线能把动作串起来，但状态会散；Redux 能管住状态，但在这种深层嵌套结构里 action 和 reducer 成本太高。
+            我们更需要“改一个对象，三栏自动感知”的模型，所以最终选了 MobX，把 stageStore 作为唯一上下文源。
+          </div>
+        </details>
+        <details>
+          <summary>MobX 在这套编辑器里最核心的价值是什么？</summary>
+          <div class="answer">
+            不是“可以做状态管理”这么简单，而是它特别适合这种对象树驱动的编辑器。很多状态本来就长在对象上，比如 page.isSelected、widget.left、widget.data.title。
+            用 MobX 以后，这些局部属性变化天然就是 UI 更新来源，不需要再人为造一层同步协议。
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">03</span>渲染收敛：让编辑器与 C 端尽量同构</h2>
+      <p class="challenge-lead">WYSIWYG 真正难的是“编辑器多了一层交互壳，C 端多了一层运行时壳”，但两端视觉和内容还要对齐。</p>
+
+      <div class="sub-h">为什么这是个难点</div>
+      <p>
+        编辑器和 C 端天然不是一个环境：
+      </p>
+      <ul class="bullets">
+        <li>编辑器有选中框、拖拽缩放、辅助线、右键菜单。</li>
+        <li>C 端有触摸事件、滚动监听、懒加载、SSR hydrate。</li>
+        <li>编辑器宽度固定，C 端要按手机视口自适应。</li>
+      </ul>
+      <p>
+        如果两边各写一套渲染逻辑，视觉不一致一定会越来越多。所以关键不是“测试多一点”，而是从架构上让两端尽量共享。
+      </p>
+
+      <div class="sub-h">双端一致性架构图</div>
+      <div class="diagram" aria-label="双端一致性架构图">
+
+        <div class="layer">
+          <div class="layer-label">共享层</div>
+          <div class="block highlight">
+            WidgetClass
+            <span class="sub">getStyle / getAnimation / getWidgetContent</span>
+          </div>
+          <div class="block highlight">
+            WidgetContent
+            <span class="sub">统一执行 widgetConfig.onRender(ctx)</span>
+          </div>
+          <div class="block highlight">
+            Container
+            <span class="sub">统一 flow / normal 布局切分</span>
+          </div>
+          <div class="block highlight">
+            同一份 .less
+            <span class="sub">样式只维护一份</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">编辑器侧</div>
+          <div class="block">
+            BaseWidget + Rnd
+            <span class="sub">拖拽、缩放、选中态</span>
+          </div>
+          <div class="block">
+            Sortable flow 列表
+            <span class="sub">瀑布流排序</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">C 端侧</div>
+          <div class="block">
+            Widget 包装
+            <span class="sub">触摸、懒加载、页面行为</span>
+          </div>
+          <div class="block">
+            hydrate / render
+            <span class="sub">接管 SSR 或纯客户端渲染</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">我做的一致性策略</div>
+      <ul class="bullets">
+        <li><strong>共享渲染入口</strong>。组件真正内容统一走 <code>widgetConfig.onRender(ctx)</code>。</li>
+        <li><strong>共享样式计算</strong>。基础样式、背景、边框、圆角、阴影都在共享基类里计算。</li>
+        <li><strong>共享容器布局</strong>。page 和 layer 都复用同一套 Container 渲染逻辑。</li>
+        <li><strong>差异只留在包装层</strong>。编辑器包装交互壳，C 端包装运行时壳。</li>
+        <li><strong>固定编辑画布 + C 端 px2rem</strong>。编辑器看的是 375 基准，C 端按视口等比缩放。</li>
+      </ul>
+
+      <div class="sub-h">关键渲染链路</div>
+      <div class="flow" aria-label="共享渲染链路">
+        <span class="node">WidgetSchema(type/version/data)</span>
+        <span class="arrow">→</span>
+        <span class="node">getWidgetConfigByType()</span>
+        <span class="arrow">→</span>
+        <span class="node">WidgetClass.getWidgetContent()</span>
+        <span class="arrow">→</span>
+        <span class="node">WidgetContent</span>
+        <span class="arrow">→</span>
+        <span class="node accent">widgetConfig.onRender(ctx)</span>
+      </div>
+
+      <div class="sub-h">面试里值得强调的工程细节</div>
+      <ul class="bullets">
+        <li><strong>组件 autoHeight 兼容</strong>。有些组件没写固定高度，编辑器里需要二次测量真实高度回写模型，避免选中后高度回弹。</li>
+        <li><strong>flow 和 normal 一致性</strong>。不仅组件内容要一致，连容器里两种布局的拆分规则都必须统一。</li>
+        <li><strong>运行态变量也要参与一致性</strong>。页面标题、动态文本、数据源变量都不能只在客户端生效，SSR 也要能理解。</li>
+      </ul>
+
+      <div class="pitch">
+        <div class="pitch-label">面试这样说</div>
+        <p>
+          “我不认为双端一致性能靠人工测试解决，必须从代码结构上收敛。我做法是把真正相同的部分强制提到共享层：共享 WidgetClass、共享 WidgetContent、共享 Container、共享 onRender 和样式文件。
+          编辑器和 C 端只在包装层做差异，前者负责拖拽选中，后者负责触摸和 hydrate。” 
+        </p>
+      </div>
+
+      <div class="qa" aria-label="双端一致性追问 Q&A">
+        <details>
+          <summary>为什么不是直接维护两套渲染代码，各自针对场景优化？</summary>
+          <div class="answer">
+            短期看会更快，长期几乎一定失控。因为低代码平台的核心不是做一个页面，而是持续接入很多组件。如果双端各维护一套，组件越多，不一致问题越多，最后调试成本会高于一开始共享设计的成本。
+          </div>
+        </details>
+        <details>
+          <summary>你们是怎么处理那些“编辑器里能看，线上高度却不准”的组件的？</summary>
+          <div class="answer">
+            这类问题通常出在 autoHeight、富文本、图片比例这几个场景。我们的做法是把高度计算尽量收敛到共享层和编辑器包装层，必要时在编辑器里做真实高度测量后回写模型，
+            不让“视觉尺寸”只存在于 DOM，不存在于 schema。
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">04</span>组件平台化：协议设计与动态装载</h2>
+      <p class="challenge-lead">平台不能每加一个业务组件就发版，但也不能让外部组件打穿历史活动页，所以必须做成带版本的运行时组件体系。</p>
+
+      <div class="sub-h">为什么这是个难点</div>
+      <p>
+        组件平台化往往会遇到三个冲突：
+      </p>
+      <ul class="bullets">
+        <li>业务方希望自己发组件，不要等平台发版。</li>
+        <li>平台希望组件接入后自动出现在编辑器、右侧配置、C 端运行时和 SSR 中。</li>
+        <li>历史活动页已经在线上跑，组件升级绝不能把旧页面打坏。</li>
+      </ul>
+
+      <div class="sub-h">组件体系分层图</div>
+      <div class="diagram" aria-label="组件体系分层图">
+
+        <div class="layer">
+          <div class="layer-label">内建组件</div>
+          <div class="block">
+            Image / RichText / NormalText
+            <span class="sub">高频基础组件，构建时直接打包</span>
+          </div>
+          <div class="block">
+            Container / DataContainer
+            <span class="sub">平台底层容器能力</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">内部组件</div>
+          <div class="block">
+            PageData.innerWidgets
+            <span class="sub">平台内置但按需加载</span>
+          </div>
+          <div class="block">
+            CDN index.js / index.css
+            <span class="sub">运行时拉取</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">外部组件</div>
+          <div class="block highlight">
+            PageData.installed
+            <span class="sub">用户安装的组件清单</span>
+          </div>
+          <div class="block highlight">
+            type + version
+            <span class="sub">版本钉死在 schema 里</span>
+          </div>
+          <div class="block">
+            god.__components__
+            <span class="sub">运行时注册中心</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">统一入口</div>
+          <div class="block highlight">
+            WidgetConfigs
+            <span class="sub">三类组件最终汇总到同一个注册表</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">组件接入协议</div>
+<pre class="code-block"><span class="c-kw">export</span> <span class="c-kw">default</span> {
+  name: <span class="c-str">'CourseCard'</span>,
+  type: <span class="c-str">'CourseCard'</span>,
+  version: <span class="c-str">'1.2.0'</span>,
+  category: <span class="c-str">'widget'</span>,
+  data: {
+    title: <span class="c-str">''</span>,
+    image: <span class="c-str">''</span>,
+    jumpUrl: <span class="c-str">''</span>
+  },
+  config: {
+    title: { text: <span class="c-str">'标题'</span>, type: <span class="c-str">'Input'</span> },
+    image: { text: <span class="c-str">'封面'</span>, type: <span class="c-str">'FilePicker'</span> },
+    jumpUrl: { text: <span class="c-str">'跳转链接'</span>, type: <span class="c-str">'Input'</span> }
+  },
+  methods: {},
+  listeners: {},
+  onRender(ctx) {
+    <span class="c-kw">return</span> &lt;<span class="c-prop">div</span>&gt;...&lt;/<span class="c-prop">div</span>&gt;
+  }
+}
+</pre>
+
+      <div class="sub-h">为什么这套协议很关键</div>
+      <ul class="bullets">
+        <li><strong>data</strong> 定义组件实例默认业务数据。</li>
+        <li><strong>config</strong> 定义右侧属性面板如何渲染，不需要平台为每个组件手写表单。</li>
+        <li><strong>onRender</strong> 定义双端统一内容输出。</li>
+        <li><strong>methods / listeners</strong> 定义组件内部可复用能力和运行时事件。</li>
+      </ul>
+
+      <div class="sub-h">动态加载流程</div>
+      <div class="flow" aria-label="动态组件加载流程">
+        <span class="node">编辑器或预览端发现 widget.type/version</span>
+        <span class="arrow">→</span>
+        <span class="node">loadScript(CDN index.js)</span>
+        <span class="arrow">→</span>
+        <span class="node">loadStyle(CDN index.css)</span>
+        <span class="arrow">→</span>
+        <span class="node">组件自注册到 god.__components__</span>
+        <span class="arrow">→</span>
+        <span class="node accent">合并进 WidgetConfigs，平台像内建组件一样使用</span>
+      </div>
+
+      <div class="sub-h">我重点解决的两个问题</div>
+      <ul class="bullets">
+        <li><strong>版本稳定性</strong>。历史活动页 schema 里已经记录了 version，所以运行时永远按这个版本拉资源，外部组件升级不会回灌旧页面。</li>
+        <li><strong>加载可靠性</strong>。脚本和样式加载都做了缓存、超时、重试和错误日志上报，避免运营遇到“组件偶现加载不出来”。</li>
+      </ul>
+
+      <div class="pitch">
+        <div class="pitch-label">面试这样说</div>
+        <p>
+          “我把组件体系做成了带协议的运行时注册机制。组件开发者不需要改平台主仓库，只要按 data/config/onRender 这套协议发布 bundle 到 CDN，平台在编辑器和运行时都能把它当成标准组件使用。
+          同时 version 是钉在 schema 里的，所以历史活动页永远拉它发布时那一版，不会被新版本打穿。” 
+        </p>
+      </div>
+
+      <div class="qa" aria-label="组件平台化追问 Q&A">
+        <details>
+          <summary>为什么要做成运行时动态加载，而不是把所有组件都打进主包？</summary>
+          <div class="answer">
+            因为平台型系统的组件数量会持续增长，全部打进主包会让编辑器和预览端越来越重，而且每次加组件都要发主包，平台会变成所有业务的发版瓶颈。
+            动态加载的本质是把组件发布权从平台主工程里解耦出来。
+          </div>
+        </details>
+        <details>
+          <summary>为什么不直接用 npm 包管理外部组件，而要走 CDN + version 的方式？</summary>
+          <div class="answer">
+            npm 更适合构建期依赖，而我们这里很多组件是在运行时按 schema 决定加载哪一版的。CDN + version 更适合“同一套平台同时承载很多历史页面”的场景，
+            因为页面可以精确绑定它发布时依赖的版本，不需要跟着主工程一起升级。
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">05</span>发布链路：SSR 预渲染与稳定性兜底</h2>
+      <p class="challenge-lead">难点不只是 renderToString，而是要在服务端把外部组件、变量、模板拼装和线上稳定性一起处理好。</p>
+
+      <div class="sub-h">为什么这是个难点</div>
+      <p>
+        活动页对首屏打开速度要求很高，纯客户端渲染很吃亏；但如果做 SSR，又会马上遇到几个问题：
+      </p>
+      <ul class="bullets">
+        <li>活动页不是固定站点，而是大量 schema 驱动的动态页面。</li>
+        <li>组件不全在主仓库里，外部组件运行时才知道该加载哪几个版本。</li>
+        <li>有些组件 SSR 安全，有些组件一旦碰 DOM API 就会炸。</li>
+        <li>发布链路不能因为某个组件 SSR 失败就直接把项目发布打断。</li>
+      </ul>
+
+      <div class="sub-h">发布链路架构图</div>
+      <div class="diagram" aria-label="SSR 发布链路架构图">
+
+        <div class="layer">
+          <div class="layer-label">输入</div>
+          <div class="block">
+            revisionData
+            <span class="sub">项目 schema 快照</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">服务端准备</div>
+          <div class="block">
+            jsdom + god + localStorage
+            <span class="sub">模拟浏览器环境</span>
+          </div>
+          <div class="block">
+            扫描 used widgets / triggers
+            <span class="sub">找到实际需要的运行时资源</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">SSR 预处理</div>
+          <div class="block highlight">
+            拉取支持 SSR 的组件 JS/CSS
+            <span class="sub">按 type/version 从 CDN 获取</span>
+          </div>
+          <div class="block">
+            new Function 执行注册
+            <span class="sub">把外部组件注入 god.__components__</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">HTML 生成</div>
+          <div class="block highlight">
+            renderToString(&lt;App /&gt;)
+            <span class="sub">产出 mainHTML</span>
+          </div>
+          <div class="block">
+            Handlebars 模板装配
+            <span class="sub">mainHTML + PageData + scripts + styles</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">发布与兜底</div>
+          <div class="block">
+            上传 HTML / JSON / 截图
+            <span class="sub">CDN 发布</span>
+          </div>
+          <div class="block highlight">
+            needHydrate = false
+            <span class="sub">SSR 失败时客户端 render 兜底</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">关键发布流程</div>
+      <div class="flow" aria-label="SSR 发布流程">
+        <span class="node">保存 schema</span>
+        <span class="arrow">→</span>
+        <span class="node">服务端 clone revisionData</span>
+        <span class="arrow">→</span>
+        <span class="node">jsdom 建运行环境</span>
+        <span class="arrow">→</span>
+        <span class="node">收集组件脚本与样式</span>
+        <span class="arrow">→</span>
+        <span class="node">renderToString 产出 mainHTML</span>
+        <span class="arrow">→</span>
+        <span class="node">模板拼 HTML + PageData</span>
+        <span class="arrow">→</span>
+        <span class="node">上传 CDN</span>
+        <span class="arrow">→</span>
+        <span class="node accent">前端 hydrate 或 render</span>
+      </div>
+
+      <div class="sub-h">优雅降级策略</div>
+      <ul class="bullets">
+        <li><strong>组件不支持 SSR</strong>，就不在服务端执行它，避免整页炸掉。</li>
+        <li><strong>预加载脚本阶段出错</strong>，直接把 <code>needHydrate</code> 置为 false。</li>
+        <li><strong>renderToString 抛错</strong>，也继续生成页面，只是回退到客户端 render。</li>
+        <li><strong>项目状态异常</strong>，如未开始或已结束，也主动禁用 hydrate，避免接管不一致。</li>
+      </ul>
+
+      <div class="sub-h">我认为这条链路里最有价值的设计</div>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">SSR 可选，不是强依赖</div>
+          <div class="mini-stat">保证发布成功率</div>
+          <div class="mini-desc">SSR 失败不等于发布失败，客户端 render 始终是兜底。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">按组件版本预加载</div>
+          <div class="mini-stat">避免错版本</div>
+          <div class="mini-desc">服务端和客户端都基于 schema 中的 version 取资源。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">require.cache 清理</div>
+          <div class="mini-stat">隔离多次发布</div>
+          <div class="mini-desc">防止上一次发布残留模块污染下一次 SSR。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">HTML + JSON 双产物</div>
+          <div class="mini-stat">便于运行与排障</div>
+          <div class="mini-desc">线上既有首屏 HTML，也保留 revisionData JSON 方便回溯。</div>
+        </div>
+      </div>
+
+      <div class="pitch">
+        <div class="pitch-label">面试这样说</div>
+        <p>
+          “这条发布链路我不是把 SSR 当成唯一方案，而是把它当成首屏优化层。服务端先根据 schema 扫描实际用到的组件和行为，拉支持 SSR 的外部组件 bundle，
+          在 jsdom 环境里执行注册，再用 renderToString 产出 mainHTML。成功了就走 hydrate，失败了就回退到客户端 render，保证发布链路本身稳定。”
+        </p>
+        <p>
+          “我比较重视的一点是模块隔离。Node 里的 require 是有缓存的，如果不清 cache，多次发布容易串环境，所以我在每次 SSR 前会清对应模块缓存，尽量避免旧组件代码污染新发布。” 
+        </p>
+      </div>
+
+      <div class="qa" aria-label="SSR 追问 Q&A">
+        <details>
+          <summary>为什么不直接用 Next.js 这类现成方案来做 SSR？</summary>
+          <div class="answer">
+            因为我们不是在做一个固定站点，而是在做一个“发布服务”，它面对的是大量 schema 驱动的活动页和运行时组件。我们需要完全掌控组件扫描、外部 bundle 注入、
+            模板拼装、CDN 上传和失败回退这些步骤，自己基于 Koa + jsdom 更灵活。
+          </div>
+        </details>
+        <details>
+          <summary>为什么 SSR 失败时不直接阻断发布，而是继续让客户端 render？</summary>
+          <div class="answer">
+            因为发布成功率比 SSR 更重要。SSR 的目标是提升首屏，不是成为单点故障。如果因为某个组件的 SSR 兼容性问题就导致整个活动页发不出去，业务是不能接受的。
+            所以我的原则是：SSR 是增强能力，客户端 render 才是最终兜底。
+          </div>
+        </details>
+        <details>
+          <summary>服务端为什么还要执行外部组件代码，这里面最大的风险是什么？</summary>
+          <div class="answer">
+            因为如果不执行外部组件注册逻辑，SSR 根本拿不到这些组件的 onRender，页面就没法完整预渲染。最大的风险是组件代码不纯，直接依赖浏览器 API 或副作用太重，
+            所以我们只对满足约束的组件做 SSR，并且保留完整的失败降级路径，不让这一步成为发布单点。
+          </div>
+        </details>
+      </div>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./decisions.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">06 · 关键决策</span>
+        </a>
+        <a class="next" href="./impact.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">08 · 项目成果</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

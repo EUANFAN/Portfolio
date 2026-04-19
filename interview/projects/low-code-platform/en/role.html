@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Role &amp; Ownership · Low-Code Campaign Platform</title>
+<meta name="description" content="Role and ownership on the Low-Code Campaign Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="role" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Role &amp; Ownership</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">03</span>Role &amp; Ownership</div>
+        <h1 class="page-title">What I owned, and where I went hands-on</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          I was the frontend tech lead and also one of the core ICs on the project. I directly worked across
+          the editor, the widget system, and the Node-side SSR publish flow, because most of the important
+          decisions only made sense when you looked at the full loop end to end.
+        </p>
+      </header>
+
+      <h3 class="sub">What I owned</h3>
+      <ul class="bullets">
+        <li>End-to-end architecture across the editor, runtime, widget library, schema contract, and publish pipeline.</li>
+        <li>The core data model itself: how <code>Project / Page / Widget / Layer</code> are shaped, restored, and consumed by both the editor and runtime.</li>
+        <li>Widget APIs, versioning rules, and the CDN loading strategy for internal and external components.</li>
+        <li>Frontend engineering conventions, scaffolding, docs, and the day-to-day technical direction for a 3-5 engineer team.</li>
+        <li>Adoption work with product, ops, and business teams across 4 business lines.</li>
+      </ul>
+
+      <h3 class="sub">What I built myself</h3>
+      <ul class="bullets">
+        <li>The first version of the editor core: three-pane communication model, <code>StageStore</code>, <code>Stage</code> abstraction, workspace, and dynamic settings panel.</li>
+        <li>The shared widget contract and rendering path: <code>WidgetClass</code>, editor wrapper, runtime wrapper, and the <code>onRender</code>-based component protocol.</li>
+        <li>The Node-side SSR publish chain: jsdom bootstrapping, external widget preload, <code>renderToString</code>, template assembly, CDN output, and graceful fallback.</li>
+        <li>The declarative trigger model for click, exposure, redirect, share, custom events, and cross-widget updates.</li>
+      </ul>
+
+      <p class="muted" style="margin-top:16px;">
+        I also worked closely with backend, design, and analytics teams. Storage and publish APIs had backend ownership,
+        but I defined the contracts and still went deep into the implementation where the frontend and server concerns met.
+      </p>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./context.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">02 · Context &amp; Problem</span>
+        </a>
+        <a class="next" href="./architecture.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">04 · Architecture</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>
