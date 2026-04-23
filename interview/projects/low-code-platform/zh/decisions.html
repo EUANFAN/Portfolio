@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>关键决策 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台 - 关键技术决策与取舍" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="decisions" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">企业级低代码活动搭建平台</a>
+        <span class="sep">/</span>
+        <span>关键决策</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">06</span>关键决策</div>
+        <h1 class="page-title">几个关键节点上的选型与取舍</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          每个决策按「问题 / 选择 / 理由 / 代价」四段式讲。面试里讲清楚后两段，比讲清楚选了什么更重要——
+          因为选什么体现知识面，<strong class="em">讲理由和代价体现判断力</strong>。
+        </p>
+      </header>
+
+      <!-- ========== 决策 1：MobX ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 1 · 状态管理 —— 选 MobX，不选 Redux</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">编辑器里三栏（组件库 / 画布 / 属性面板）要高度实时联动。改一个属性，画布要立即重绘；选中一个组件，右边面板要立即切换。状态管理方案怎么选。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">MobX</strong>——一个 <code>StageStore</code> 包住 Project → Pages → Widgets → Layers 的所有数据，全部 <code>@observable</code>；三栏面板全是 <code>@observer</code>。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            编辑器里的状态<strong class="em">嵌套深、引用多、改动频繁</strong>。用 Redux 的话要写海量的 action / reducer，
+            改一个字段要穿透好几层 reducer，而且对象嵌套下 immer 也帮不到多少。
+            MobX 的响应式模型正好对得上——改数据就是改对象，不用管派发，下游自动重绘。代码量预计能降到 Redux 的 1/3 以下。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">
+            ① MobX 的响应式有"魔法"，新人不了解会踩坑（比如动态属性不追踪）；
+            ② 调试没有 Redux DevTools 那么直观，时间旅行要自己搭。
+            这两点我们都做了兜底——Widget 基类里把"动态属性"统一重新赋值；撤销重做单独维护一个 history 栈。
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 2：React Class ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 2 · 组件形式 —— 选 Class Components，不追 Hooks</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">项目立项时 React Hooks 已经稳定一段时间了，但 MobX 4 对 Hooks 的支持不如 Class（<code>@observer</code> 装饰器 vs. <code>observer()</code> 函数式包装）。选哪个？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">Class Components</strong>——核心编辑器组件和 Widget 基类全部用 Class，装饰器风格写 <code>@observer</code> / <code>@observable</code>。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            三件事：①<strong class="em">继承</strong>——<code>WidgetClass</code>、<code>BaseWidget</code>、<code>Widget</code> 三层继承关系，用 Class 天然表达，用 Hooks 要绕一大圈组合；
+            ②<strong class="em">装饰器语法</strong>——跟 MobX 的 <code>@observable</code> 天然配合，代码噪音比 <code>observer(function)</code> 少一半；
+            ③<strong class="em">生命周期显式</strong>——编辑器里大量依赖 <code>componentDidMount</code> / <code>componentDidUpdate</code> 做细粒度的时机控制，用 Class 比 <code>useEffect</code> 的闭包心智更直观。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">跟社区潮流不一致，新同学上手要适应 Class 写法；长期看 React 官方 Hooks 是主推方向，未来升级会有迁移成本。我们接受这个代价，以换取当期的开发速度。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 3：SSR 方案 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 3 · SSR —— 自己搭 jsdom + renderToString，不用 Next.js</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">C 端首屏是硬指标。用 Next.js 这种成熟框架，还是自己基于 Koa + jsdom 手撸？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">自己搭</strong>——Koa 作为后端主框架，jsdom 模拟浏览器环境，<code>ReactDOM.renderToString</code> 产出 HTML，Handlebars 装配进模板。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            Next.js 适合"一个应用就是一个站点"的场景，但我们的场景是<strong class="em">"一个发布服务给成百上千个活动页打 SSR"</strong>——
+            每个活动的组件不同、版本不同、schema 不同，SSR 过程里还要按需从 CDN 动态拉第三方组件 JS 执行。
+            这种"多租户 + 组件动态注入"模型塞进 Next.js 非常别扭，倒不如直接基于 Koa + jsdom 手控每一步。
+            另外我们已经有自己的 Koa 后端，再引 Next.js 会让技术栈复杂度翻倍。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">
+            自己手搭意味着 jsdom 边界问题、<code>require.cache</code> 污染、SSR 失败降级、外部组件沙箱——每一个都得自己搞定。
+            我们踩了大半年坑才把流水线跑稳。但换来的是<strong class="em">对整条链路的完全掌控</strong>，出问题能查到毫秒级。
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 4：组件三层分级 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 4 · 组件体系 —— 三层分级，不统一用一种加载方式</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">组件是要全部打包进客户端，还是全部运行时从 CDN 拉？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">三层分级</strong>：内建打包 · 内部 CDN 动态加载 · 外部第三方 x-cli 独立发布到 CDN。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            全部打包进客户端——包体会随组件数量线性膨胀，几百个组件后首屏就崩了；
+            全部运行时拉——最基础的 Image / Container 都要等 CDN 回来才能渲染，首屏体验差。
+            <strong class="em">按"稳定度"分三层</strong>是折中解：业务一定会用的（Image、Container）打进去，业务专属但稳定的（课程卡片）内部 CDN，第三方的外部 CDN。
+            用户体验和可扩展性都能照顾到。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">加载策略分三层，调试和排障要搞清楚组件在哪一层；"一个组件从内部升级到内建"需要一次发版。这些代价可控。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 5：不开代码面板 ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 5 · 运营交互能力 —— 坚持声明式触发器，不开代码面板</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">运营偶尔会有"非标"交互需求。最直接的方案是开个代码面板让他们写 JS，最省事。要不要开？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val"><strong class="em">坚决不开</strong>——所有交互必须通过声明式触发器（事件 + action）表达。非标需求走"抽象成新触发器"的通道，不走"让运营写 JS"。</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            一旦允许运营写 JS：
+            ①<strong class="em">安全</strong>——脚本会在 C 端运行，XSS 风险无法收敛；
+            ②<strong class="em">审计</strong>——发布流程失去可预测性；
+            ③<strong class="em">排障</strong>——线上出问题，责任边界模糊（不是平台 bug 就是运营代码，扯皮）；
+            ④<strong class="em">演进</strong>——后面想升级 React 版本时，运营写的代码会到处炸。
+            声明式触发器虽然有上限，但能抽象出 95% 的实际需求，<strong class="em">把平台的可预测性守住了</strong>。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">少数非标需求没法立刻满足，需要等我们在 action 体系里加新类型——响应慢一点，但换来的是长期可维护。</div>
+        </div>
+      </div>
+
+      <!-- ========== 决策 6：编辑器 375 + C 端 px2rem ========== -->
+      <div class="decision">
+        <div class="decision-title">决策 6 · 双端一致 —— 编辑器 375 固定画布 + C 端 px2rem 自适应</div>
+        <div class="decision-row">
+          <div class="label">面对的问题</div>
+          <div class="val">活动页要在各种宽度的手机上都看起来协调。运营在编辑器里按什么宽度搭？C 端怎么适配？两端怎么保证一致？</div>
+        </div>
+        <div class="decision-row">
+          <div class="label">最终选择</div>
+          <div class="val">
+            <strong class="em">编辑器画布固定 375px</strong>（iPhone 基准宽度，所有 px 单位 1:1）；
+            <strong class="em">C 端上线时自动 px2rem 转换</strong>（<code>1rem = 37.5px</code>，根据视口宽度按比例缩放）。
+            编辑器 <code>BaseWidget</code> 和 C 端 <code>Widget</code> 共享 <code>WidgetClass</code>、共用 <code>onRender</code>、共用 <code>.less</code>——<strong class="em">一份代码两端跑</strong>。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">主要理由</div>
+          <div class="val">
+            运营不懂响应式，只能给他们一个确定的画布宽度——<strong class="em">所见即所得的前提是"所见"本身是确定的</strong>。
+            选 375 是因为设计稿基本都按 iPhone 出。上线后 px2rem 把所有 px 值折算成 rem，视口宽度决定 rem 大小，全页面等比缩放——
+            视觉比例永远不会错位。
+          </div>
+        </div>
+        <div class="decision-row">
+          <div class="label">代价</div>
+          <div class="val">
+            ① 小尺寸手机字变得小，大屏幕字变得大，极端宽度（比如 iPad）会失真——但我们业务 99% 是手机，不考虑 iPad 投放；
+            ② 组件开发者必须只写 px、不写媒体查询——这条写进规范，组件接入时卡住。
+          </div>
+        </div>
+      </div>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./modules.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">05 · 重点模块</span>
+        </a>
+        <a class="next" href="./challenges.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">07 · 难点与方案</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

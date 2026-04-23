@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Euan Fan | Senior Frontend / Full-Stack Engineer</title>
+<meta
+  name="description"
+  content="Resume of Euan Fan, Senior Frontend / Full-Stack Engineer based in Auckland."
+/>
+<meta name="robots" content="noindex, nofollow" />
+<style>
+  :root {
+    --accent: #0EA5E9;
+    --accent-strong: #0369A1;
+    --text: #0F172A;
+    --muted: #475569;
+    --soft: #64748B;
+    --line: #E2E8F0;
+    --bg: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 10.5pt;
+    line-height: 1.38;
+  }
+
+  .toolbar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 20;
+  }
+
+  .toolbar button {
+    appearance: none;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #FFFFFF;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toolbar button:hover {
+    background: var(--accent-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+  }
+
+  .toolbar button.secondary {
+    background: #FFFFFF;
+    color: var(--accent-strong);
+    border-color: var(--line);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  }
+
+  .toolbar button.secondary:hover {
+    border-color: var(--accent);
+  }
+
+  .toolbar svg { width: 14px; height: 14px; }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 14mm 14mm 12mm;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  .header {
+    display: block;
+    text-align: center;
+    padding: 2mm 0 4mm;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .name {
+    margin: 0;
+    font-size: 30pt;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .role {
+    margin: 7px 0 9px;
+    font-size: 13pt;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .summary {
+    margin: 4mm 0 0;
+    color: var(--text);
+    font-size: 10.9pt;
+    line-height: 1.42;
+    text-align: left;
+  }
+
+  .contact {
+    font-size: 10pt;
+    color: var(--muted);
+    display: block;
+    text-align: center;
+  }
+
+  .contact a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .section {
+    margin-top: 3.2mm;
+  }
+
+  .section-title {
+    margin: 0 0 1.2mm;
+    font-size: 10.8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .skills {
+    margin: 0;
+    padding-left: 4.5mm;
+  }
+
+  .item {
+    margin-bottom: 2.4mm;
+  }
+
+  .item:last-child {
+    margin-bottom: 0;
+  }
+
+  .item-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 4mm;
+    align-items: baseline;
+    break-after: avoid;
+    page-break-after: avoid;
+    flex-wrap: nowrap;
+  }
+
+  .item-title {
+    margin: 0;
+    font-size: 10.9pt;
+    font-weight: 800;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .item-title .sub {
+    color: var(--text);
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  .period {
+    white-space: nowrap;
+    color: var(--text);
+    font-size: 10pt;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+
+  .meta {
+    margin: 0.35mm 0 0.75mm;
+    color: #5b6b7f;
+    font-size: 9.5pt;
+    font-style: italic;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 5mm;
+  }
+
+  li {
+    margin: 0 0 0.45mm;
+    color: var(--text);
+  }
+
+  li:last-child {
+    margin-bottom: 0;
+  }
+
+  .two-col {
+    display: block;
+  }
+
+  .project-stack {
+    margin-top: 0.65mm;
+    color: #607287;
+    font-size: 9.1pt;
+    font-weight: 500;
+  }
+
+  .education-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6mm;
+    align-items: baseline;
+  }
+
+  .education-row p {
+    margin: 0;
+  }
+
+  .contact-line {
+    margin: 0;
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .separator {
+    color: var(--soft);
+    margin: 0 10px;
+  }
+
+  .summary-block {
+    margin-top: 3.2mm;
+  }
+
+  .section.projects .item {
+    padding-bottom: 1.8mm;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  }
+
+  .section.projects .item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      width: 100%;
+      min-height: auto;
+      margin: 0;
+      padding: 20px;
+      box-shadow: none;
+    }
+
+    .contact {
+      text-align: left;
+    }
+
+    .contact-line {
+      justify-content: flex-start;
+    }
+
+    .education-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+  }
+
+  @page {
+    size: A4;
+    margin: 14mm 14mm 12mm;
+  }
+
+  @media print {
+    body {
+      background: #fff;
+    }
+
+    .toolbar {
+      display: none !important;
+    }
+
+    .page {
+      width: auto;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .section-title {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    .section {
+      margin-top: 3mm;
+    }
+
+    .item {
+      margin-bottom: 2.2mm;
+    }
+
+    .contact {
+      text-align: center !important;
+    }
+
+    .contact-line {
+      width: 100%;
+      display: flex;
+      justify-content: center !important;
+      align-items: center;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="secondary" onclick="location.href='./index.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Back
+    </button>
+    <button onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/>
+      </svg>
+      Print / Save PDF
+    </button>
+  </div>
+
+  <article class="page" role="document" aria-label="Resume of Euan Fan">
+    <header class="header">
+      <h1 class="name">Euan Fan</h1>
+      <p class="role">Senior Frontend / Full-Stack Engineer</p>
+      <div class="contact">
+        <p class="contact-line">
+          <span>Location: Auckland</span>
+          <span class="separator">|</span>
+          <span>Work Rights: Valid New Zealand work visa</span>
+          <span class="separator">|</span>
+          <span>Availability: Immediate</span>
+        </p>
+        <p class="contact-line">
+          <span>Email: <a href="mailto:fyh1477596895@gmail.com">fyh1477596895@gmail.com</a></span>
+          <span class="separator">|</span>
+          <span>Portfolio: <a href="https://euanfan.github.io/Portfolio/" target="_blank" rel="noopener">euanfan.github.io/Portfolio/</a></span>
+        </p>
+      </div>
+      <div class="summary-block">
+        <p class="summary">
+          Senior Frontend / Full-Stack Engineer with 10+ years of experience building scalable platforms and modern
+          web systems used by millions of users. Strong in frontend architecture, platform engineering, reusable systems,
+          and developer productivity.
+        </p>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2 class="section-title">Core Skills</h2>
+      <ul class="skills">
+        <li><strong>Frontend:</strong> React, JavaScript, TypeScript, HTML5, CSS3</li>
+        <li><strong>Build Tools:</strong> Webpack, Vite, Babel, ESLint, npm, pnpm</li>
+        <li><strong>Backend:</strong> Node.js, MongoDB, Koa, Redis, API development</li>
+        <li><strong>AI Development:</strong> ChatGPT, Cursor, Claude Code, AI-assisted coding, debugging, and content generation</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Key Achievements</h2>
+      <ul>
+        <li>Reduced campaign launch cycles from days to minutes by building a low-code platform.</li>
+        <li>Drove adoption of shared component libraries across multiple business teams.</li>
+        <li>Improved engineering efficiency and system stability by building platform and frontend infrastructure.</li>
+        <li>Built core systems supporting products used by millions of users.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Professional Experience</h2>
+
+      <div class="item">
+        <div class="item-head">
+          <h3 class="item-title">Xiwangxue — <span class="sub">Senior Software Engineer</span> | Beijing, China</h3>
+          <div class="period">May 2022 - Jul 2025</div>
+        </div>
+        <p class="meta">A leading K-12 education company in China.</p>
+        <ul>
+          <li>Led the development of a low-code platform for operational campaigns, shifting page delivery from repeated frontend implementation to a more scalable, configuration-driven workflow.</li>
+          <li>Built reusable frontend infrastructure through the platform work, including shared component libraries, UI standards, project scaffolding, and engineering conventions, improving consistency and delivery efficiency across teams.</li>
+          <li>Partnered with product, design, and business teams to define scalable platform capabilities, drive cross-team alignment, and ensure adoption in real business scenarios.</li>
+        </ul>
+      </div>
+
+      <div class="item">
+        <div class="item-head">
+          <h3 class="item-title">Meituan — <span class="sub">Senior Software Engineer</span> | Beijing, China</h3>
+          <div class="period">Jul 2021 - Apr 2022</div>
+        </div>
+        <p class="meta">Leading local life services and delivery platform in China.</p>
+        <ul>
+          <li>Core frontend engineer for Meituan Youxuan, a large-scale community group-buying product in the Meituan app and WeChat ecosystem.</li>
+          <li>Built and improved frontend infrastructure for the group leader side, improving system stability and reducing repeated infrastructure changes through hot-cold code separation and engineering standards.</li>
+          <li>Focused on the WeChat Mini Program stack, including performance optimization, reusable component development, and cross-team component reuse to improve delivery efficiency and consistency.</li>
+        </ul>
+      </div>
+
+      <div class="item">
+        <div class="item-head">
+          <h3 class="item-title">Baidu — <span class="sub">Senior R&amp;D Engineer</span> | Beijing, China</h3>
+          <div class="period">Aug 2020 - Jul 2021</div>
+        </div>
+        <p class="meta">Leading search engine and AI company in China.</p>
+        <ul>
+          <li>Led the development of an intelligent customer service platform, bringing in-app support capabilities to Baidu's marketing products.</li>
+          <li>Worked with multiple teams to roll out the platform across 15+ internal business systems, and used user support cases as feedback to keep improving the product and platform.</li>
+          <li>Improved operational efficiency by reducing manual support workload and increasing daily resolved cases from around 200–300 to about 1,000.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section projects">
+      <h2 class="section-title">Selected Projects</h2>
+      <div class="item">
+        <div class="item-head">
+          <h3 class="item-title">Low-Code Campaign Platform</h3>
+        </div>
+        <p class="meta">A low-code platform that lets operations teams build and launch marketing campaign pages on their own, without needing frontend support for every page.</p>
+        <ul>
+          <li>Reduced the launch cycle of a campaign page from 4–5 working days to under 30 minutes by turning page delivery into a low-code, configuration-driven workflow.</li>
+          <li>Enabled operations teams to independently build and launch campaign pages through a visual editor, without needing frontend support for every page.</li>
+          <li>Improved engineering efficiency through reusable components, shared templates, and centralized asset management, reducing repeated frontend work and making delivery faster and more consistent.</li>
+          <li>Served as the frontend lead and one of the core owners of the project, responsible for the overall platform architecture and key implementation decisions.</li>
+        </ul>
+        <div class="project-stack">Tech Stack: React, TypeScript, JavaScript, Node.js, MongoDB</div>
+      </div>
+
+      <div class="item">
+        <div class="item-head">
+          <h3 class="item-title">Course Commerce Platform</h3>
+        </div>
+        <p class="meta">A unified internal course commerce platform that enables operations teams to manage product setup, promotions, purchase rules, and campaign operations in one place, improving efficiency, consistency, and scalability.</p>
+        <ul>
+          <li>Built a unified course commerce platform supporting the company's core sales business and millions of users in high-traffic transaction scenarios.</li>
+          <li>Integrated 4+ previously fragmented operational workflows into one system, reducing cross-system switching, manual coordination, and management overhead.</li>
+          <li>Standardized core platform capabilities including permissions, request flow, and complex form handling, improving consistency, maintainability, and operational stability.</li>
+          <li>Owned the end-to-end design and delivery of the Course Commerce Platform, consolidating multiple fragmented operational workflows into one unified system.</li>
+        </ul>
+        <div class="project-stack">Tech Stack: React, TypeScript, JavaScript, Python, MySQL, Redis</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Education</h2>
+      <div class="education-row">
+        <p><strong>Beihua University</strong> — Bachelor's Degree in Network Engineering</p>
+        <p class="period">2011 - 2015</p>
+      </div>
+    </section>
+  </article>
+</body>
+</html>

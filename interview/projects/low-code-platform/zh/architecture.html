@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>技术架构 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台 - 技术架构、技术栈与关键链路" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="architecture" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">企业级低代码活动搭建平台</a>
+        <span class="sep">/</span>
+        <span>技术架构</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">04</span>技术架构</div>
+        <h1 class="page-title">整体分层、技术栈与关键链路</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          一张分层图看清这个平台：上面是编辑器、下面是 C 端运行时，中间用一份共享的 schema 串起来，
+          后端只做三件事——存 schema、打 SSR、传 CDN。
+        </p>
+      </header>
+
+      <h3 class="sub">整体架构图</h3>
+      <div class="diagram" aria-label="整体架构图">
+
+        <div class="layer">
+          <div class="layer-label">编辑器（前端 · React + MobX）</div>
+          <div class="block">
+            左侧组件库
+            <span class="sub">内建 + 内部 + 外部组件卡片</span>
+          </div>
+          <div class="block">
+            中间画布
+            <span class="sub">Viewport · 瀑布流 + 自由定位</span>
+          </div>
+          <div class="block">
+            右侧属性面板
+            <span class="sub">ControlWrap 动态表单渲染</span>
+          </div>
+          <div class="block highlight">
+            StageStore（MobX 单一数据源）
+            <span class="sub">Project → Pages → Widgets</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">协议层（共享）</div>
+          <div class="block highlight">
+            PageData
+            <span class="sub">项目 · 页面 · 组件 · 触发器 · 动画 · 分享</span>
+          </div>
+          <div class="block highlight">
+            WidgetClass 契约
+            <span class="sub">data · config · onRender · methods</span>
+          </div>
+          <div class="block highlight">
+            Triggers 事件模型
+            <span class="sub">Redirect · ScrollToPage · ChangeWidget · EmitListeners</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">服务端（Koa · Node.js）</div>
+          <div class="block">
+            schema 存储
+            <span class="sub">MongoDB · 项目 / 组件元数据</span>
+          </div>
+          <div class="block">
+            SSR 发布流水线
+            <span class="sub">jsdom · renderToString · Handlebars</span>
+          </div>
+          <div class="block">
+            CDN 上传 + 截图
+            <span class="sub">HTML / JSON / 缩略图</span>
+          </div>
+          <div class="block">
+            认证 / CRUD API
+            <span class="sub">Koa 控制器 + 中间件</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">C 端运行时（H5 / 公众号 / App WebView）</div>
+          <div class="block">
+            SSR HTML（首屏秒开）
+            <span class="sub">从 CDN 拉取</span>
+          </div>
+          <div class="block">
+            ReactDOM.hydrate
+            <span class="sub">绑事件 · 补完交互</span>
+          </div>
+          <div class="block">
+            外部组件动态加载
+            <span class="sub">CDN · loadScript · loadStyle</span>
+          </div>
+          <div class="block highlight">
+            优雅降级
+            <span class="sub">SSR 失败 → 客户端 render</span>
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="sub">技术栈</h3>
+      <div class="stack-grid">
+
+        <div class="stack-group">
+          <div class="stack-group-title">核心框架</div>
+          <div class="tags">
+            <span class="tag">React（Class Components）</span>
+            <span class="tag">MobX 4</span>
+            <span class="tag">Ant Design</span>
+            <span class="tag">Less · px2rem</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">编辑器交互</div>
+          <div class="tags">
+            <span class="tag">react-rnd（拖拽 + 缩放）</span>
+            <span class="tag">react-sortable-hoc（排序）</span>
+            <span class="tag">react-swipeable-views（多层视口）</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">服务端</div>
+          <div class="tags">
+            <span class="tag">Koa</span>
+            <span class="tag">jsdom</span>
+            <span class="tag">ReactDOM.renderToString</span>
+            <span class="tag">Handlebars</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">存储与缓存</div>
+          <div class="tags">
+            <span class="tag">MongoDB</span>
+            <span class="tag">Redis</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">构建与工程化</div>
+          <div class="tags">
+            <span class="tag">Webpack</span>
+            <span class="tag">Babel</span>
+            <span class="tag">ESLint</span>
+            <span class="tag">Prettier</span>
+            <span class="tag">Husky</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">部署与环境</div>
+          <div class="tags">
+            <span class="tag">Docker · docker-compose</span>
+            <span class="tag">dev / gray / prod 多环境</span>
+            <span class="tag">PM2</span>
+            <span class="tag">CDN</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-group-title">第三方组件开发</div>
+          <div class="tags">
+            <span class="tag">x-cli 脚手架</span>
+            <span class="tag">xcli 版本元数据</span>
+            <span class="tag">独立 bundle + semver</span>
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="sub">关键链路 1：从"拖一个组件"到"画布更新"</h3>
+      <p class="muted">
+        运营在左侧组件库点了一下「图片」组件，到画布出现这个组件的全过程——<strong class="em">完全走 MobX 的响应式路径</strong>，不经过任何事件总线：
+      </p>
+      <div class="flow" aria-label="编辑器拖拽链路">
+        <span class="node accent">点击 / 拖入组件卡片</span>
+        <span class="arrow">→</span>
+        <span class="node">Stage.addChild(widget)</span>
+        <span class="arrow">→</span>
+        <span class="node">widget push 到 @observable widgets 数组</span>
+        <span class="arrow">→</span>
+        <span class="node">@observer 画布检测到 widgets 变化</span>
+        <span class="arrow">→</span>
+        <span class="node accent">自动 re-render 新组件</span>
+      </div>
+      <p style="margin-top:10px;">
+        同时，右侧属性面板修改 <code>widget.data.url</code> 时也走同一条路径。
+        三栏（组件库 / 画布 / 属性面板）都是 <code>@observer</code>，共享同一个 <code>StageStore</code>——<strong class="em">改哪里，哪里自动重绘，不需要事件传递</strong>。
+      </p>
+
+      <h3 class="sub">关键链路 2：从"点发布"到"C 端秒开"</h3>
+      <p class="muted">这条是整个项目最复杂也最要紧的链路：</p>
+      <div class="flow" aria-label="SSR 发布链路">
+        <span class="node">运营点「发布」</span>
+        <span class="arrow">→</span>
+        <span class="node">前端 POST schema 到 Koa</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Node 侧 jsdom 模拟浏览器</span>
+        <span class="arrow">→</span>
+        <span class="node">从 CDN 拉外部组件 JS · new Function() 注册</span>
+        <span class="arrow">→</span>
+        <span class="node">require App · renderToString(&lt;App /&gt;)</span>
+        <span class="arrow">→</span>
+        <span class="node">Handlebars 装配 HTML + PageData</span>
+        <span class="arrow">→</span>
+        <span class="node">HTML / JSON 传 CDN + 截图</span>
+        <span class="arrow">→</span>
+        <span class="node accent">C 端拿 HTML 秒开 · hydrate 补交互</span>
+      </div>
+      <p style="margin-top:10px;">
+        任何一步失败（组件 JS 下载出错、SSR 里调了浏览器专属 API、<code>require</code> 抛错……），
+        就把 <code>needHydrate</code> 置 false，C 端退回 <code>ReactDOM.render</code>。
+        <strong class="em">SSR 是锦上添花，客户端渲染是兜底——发布流程不能因为 SSR 挂掉</strong>。
+      </p>
+      <p style="margin-top:6px;">
+        另外一个容易被忽略的细节：<strong class="em">每次发布都会清 App 模块的 <code>require.cache</code></strong>，
+        防止上一次发布的旧组件代码污染这一次的渲染。jsdom 环境在 Node 里是有状态的，不主动隔离会出 bug。
+      </p>
+
+      <h3 class="sub">关键链路 3：从"组件升级"到"历史活动页不被打穿"</h3>
+      <div class="flow" aria-label="组件版本化链路">
+        <span class="node">组件开发者发新版本</span>
+        <span class="arrow">→</span>
+        <span class="node">CDN 存 /components/{type}/{version}/index.js</span>
+        <span class="arrow">→</span>
+        <span class="node accent">旧 schema 里的 version 保持不变</span>
+        <span class="arrow">→</span>
+        <span class="node">C 端按 schema 钉死的版本拉 JS</span>
+        <span class="arrow">→</span>
+        <span class="node">历史活动页继续使用旧版本</span>
+      </div>
+      <p style="margin-top:10px;">
+        关键点是<strong class="em">"版本钉在 schema 里"</strong>，不是"全站用最新版"。新活动页想用新版本，就在编辑器里升；
+        老活动页不动 schema，就永远停在它发布时的那个版本——<strong class="em">组件升级不会回灌到历史活动</strong>。
+      </p>
+
+      <h3 class="sub">目录结构概览</h3>
+      <pre style="background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;font-size:12.5px;line-height:1.7;color:var(--text-muted);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;overflow-x:auto;"><code>├── client/                          前端
+│   ├── widgets/                     组件体系
+│   │   ├── index.js                 注册中心 · 动态加载器
+│   │   ├── WidgetClass.js           双端共享基类
+│   │   ├── WidgetContent.js         通用内容渲染器
+│   │   ├── Base/                    编辑器包装（Rnd + 交互）
+│   │   ├── Widget/                  C 端包装（触摸 + px2rem）
+│   │   └── Image / RichText / Container / DataContainer …
+│   ├── store/                       MobX 状态
+│   │   ├── stage/
+│   │   │   ├── StageStore.js        全局 store
+│   │   │   └── Stage.js             容器统一抽象
+│   │   ├── clazz/
+│   │   │   ├── Project.js · Page.js · Widget.js · Layer.js
+│   │   │   └── Trigger.js · Animation.js · Share.js
+│   │   └── history/                 撤销 / 重做
+│   ├── components/                  编辑器 80+ UI 组件
+│   │   ├── HEWorkSpace/             画布工作区（标尺 / 视口 / 框选）
+│   │   ├── HEStage/                 画布舞台
+│   │   ├── HESettingsPanel/         右侧面板路由
+│   │   ├── HEAttributePanel/        属性配置标签
+│   │   └── HEEditorLeftWidgetPanel / HELayerList / HEAnimation / …
+│   ├── controls/
+│   │   └── ControlWrap/             schema → 表单控件
+│   ├── triggers/                    触发器
+│   │   ├── Redirect.js · ScrollToPage.js
+│   │   ├── ChangeWidget.js · EmitListeners.js
+│   ├── common/
+│   │   ├── Container.js             共享页面/图层容器
+│   │   ├── god.js                   全局命名空间
+│   │   └── utils.js
+│   └── page/
+│       ├── editor/                  编辑器入口
+│       └── project/preview/         C 端入口（hydrate vs render）
+│
+├── server/                          后端（Koa）
+│   ├── controller/
+│   │   └── project/helper/index.js  SSR 发布流水线
+│   ├── plugins/render.js            Handlebars SSR 装配
+│   └── utils/script.js              组件 JS 拉取 · SSR 兼容检查
+│
+├── build/                           Webpack 多环境
+│   ├── webpack.common.js · webpack.dev.js
+│   └── webpack.prod.js · webpack.server.js
+│
+└── docker-compose.yml               应用 + MongoDB + Redis</code></pre>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./role.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">03 · 我的职责</span>
+        </a>
+        <a class="next" href="./modules.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">05 · 重点模块</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

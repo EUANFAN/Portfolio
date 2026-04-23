@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Impact · Course Commerce Platform</title>
+<meta name="description" content="Impact and measurable outcomes of the Course Commerce Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" data-active="impact" aria-label="Project sections"></aside>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Impact</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">08</span>Impact</div>
+        <h1 class="page-title">What practical changes came out of it</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          Some of these are hard numbers, and some are more qualitative but just as real.
+          To be fair, some outcomes were team results rather than my solo contribution.
+          My own role was mainly in the frontend architecture and the delivery of the key modules.
+        </p>
+      </header>
+
+      <h3 class="sub">Quantifiable outcomes</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-stat">3-5 days → hours</div>
+          <div class="mini-desc">A new course landing page went from a 3-5 day frontend delivery cycle to something the ops team could finish in a few hours.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Business coverage</div>
+          <div class="mini-stat">5 business domains · 20+ pages</div>
+          <div class="mini-desc">Project Center, Gift Center, Tools, User Portrait, and Workspace.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Permission granularity</div>
+          <div class="mini-stat">50+ permission keys</div>
+          <div class="mini-desc">Covering both menus and buttons, and supporting fine-grained separation across 10+ roles.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Shared capability</div>
+          <div class="mini-stat">~20 shared components · 10+ custom hooks</div>
+          <div class="mini-desc">On average, each shared component was reused 10+ times.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">List-page cost</div>
+          <div class="mini-stat">500+ lines → ~150 lines</div>
+          <div class="mini-desc">After the CRUD abstraction, a new list page shrank to about one third of the old size, with more consistent interaction.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Build environments</div>
+          <div class="mini-stat">4 environments</div>
+          <div class="mini-desc">dev / mock / gray / prod stayed separated, so testing and publishing could be done independently.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Frontend/backend contract</div>
+          <div class="mini-stat">100% TypeScript coverage</div>
+          <div class="mini-desc">All APIs were type-generated from Swagger, so backend interface changes showed up during frontend compile.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Landing-page templates</div>
+          <div class="mini-stat">8 templates</div>
+          <div class="mini-desc">Supporting regular, trial, half-screen, ad, lead-gen, combined, long-image, and media-training style scenarios.</div>
+        </div>
+      </div>
+
+      <h3 class="sub">Impact on team efficiency</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">Ops self-service rate</div>
+          <div class="mini-desc">Landing-page work moved from “100% frontend-dependent” to “80%+ handled by ops,” with frontend mostly focusing on templates and components.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Frontend capacity released</div>
+          <div class="mini-desc">Before the new admin, landing-page work could take more than 50% of the team’s weekly time. After launch, it dropped to under 10%, leaving room for actual platform work.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">New teammate ramp-up</div>
+          <div class="mini-desc">A new engineer could usually ship their first list page or form page within a week by following the shared patterns.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Cross-system switching cost</div>
+          <div class="mini-desc">What used to require jumping across 3-4 back-office tools was pulled into one entry point.</div>
+        </div>
+      </div>
+
+      <h3 class="sub">Stability and quality</h3>
+      <ul class="bullets">
+        <li>Since launch, there were <strong class="em">no P0 frontend incidents</strong>. The few functional bugs we saw were fixed and shipped within hours.</li>
+        <li>Because the API contract was generated from Swagger, <strong class="em">bugs caused by frontend/backend field mismatch dropped to nearly zero</strong>.</li>
+        <li>ESLint, Prettier, Stylelint, and Husky formed a solid engineering loop, so PR review could focus more on logic and less on formatting noise.</li>
+        <li>We ran permission-isolation checks across all 5 business domains, and there were no permission-leak incidents.</li>
+      </ul>
+
+      <h3 class="sub">Impact on architecture and the wider org</h3>
+      <div class="decision">
+        <div class="decision-title">Three things became reusable after this project</div>
+        <ul class="bullets" style="margin-top:6px;">
+          <li><strong class="em">“Umi Max + two-layer access + axios interceptors + Swagger generation”</strong> became the default foundation for new internal admin projects in the team.</li>
+          <li><strong class="em">The CRUD primitive pattern</strong> — hooks like <code>useTableSearch</code> plus shared search and operation components — was pulled into an internal template that other projects could reuse.</li>
+          <li><strong class="em">Formily best practices for complex forms</strong> were documented, so later projects did not have to re-learn the same lessons from scratch.</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">What I personally got out of it</h3>
+      <ul class="bullets">
+        <li>This was a full shift for me from “building pages” to “building the foundation.” Going from 0 to 1 on a fairly large internal admin made me feel very directly that “constraints are freedom” — clear conventions actually make business delivery faster.</li>
+        <li>I got much sharper about <strong class="em">when abstraction is worth it and when it is not</strong>. Internal admin projects are especially easy to over-abstract, so restraint matters.</li>
+        <li>I also got much more real experience collaborating across frontend, backend, product, and ops. In B-side tools, the core question is not whether the code looks elegant. It is whether the tool genuinely helps the business team do their job.</li>
+      </ul>
+
+      <p class="muted" style="margin-top:24px;font-size:13px;">
+        Note: these numbers were observed over roughly 12 months after launch.
+        Some outcomes were team-level results, not individual ones, and I tried to keep the scale honest rather than overstating it.
+      </p>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./challenges.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">07 · Challenges &amp; Solutions</span>
+        </a>
+        <span></span>
+      </footer>
+    </main>
+  </div>
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

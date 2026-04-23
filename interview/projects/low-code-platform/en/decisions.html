@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Key Decisions · Low-Code Campaign Platform</title>
+<meta name="description" content="Key architectural decisions and tradeoffs in the Low-Code Campaign Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="decisions" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Key Decisions</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">06</span>Key Decisions</div>
+        <h1 class="page-title">The calls that shaped the platform</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          In interviews, this is the section I use to show judgment rather than just implementation detail.
+          The pattern is simple: what problem we faced, what we chose, why we chose it, and what we knowingly gave up.
+        </p>
+      </header>
+
+      <div class="decision">
+        <div class="decision-title">Decision 1 · MobX over Redux</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">The editor had deeply nested, high-frequency state changes across three panes.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val">One MobX <code>StageStore</code> with observable project, pages, widgets, layers, and selection state.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">The object graph was deep and highly interactive. MobX let us treat state like state, not turn every field edit into a mini state-management ceremony.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">MobX felt more magical, and debugging was less explicit than Redux DevTools. We paid that cost and offset it with conventions and a separate history stack.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 2 · Class Components over Hooks</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">The project started when Hooks were available, but the codebase leaned heavily on inheritance and MobX decorators.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val">Core editor components and widget wrappers stayed class-based.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">The widget runtime had a real base-class hierarchy, and the lifecycle timing was easier to reason about with explicit class methods.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">It drifted away from mainstream React style and made future migration harder, but it sped up delivery at the time.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 3 · Custom SSR over Next.js</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">We needed SSR, but the system was not “one app, one site.” It was a publish service rendering thousands of schema-driven pages with dynamic widgets.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val">We built the SSR path ourselves on top of Koa, jsdom, and <code>renderToString</code>.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">We needed full control over dynamic widget injection, browser simulation, and per-page schema-driven rendering. That fit our model better than bending a full framework around it.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">We owned every edge case ourselves: cache isolation, SSR compatibility, fallback behavior, and external bundle execution safety.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 4 · Three widget tiers instead of one loading strategy</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">Packing every widget into the client bundle would blow up the payload, but making everything runtime-loaded would hurt first paint.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val">Built-in widgets in the main bundle, internal widgets on CDN, external widgets on CDN with a stricter protocol.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">This split followed stability. Core primitives were always there; less common business widgets stayed decoupled and versioned.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">The loading story became more complex, and moving a widget between tiers required operational discipline.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 5 · No code editor for ops</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">Operators occasionally wanted non-standard interactions, and the fastest way to satisfy that would have been a custom JS panel.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val">We did not allow custom scripting. Interactions had to be expressed through declarative triggers.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">Giving non-engineers arbitrary code would have made security, auditing, debugging, and runtime evolution much harder.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">Some one-off requests could not be solved instantly. We accepted that and turned repeated needs into proper trigger types.</div></div>
+      </div>
+
+      <div class="decision">
+        <div class="decision-title">Decision 6 · Fixed 375px editor canvas plus px2rem in production</div>
+        <div class="decision-row"><div class="label">Problem</div><div class="val">The editor needed a deterministic WYSIWYG baseline, while the runtime still had to adapt to real mobile screens.</div></div>
+        <div class="decision-row"><div class="label">Choice</div><div class="val">The editor used a fixed 375px canvas. Production translated the same styling into rem-based responsive rendering.</div></div>
+        <div class="decision-row"><div class="label">Why</div><div class="val">Operators do not think in responsive design systems. A fixed reference width made the editing experience concrete and much easier to trust.</div></div>
+        <div class="decision-row"><div class="label">Cost</div><div class="val">Extreme device widths were never perfect, and widget authors had to follow strict styling rules.</div></div>
+      </div>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./modules.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">05 · Core Modules</span>
+        </a>
+        <a class="next" href="./challenges.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">07 · Challenges &amp; Solutions</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

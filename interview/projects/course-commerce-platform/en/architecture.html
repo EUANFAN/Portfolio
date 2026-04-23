@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Architecture · Course Commerce Platform</title>
+<meta name="description" content="Architecture, stack, and key flows of the Course Commerce Platform." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" data-active="architecture" aria-label="Project sections"></aside>
+    <main>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Course Commerce Platform</a>
+        <span class="sep">/</span>
+        <span>Architecture</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">04</span>Architecture</div>
+        <h1 class="page-title">Overall layering, tech stack, and key flows</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          One layered view makes the project easy to read: business modules on top,
+          platform capability in the middle, and frontend infrastructure at the bottom.
+          All business modules shared the same routing, permission model, request flow, form system, and common components.
+        </p>
+      </header>
+
+      <h3 class="sub">Architecture diagram</h3>
+      <div class="diagram" aria-label="Architecture diagram">
+        <div class="layer">
+          <div class="layer-label">Business modules</div>
+          <div class="block">Project Center<span class="sub">template</span></div>
+          <div class="block">Gift Center<span class="sub">present</span></div>
+          <div class="block">Tools<span class="sub">tools</span></div>
+          <div class="block">User Portrait<span class="sub">user-portrait</span></div>
+          <div class="block">Workspace<span class="sub">work-space</span></div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Platform capability</div>
+          <div class="block highlight">Formily form system<span class="sub">linkage / validation / custom fields</span></div>
+          <div class="block highlight">Drag and sort<span class="sub">react-sortable-hoc · react-dnd</span></div>
+          <div class="block highlight">Device preview<span class="sub">react-device-frameset · QR code testing</span></div>
+          <div class="block highlight">Shared components<span class="sub">upload / filters / form search / table actions</span></div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Infrastructure</div>
+          <div class="block">Umi Max 4<span class="sub">routing · access · initialState · layout</span></div>
+          <div class="block">Redux Toolkit<span class="sub">config / user / checkTool</span></div>
+          <div class="block">Axios interceptors<span class="sub">SSO token · 401 fallback · unified errors</span></div>
+          <div class="block">Swagger generation<span class="sub">@dandelion/swagger · typed APIs</span></div>
+        </div>
+      </div>
+
+      <h3 class="sub">Tech stack</h3>
+      <div class="stack-grid">
+        <div class="stack-group">
+          <div class="stack-group-title">Framework and routing</div>
+          <div class="tags">
+            <span class="tag">Umi Max 4</span>
+            <span class="tag">React 18</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Hash Router</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">UI and theme</div>
+          <div class="tags">
+            <span class="tag">Ant Design 4</span>
+            <span class="tag">Ant Design Pro Components</span>
+            <span class="tag">Less</span>
+            <span class="tag">Custom theme (#FF3627)</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Forms and complex interaction</div>
+          <div class="tags">
+            <span class="tag">Formily 2</span>
+            <span class="tag">react-sortable-hoc</span>
+            <span class="tag">react-dnd</span>
+            <span class="tag">react-colorful</span>
+            <span class="tag">@uiw/react-codemirror</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">State and data</div>
+          <div class="tags">
+            <span class="tag">Redux Toolkit</span>
+            <span class="tag">ahooks</span>
+            <span class="tag">axios</span>
+            <span class="tag">pubsub-js</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Device simulation and preview</div>
+          <div class="tags">
+            <span class="tag">react-device-frameset</span>
+            <span class="tag">react-qr-code</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Engineering and standards</div>
+          <div class="tags">
+            <span class="tag">ESLint</span>
+            <span class="tag">Prettier</span>
+            <span class="tag">Stylelint</span>
+            <span class="tag">Husky</span>
+            <span class="tag">lint-staged</span>
+            <span class="tag">commitizen</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">Build and environments</div>
+          <div class="tags">
+            <span class="tag">dev</span>
+            <span class="tag">mock</span>
+            <span class="tag">gray</span>
+            <span class="tag">production</span>
+            <span class="tag">cross-env</span>
+          </div>
+        </div>
+        <div class="stack-group">
+          <div class="stack-group-title">API and contract</div>
+          <div class="tags">
+            <span class="tag">@dandelion/swagger</span>
+            <span class="tag">Mock</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub">Key flow 1: permission flow (menu + button auth)</h3>
+      <p class="muted">This was one of the most recognizable parts of the project: the backend permission list directly drove <strong class="em">routes, menus, and buttons</strong> on the frontend.</p>
+      <div class="flow" aria-label="Permission flow">
+        <span class="node accent">SSO login</span>
+        <span class="arrow">→</span>
+        <span class="node">getInitialState()</span>
+        <span class="arrow">→</span>
+        <span class="node">Fetch {menus, permissions}</span>
+        <span class="arrow">→</span>
+        <span class="node">Split by type</span>
+        <span class="arrow">→</span>
+        <span class="node">Generate booleans in access.ts</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Route guard + menu render + button auth</span>
+      </div>
+      <p style="margin-top:10px;">
+        In the permission list, <code>type=0/1</code> meant <strong class="em">menu permissions</strong>, which drove route access and ProLayout menus.
+        Everything else meant <strong class="em">function permissions</strong>, which drove buttons.
+        Pages used <code>&lt;Access accessible={access.canSeeXxx}&gt;</code>, while buttons used helpers like
+        <code>useAuthCheck('project-center-project-list-course-edit')</code>.
+        <strong class="em">One key controlled route access, menu visibility, and button visibility together</strong>, so new modules only needed a route plus an access key.
+      </p>
+
+      <h3 class="sub">Key flow 2: request and contract flow</h3>
+      <p class="muted">The frontend/backend contract was generated from Swagger, so business code could stay focused on the happy path.</p>
+      <div class="flow" aria-label="Request flow">
+        <span class="node accent">@dandelion/swagger</span>
+        <span class="arrow">→</span>
+        <span class="node">Generate TS types + request functions</span>
+        <span class="arrow">→</span>
+        <span class="node">Business code calls them</span>
+        <span class="arrow">→</span>
+        <span class="node">Request interceptor (SSO token / mode)</span>
+        <span class="arrow">→</span>
+        <span class="node">Backend</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Response interceptor (401 → SSO · business-code toast)</span>
+      </div>
+      <p style="margin-top:10px;">
+        <code>@dandelion/swagger</code> generated TypeScript types and request functions directly from OpenAPI,
+        so the frontend almost stopped writing the API layer by hand.
+        The axios interceptors centralized two important behaviors:
+        <strong class="em">401 automatically logged the user out and redirected to SSO</strong>, and
+        <strong class="em">business error codes showed unified toast messages</strong>.
+        That kept error-handling conventions inside the interceptor layer instead of leaking into every page.
+      </p>
+
+      <h3 class="sub">Key flow 3: CRUD list-page flow (hook-driven)</h3>
+      <p class="muted">More than 20 list pages shared the same behavior, and this was the abstraction that cut a page from 500+ lines down to around 150.</p>
+      <div class="flow" aria-label="CRUD list flow">
+        <span class="node">Declare columns + search form + fetchFn</span>
+        <span class="arrow">→</span>
+        <span class="node accent">useTableSearch</span>
+        <span class="arrow">→</span>
+        <span class="node">useAntdTable data source</span>
+        <span class="arrow">→</span>
+        <span class="node accent">useTableSet</span>
+        <span class="arrow">→</span>
+        <span class="node">ProTable render + localStorage persistence</span>
+      </div>
+      <p style="margin-top:10px;">
+        <code>useTableSearch</code> took over <strong class="em">search / reset / paging / URL sync</strong>, and returned helpers like <code>{ search, reset, formValue }</code>.
+        Search automatically reset <code>current</code>, paging preserved filters, and reset cleared params.
+        <code>useTableSet</code> took care of <strong class="em">custom columns</strong>, including width, visibility, and operation columns,
+        while user changes were persisted into <code>localStorage</code>.
+        <strong class="em">The default behavior lived inside the hooks, so every new list page got the same interaction model automatically.</strong>
+      </p>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./role.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">03 · Role &amp; Ownership</span>
+        </a>
+        <a class="next" href="./modules.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">05 · Core Modules</span>
+        </a>
+      </footer>
+    </main>
+  </div>
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

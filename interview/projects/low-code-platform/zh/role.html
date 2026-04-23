@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>我的职责 · 企业级低代码活动搭建平台</title>
+<meta name="description" content="企业级低代码活动搭建平台 - 我的职责" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="role" aria-label="项目章节"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="./index.html">企业级低代码活动搭建平台</a>
+        <span class="sep">/</span>
+        <span>我的职责</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">03</span>我的职责</div>
+        <h1 class="page-title">我在这个项目里做了什么</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          <strong class="em">前端负责人 + 核心贡献者</strong>，带一个 3–5 人的小团队。
+          编辑器、组件体系、Node 侧 SSR 发布流水线三条核心链路我都直接下场写过 ——
+          <strong class="em">前端和后端（Koa / jsdom / MongoDB）的工作我都参与</strong>，
+          因为这类平台的关键决策只看一面都会走偏，得前后端一起打通才站得住。
+        </p>
+      </header>
+
+      <h3 class="sub">整体技术架构</h3>
+      <ul class="bullets">
+        <li>
+          <strong class="em">关键技术选型。</strong>
+          选 MobX 而不是 Redux、保留 React Class Components、两种布局（瀑布流 + 自由定位）并存、
+          SSR + 客户端 <code>hydrate</code>、组件运行时从 CDN 动态加载、三层组件体系（内建 / 内部 / 外部）——
+          这几个决定项目走向的选择都是我主导的，后面也都要为它们兜底。
+        </li>
+        <li>
+          <strong class="em">组件开发规范与契约。</strong>
+          Widget 基类（<code>WidgetClass</code>）、编辑器 / C 端双端包装（<code>BaseWidget</code> / <code>Widget</code>）、
+          组件的 <code>data</code> / <code>config</code> / <code>onRender</code> 四段式契约、<code>x-cli</code> 脚手架、
+          版本治理规则 —— 第三方同学用这套开发组件的规范是我定义并推动的。
+        </li>
+        <li>
+          <strong class="em">团队工程规范。</strong>
+          项目脚手架、ESLint / Prettier / Husky、Webpack 多环境配置（dev / gray / prod）、Docker 本地化部署、内部文档。
+        </li>
+      </ul>
+
+      <h3 class="sub">核心模块开发</h3>
+      <ul class="bullets">
+        <li>
+          <strong class="em">编辑器（前端）。</strong>
+          三栏通信模型、<code>StageStore</code> 数据结构、Stage 抽象层、画布工作区（标尺 / 视口 / 框选器）、
+          右侧 <code>ControlWrap</code> 动态表单渲染器 —— 这套核心骨架的第一版是我写的，后面逐步和团队一起完善。
+        </li>
+        <li>
+          <strong class="em">组件体系（前端）。</strong>
+          内建组件（Image / RichText / Container / FixedButton 等）的基础集、组件运行时的动态 <code>loadScript</code> 加载器、
+          版本路由（同组件不同版本并存）、编辑器和 C 端共享 <code>onRender</code> 的渲染机制。
+        </li>
+        <li>
+          <strong class="em">Node 侧 SSR 发布流水线（前端 + 服务端都做）。</strong>
+          jsdom 环境准备、外部组件从 CDN 拉取并 <code>new Function()</code> 注册、<code>renderToString</code>、
+          Handlebars 模板装配、CDN 部署、<code>require.cache</code> 隔离、优雅降级策略 ——
+          <strong class="em">前端侧和服务端侧（Koa 路由、发布接口、MongoDB schema 存储、资源上传）我都直接下场写</strong>，
+          SSR 本身就是横跨前后端的事，不掺进去这条链路根本推不动。
+        </li>
+        <li>
+          <strong class="em">声明式触发器系统。</strong>
+          <code>type / event / data / client / platform</code> 五段式触发器协议、触发器的运行时执行器、
+          跳小程序 / 跳 URL / 曝光埋点 / 改其他组件 / 发自定义事件等一整套内置能力。
+        </li>
+        <li>
+          <strong class="em">推广与落地。</strong>
+          直接和运营、市场、产品团队对接 —— 收需求、演示、培训、兜底答疑。
+          这部分「非技术」的工作，在低代码项目里其实最决定成败。
+        </li>
+      </ul>
+
+      <p class="muted" style="margin-top:18px;">
+        简单讲：<strong class="em">架构我拍板，核心链路前端 + 后端两边我都自己写</strong>。
+        带 3–5 人的小团队，随项目阶段弹性调整。
+        之所以同时管编辑器、运行时、发布链路和推广四件事——
+        因为这类平台的关键决策只看一面都会走偏，得几面一起看才站得住。
+      </p>
+
+      <footer class="pager" aria-label="章节导航">
+        <a class="prev" href="./context.html">
+          <span class="dir">← 上一章</span>
+          <span class="lbl">02 · 背景与问题</span>
+        </a>
+        <a class="next" href="./architecture.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">04 · 技术架构</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

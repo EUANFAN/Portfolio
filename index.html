@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  <title>Euan Fan | Frontend Engineer</title>
+  <link rel="icon" type="image/png" href="/Portfolio/images/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    (function() {
+      var stored = localStorage.getItem('portfolio-theme');
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.setAttribute('data-theme', stored);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <script type="module" crossorigin src="/Portfolio/assets/index-CMnQ11jv.js"></script>
+  <link rel="stylesheet" crossorigin href="/Portfolio/assets/index-DD4buBZA.css">
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

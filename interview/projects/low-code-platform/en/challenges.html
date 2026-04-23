@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Challenges &amp; Solutions · Low-Code Campaign Platform</title>
+<meta name="description" content="Five core challenges and the solutions behind the Low-Code Campaign Platform, written as an interview talk track." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="challenges" aria-label="Project sections"></aside>
+
+    <main>
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./index.html">Low-Code Campaign Platform</a>
+        <span class="sep">/</span>
+        <span>Challenges &amp; Solutions</span>
+      </nav>
+
+      <header class="page-header" style="margin-bottom:40px;">
+        <div class="section-eyebrow"><span class="num">07</span>Challenges &amp; Solutions</div>
+        <h1 class="page-title">Five problems that were actually hard, and how I got them shipped</h1>
+        <p class="page-lead" style="margin-top:12px;">
+          I've written this the way I'd walk through it in an interview. For each one I'll cover
+          <strong class="em">why it was hard, where the real pain was, how I broke it down, what I ended up building, the data structures behind it, and how I knew it worked</strong>.
+          If the interviewer wants to dig deeper, I can keep going into the schema, the render path, or the publish pipeline.
+        </p>
+      </header>
+
+      <h2 class="challenge-heading"><span class="num">01</span>Unified schema: one engineering model for many campaign types</h2>
+      <p class="challenge-lead">The hard part wasn't "store a JSON." It was designing one JSON shape that could describe very different campaigns and serve the editor, the preview, the publish flow, and the component system all at once.</p>
+
+      <div class="sub-h">Why this was hard</div>
+      <p>
+        The first real problem in a low-code platform isn't drag-and-drop, it's <strong class="em">how do you describe a page at all</strong>. If the schema is too thin, it can only describe static UI. If it's too heavy, the editor becomes a nightmare to maintain and the runtime gets complicated too. And we had to support a lot of different campaign shapes:
+      </p>
+      <ul class="bullets">
+        <li>Some pages were one long scrolling page, others were multi-page flows.</li>
+        <li>Some widgets were plain atomic components, others were containers with their own inner panels.</li>
+        <li>Some content was static config, other content came from APIs at runtime.</li>
+        <li>Some interactions were page-level, others were widget-level behaviors, animations, or conditional visibility.</li>
+        <li>The same data had to be editable in the editor, renderable on the client, executable in SSR, and open enough for external widgets to plug in.</li>
+      </ul>
+      <p>
+        So my take was: this schema can't just describe "what the page looks like." It has to describe a full campaign project, including
+        <strong class="em">structure, layout, styles, behavior, animation, variables, data sources, and platform config</strong>.
+      </p>
+
+      <div class="sub-h">Core data model</div>
+      <div class="diagram" aria-label="Unified schema layered structure">
+
+        <div class="layer">
+          <div class="layer-label">Project</div>
+          <div class="block highlight">
+            pages[]
+            <span class="sub">Page list, the main structure of the project</span>
+          </div>
+          <div class="block">
+            variableStore / pageState
+            <span class="sub">Project variables and runtime state</span>
+          </div>
+          <div class="block">
+            dataBox / componentPlat / dynamicLoadScript
+            <span class="sub">Data sources and platform config</span>
+          </div>
+          <div class="block">
+            rulesConfig / shareConfig / thirdPartyConfig
+            <span class="sub">Rules, sharing, third-party integrations</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Page</div>
+          <div class="block">
+            width / height / isFullPage
+            <span class="sub">Page size and scroll mode</span>
+          </div>
+          <div class="block">
+            bgColor / bgImage / bgSize
+            <span class="sub">Page background</span>
+          </div>
+          <div class="block highlight">
+            widgets[]
+            <span class="sub">Entry point to the component tree inside this page</span>
+          </div>
+          <div class="block">
+            triggers[] / variableStore / dataBox
+            <span class="sub">Page behaviors, page variables, page-level APIs</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Widget</div>
+          <div class="block highlight">
+            type / version / data / config
+            <span class="sub">The core of the widget contract</span>
+          </div>
+          <div class="block">
+            layout / location / top / left / width / height
+            <span class="sub">Layout and positioning</span>
+          </div>
+          <div class="block">
+            bg / border / shadow / padding / margin
+            <span class="sub">Visual style</span>
+          </div>
+          <div class="block">
+            triggers[] / animations[] / condition
+            <span class="sub">Interactions, animation, visibility</span>
+          </div>
+          <div class="block">
+            hasLayers / layers[]
+            <span class="sub">Inner panels for container-type widgets</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Layer</div>
+          <div class="block">
+            width / height / widgets[]
+            <span class="sub">A sub-viewport inside a container</span>
+          </div>
+          <div class="block">
+            isFullPage / bgColor
+            <span class="sub">How the sub-container is displayed</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">Schema example</div>
+<pre class="code-block"><span class="c-kw">const</span> projectSchema = {
+  name: <span class="c-str">'Fall Campaign'</span>,
+  componentPlat: <span class="c-str">'h5'</span>,
+  dynamicLoadScript: <span class="c-kw">false</span>,
+  variableStore: {
+    PAGE_VARIABLE: { city: <span class="c-str">'Beijing'</span> }
+  },
+  pages: [
+    {
+      id: <span class="c-str">'page_1'</span>,
+      name: <span class="c-str">'Home'</span>,
+      width: <span class="c-str">375</span>,
+      height: <span class="c-str">1200</span>,
+      isFullPage: <span class="c-kw">false</span>,
+      widgets: [
+        {
+          id: <span class="c-str">'w_banner'</span>,
+          type: <span class="c-str">'Image'</span>,
+          layout: <span class="c-str">'flow'</span>,
+          version: <span class="c-str">'1.0.0'</span>,
+          data: { url: <span class="c-str">'https://cdn/banner.png'</span> },
+          triggers: [],
+          animations: []
+        },
+        {
+          id: <span class="c-str">'w_tab'</span>,
+          type: <span class="c-str">'Container'</span>,
+          layout: <span class="c-str">'normal'</span>,
+          top: <span class="c-str">420</span>,
+          left: <span class="c-str">20</span>,
+          width: <span class="c-str">335</span>,
+          height: <span class="c-str">320</span>,
+          hasLayers: <span class="c-kw">true</span>,
+          layers: [
+            {
+              id: <span class="c-str">'layer_1'</span>,
+              name: <span class="c-str">'Panel-1'</span>,
+              widgets: [{ type: <span class="c-str">'NormalText'</span>, data: { text: <span class="c-str">'Course intro'</span> } }]
+            },
+            {
+              id: <span class="c-str">'layer_2'</span>,
+              name: <span class="c-str">'Panel-2'</span>,
+              widgets: [{ type: <span class="c-str">'NormalText'</span>, data: { text: <span class="c-str">'Teacher intro'</span> } }]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+</pre>
+
+      <div class="sub-h">The trade-offs I made</div>
+      <ul class="bullets">
+        <li><strong>Layered modeling: Project / Page / Widget / Layer.</strong> Containers, pages, and widgets are different concepts, but the editor can operate on all of them the same way.</li>
+        <li><strong>Business fields all live under <code>widget.data</code>.</strong> The platform only cares about the protocol, not the widget's internal business meaning.</li>
+        <li><strong>Behavior, animation, and conditions are not mixed into the style block.</strong> That way the editor panel, the runtime executor, and SSR can each consume them independently.</li>
+        <li><strong>Variables and data sources live inside the schema, not only at runtime.</strong> Otherwise preview, SSR, and client render can't stay aligned.</li>
+      </ul>
+
+      <div class="sub-h">Why this model can carry very different campaigns</div>
+      <div class="flow" aria-label="How the unified schema supports different campaigns">
+        <span class="node">Unified Project / Page / Widget / Layer</span>
+        <span class="arrow">→</span>
+        <span class="node">Widget differences collapse into type + version + data</span>
+        <span class="arrow">→</span>
+        <span class="node">Interaction differences collapse into triggers / animations / condition</span>
+        <span class="arrow">→</span>
+        <span class="node">Data differences collapse into variableStore / dataBox</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Editor, runtime, and SSR share one schema</span>
+      </div>
+
+      <div class="pitch">
+        <div class="pitch-label">How I'd say it in an interview</div>
+        <p>
+          "The biggest step in this platform wasn't building the editor, it was getting the schema right first. I didn't think of it as 'a page JSON.' I treated it as a full campaign project: a Project contains Pages, a Page contains Widgets, and a container-type Widget can keep going with Layers inside it. On top of that tree I also pulled in behavior, animation, variables, data sources, and platform config."
+        </p>
+        <p>
+          "Once that was in place, the editor, the preview, the publish flow, and the external widget system could all work against the same contract. New business use cases didn't need changes to the platform core, just a new <code>widget.type</code> and a new shape of <code>widget.data</code>."
+        </p>
+      </div>
+
+      <div class="qa" aria-label="Schema follow-up Q and A">
+        <details>
+          <summary>Why not just go with a simpler page JSON instead of this full Project / Page / Widget / Layer model?</summary>
+          <div class="answer">
+            Because we weren't building a static page renderer. We were building a full campaign project. On top of the UI tree it had to carry page switching, drilling into containers, widget behaviors, runtime variables, data sources, and publish metadata. A lightweight page JSON would have left gaps for the editor, preview, SSR, and external widgets very quickly. The engineering model is heavier, but it lets the whole pipeline move around one shared contract.
+          </div>
+        </details>
+        <details>
+          <summary>Why put business fields under <code>widget.data</code> instead of on the widget root?</summary>
+          <div class="answer">
+            Platform fields and business fields have to stay separate. Things like <code>top</code>, <code>left</code>, <code>width</code>, <code>layout</code> are platform concepts the whole system needs to understand. Things like <code>url</code>, <code>courseId</code>, <code>teacherList</code> only belong to a specific widget. Pushing them into <code>data</code> keeps the platform clean of business coupling, and lets external widgets reuse the same protocol.
+          </div>
+        </details>
+        <details>
+          <summary>If you redid this schema today, would you keep the same layering?</summary>
+          <div class="answer">
+            I'd keep the overall direction, but I'd document and version the schema much earlier. The shape itself is right. What got messy in the early days is that new fields kept showing up from business demands, and some of those field semantics were a bit improvised. If I did it again, I'd draw a sharper line between platform fields, business fields, and runtime fields, so that new teams integrating with the schema would pick it up faster.
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">02</span>Editor core: three-pane collaboration and multi-level viewports</h2>
+      <p class="challenge-lead">The real challenge wasn't drawing three panes on screen. It was getting the left rail, the center canvas, and the right inspector to all stay in sync with one editing context in real time.</p>
+
+      <div class="sub-h">Why this was hard</div>
+      <p>
+        From the user's perspective it's a standard three-pane editor. Underneath there were several hard problems happening at the same time:
+      </p>
+      <ul class="bullets">
+        <li>The left pane wasn't just a widget library. It also held pages and a layer tree, so the entry point itself had multiple modes.</li>
+        <li>The center canvas wasn't a single div. It was a multi-level viewport that moved between page, container, and layer contexts.</li>
+        <li>The right inspector had to change based on "current stage + number of selected items" at the same time.</li>
+        <li>Some widgets used flow layout, some used normal (freeform) layout, and the interaction models were totally different.</li>
+      </ul>
+      <p>
+        Without a shared editing-context model, the second you touched the left pane, the center and right could drift out of sync. Walking into a container and coming back out would leave state in a bad spot.
+      </p>
+      <p>
+        There's one more key piece I want to call out here: <strong class="em">MobX actually became the real-time sync layer between the three panes</strong>.
+        A lot of editor interactions aren't one-shot submits. They're continuously changing object state: the current page, the current selected widget, coordinates, prop values, the current viewport level.
+        If I'd tried to keep those in sync with event buses or hand-written UI sync, the wiring would've been scattered and the state would've drifted fast.
+      </p>
+
+      <div class="sub-h">Three-pane collaboration architecture</div>
+      <div class="diagram" aria-label="Three-pane editor collaboration with MobX">
+
+        <div class="layer">
+          <div class="layer-label">Left pane</div>
+          <div class="block">
+            Page list
+            <span class="sub">Select, reorder, add, delete pages</span>
+          </div>
+          <div class="block">
+            Widget library
+            <span class="sub">Drag or click to insert widgets</span>
+          </div>
+          <div class="block">
+            Layer tree
+            <span class="sub">See the structure of the current context</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Center pane</div>
+          <div class="block highlight">
+            WorkSpace
+            <span class="sub">Selector + Ruler + SwipeableViews</span>
+          </div>
+          <div class="block highlight">
+            Stage
+            <span class="sub">flow reordering + normal drag/resize</span>
+          </div>
+          <div class="block">
+            Multi-level viewport
+            <span class="sub">Context switch between page / widget / layer</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Right pane</div>
+          <div class="block">
+            Properties panel
+            <span class="sub">Project / Page / Widget / Layer config</span>
+          </div>
+          <div class="block">
+            Layers / animation / behavior / condition
+            <span class="sub">Swaps in based on selection</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Shared state (MobX)</div>
+          <div class="block highlight">
+            StageStore
+            <span class="sub">@observable project + stages + swiperIndex + activeTab</span>
+          </div>
+          <div class="block highlight">
+            Project / Page / Widget / Layer
+            <span class="sub">Rehydrated as an observable object tree</span>
+          </div>
+          <div class="block highlight">
+            Stage
+            <span class="sub">Unified add / remove / update / select / sort for page / widget / layer</span>
+          </div>
+          <div class="block">
+            All three panes are @observer
+            <span class="sub">Change the data and the panes update themselves</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">Editor shell</div>
+<pre class="code-block"><span class="c-kw">return</span> (
+  &lt;<span class="c-prop">Editor</span>&gt;
+    &lt;<span class="c-prop">EditorNavbar</span> /&gt;         <span class="c-cm">// top nav</span>
+    &lt;<span class="c-prop">EditorLeftTabContainer</span> /&gt;<span class="c-cm">// left: pages / widgets / layers</span>
+    &lt;<span class="c-prop">WorkSpace</span> /&gt;              <span class="c-cm">// center: multi-level canvas</span>
+    &lt;<span class="c-prop">SettingsPanel</span> /&gt;         <span class="c-cm">// right: settings / behavior / animation / layers</span>
+  &lt;/<span class="c-prop">Editor</span>&gt;
+)
+</pre>
+
+      <div class="sub-h">How the editor looks through a MobX lens</div>
+<pre class="code-block"><span class="c-cm">// Shared editor state</span>
+<span class="c-kw">class</span> <span class="c-fn">StageStore</span> {
+  @observable project
+  @observable stages = []
+  @observable swiperIndex = <span class="c-str">0</span>
+  @observable activeTab = <span class="c-str">'attribute'</span>
+}
+
+<span class="c-cm">// Left pane: switch page / layer</span>
+stageStore.setCurrentStage(page, <span class="c-str">'page'</span>)
+
+<span class="c-cm">// Center pane: select widget / enter container / drag &amp; resize</span>
+widget.isSelected = <span class="c-kw">true</span>
+widget.modify({ left: <span class="c-str">20</span>, top: <span class="c-str">40</span> })
+
+<span class="c-cm">// Right pane: edit properties</span>
+widget.modifyData(<span class="c-str">'title'</span>, <span class="c-str">'Fall Course'</span>)
+
+<span class="c-cm">// All three panes just @observer this tree. No extra UI sync events needed.</span>
+</pre>
+
+      <div class="sub-h">Why the center pane is a multi-level viewport</div>
+      <p>
+        We didn't flatten every level into one canvas. Pages and layers are built as actual switchable viewports.
+        So when you enter a container widget, you're not digging for a child node inside a huge DOM tree. You're walking into a new editing space.
+      </p>
+      <div class="flow" aria-label="Multi-level viewport switch">
+        <span class="node">Select container widget</span>
+        <span class="arrow">→</span>
+        <span class="node">StageStore.setCurrentStage(widget, 'widget')</span>
+        <span class="arrow">→</span>
+        <span class="node">Pick the default layer</span>
+        <span class="arrow">→</span>
+        <span class="node">StageStore.setCurrentStage(layer, 'layer')</span>
+        <span class="arrow">→</span>
+        <span class="node accent">WorkSpace slides into a new Swipeable viewport</span>
+      </div>
+
+      <div class="sub-h">Why I abstracted a Stage on top</div>
+      <p>
+        Page, Layer, and container Widget are different types, but from the editor's point of view they behave very similarly.
+        They all need to support <strong class="em">adding children, removing, sorting, selecting, and deselecting</strong>. So instead of scattering <code>if/else</code> across business classes,
+        I built a Stage abstraction that maps the children of the current context into one consistent list.
+      </p>
+<pre class="code-block"><span class="c-kw">class</span> <span class="c-fn">Stage</span> {
+  constructor(component, type) {
+    <span class="c-kw">this</span>.component = component
+    <span class="c-kw">this</span>.type = type
+    <span class="c-kw">this</span>.list = component.pages || component.widgets || component.layers || []
+  }
+
+  addChild()
+  removeChildren()
+  selectChildren()
+  sortChildren()
+}
+</pre>
+
+      <div class="sub-h">How the three panes talk to each other</div>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">Left pane</div>
+          <div class="mini-stat">Changes the context</div>
+          <div class="mini-desc">Switching pages, dropping in widgets, viewing the layer tree — all of it is really just updating the current stage or current page.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Center pane</div>
+          <div class="mini-stat">Operates on the current context</div>
+          <div class="mini-desc">flow widgets reorder, normal widgets drag and resize, container widgets can be drilled into.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Right pane</div>
+          <div class="mini-stat">Describes the current context</div>
+          <div class="mini-desc">Nothing selected: edit page / layer. Single widget: show properties, behavior, animation. Multi-select: only show common operations.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Shared state</div>
+          <div class="mini-stat">StageStore</div>
+          <div class="mini-desc">The three panes never talk to each other directly. They all read and write one stageStore.</div>
+        </div>
+      </div>
+
+      <div class="sub-h">Why MobX fit this editor especially well</div>
+      <ul class="bullets">
+        <li><strong>The state is naturally a tree.</strong> Project, Page, Widget, Layer, plus the editor's own context stack, are all nested. MobX matches that shape directly.</li>
+        <li><strong>Interactions are high-frequency and fine-grained.</strong> Selecting, dragging, resizing, switching pages, switching layers, editing props — it's constant. "Change the object, UI updates" is a better fit than dispatched actions here.</li>
+        <li><strong>Three-pane collaboration is an observation problem.</strong> Left, center, and right don't need to know how each other is implemented. They all just observe the same state.</li>
+        <li><strong>It keeps boilerplate low.</strong> With a heavier dispatch model, every interaction goes through action / reducer / selector. For an editor with this many small edits, the mental overhead would add up fast.</li>
+      </ul>
+
+      <div class="sub-h">The interaction problems I specifically wanted to solve</div>
+      <ul class="bullets">
+        <li><strong>flow and normal coexisting.</strong> flow is great for ops-driven sequential layouts, normal is great for freeform layout, and they have to share one canvas.</li>
+        <li><strong>Entering and leaving a container.</strong> Walking into a container isn't a modal. It's a viewport switch with a breadcrumb, so the user always knows where they are.</li>
+        <li><strong>Marquee and multi-select.</strong> Clicking empty space deselects. Box select only picks up widgets in the current stage, so it never accidentally grabs widgets from another layer.</li>
+        <li><strong>Right-click context menu.</strong> Copy, cut, delete, bring-to-front, send-to-back, enter container — all go through the current stage, so the logic isn't scattered across the codebase.</li>
+      </ul>
+
+      <div class="pitch">
+        <div class="pitch-label">How I'd say it in an interview</div>
+        <p>
+          "On the surface this editor is a standard three-pane layout. The real challenge is that behind those three panes there has to be one shared editing context. I built a StageStore that holds the project, the current edit path as a stack of stages, a swiperIndex, and the active tab on the right. Switching pages on the left, dragging or resizing in the center, drilling into a container, editing properties on the right — all of that is really just reading and writing one stageStore."
+        </p>
+        <p>
+          "MobX was really important here. Three-pane sync isn't a 'who notifies who' problem. It's 'all three panes observe the same tree.' Page changes, selection changes, property edits, container drill-ins — those are all just mutations on observable objects. Left, center, and right are all observers and they update themselves, so I never needed to build a separate event bus to keep the UI in sync."
+        </p>
+        <p>
+          "On top of that, I abstracted Page, Layer, and container Widget children into a single Stage, so add / remove / update / select / sort all share one code path instead of <code>if/else</code> everywhere. And for entering a container, I used SwipeableViews to make it a real viewport switch instead of a modal, which is much easier for users to follow."
+        </p>
+      </div>
+
+      <div class="qa" aria-label="Editor interaction follow-up Q and A">
+        <details>
+          <summary>Why support both flow and normal layout? Why not pick one?</summary>
+          <div class="answer">
+            Because one isn't enough. Campaign pages have both sequential ops-style layouts and visually rich absolute-position layouts. Pure flow can't handle complex visual arrangements. Pure absolute positioning is a nightmare to maintain on long pages. The platform has to support both. Internally I just kept the two interaction models separated.
+          </div>
+        </details>
+        <details>
+          <summary>Why make entering a container a new viewport instead of expanding it inline?</summary>
+          <div class="answer">
+            Because once the container gets complex, expanding it inline makes selection, the layer tree, and drag boundaries really confusing. With a new viewport, the current stage has a clean boundary — the user always knows which layer they're editing, and the path back is obvious.
+          </div>
+        </details>
+        <details>
+          <summary>Why MobX + StageStore here instead of Redux or an event bus?</summary>
+          <div class="answer">
+            Because the core problem is high-frequency, fine-grained, cross-pane collaboration. An event bus can connect actions, but state ends up scattered. Redux can hold state, but the action / reducer overhead in a deeply nested tree like this is too much. What we actually needed was "change one object, all three panes react automatically." That's MobX territory, with the stageStore as the single source of truth.
+          </div>
+        </details>
+        <details>
+          <summary>What's the core value MobX is really giving you in this editor?</summary>
+          <div class="answer">
+            It's not just "a way to manage state." It fits an object-tree-driven editor particularly well. A lot of state already lives on objects — <code>page.isSelected</code>, <code>widget.left</code>, <code>widget.data.title</code>. With MobX, those local property changes are the UI update source directly. I don't have to invent a sync layer on top.
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">03</span>Render convergence: keep the editor and the client as close to isomorphic as possible</h2>
+      <p class="challenge-lead">The hard part of WYSIWYG is that the editor has an interaction shell and the client has a runtime shell, but the visuals and content still have to match.</p>
+
+      <div class="sub-h">Why this was hard</div>
+      <p>
+        The editor and the client are fundamentally different environments:
+      </p>
+      <ul class="bullets">
+        <li>The editor has selection frames, drag handles, resize handles, guide lines, context menus.</li>
+        <li>The client has touch events, scroll listeners, lazy loading, SSR hydration.</li>
+        <li>The editor canvas is a fixed size. The client has to adapt to any phone viewport.</li>
+      </ul>
+      <p>
+        If each side writes its own render logic, visual drift is just a matter of time. The answer can't be "add more tests." It has to be an architectural one: force both sides to share as much as possible.
+      </p>
+
+      <div class="sub-h">Convergence architecture</div>
+      <div class="diagram" aria-label="Editor / client convergence architecture">
+
+        <div class="layer">
+          <div class="layer-label">Shared layer</div>
+          <div class="block highlight">
+            WidgetClass
+            <span class="sub">getStyle / getAnimation / getWidgetContent</span>
+          </div>
+          <div class="block highlight">
+            WidgetContent
+            <span class="sub">Always calls widgetConfig.onRender(ctx)</span>
+          </div>
+          <div class="block highlight">
+            Container
+            <span class="sub">One flow / normal layout split, shared</span>
+          </div>
+          <div class="block highlight">
+            Same .less files
+            <span class="sub">Styles live in one place</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Editor side</div>
+          <div class="block">
+            BaseWidget + Rnd
+            <span class="sub">Drag, resize, selection state</span>
+          </div>
+          <div class="block">
+            Sortable flow list
+            <span class="sub">flow reordering</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Client side</div>
+          <div class="block">
+            Widget wrapper
+            <span class="sub">Touch, lazy load, page behaviors</span>
+          </div>
+          <div class="block">
+            hydrate / render
+            <span class="sub">Takes over SSR output or does pure client render</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">The convergence strategy I used</div>
+      <ul class="bullets">
+        <li><strong>One render entry.</strong> The actual widget content is always produced by <code>widgetConfig.onRender(ctx)</code>.</li>
+        <li><strong>One style computation.</strong> Base styles — background, border, radius, shadow — are computed in the shared base class.</li>
+        <li><strong>One container implementation.</strong> Page and layer reuse the exact same Container render path.</li>
+        <li><strong>Differences stay in the wrapper.</strong> The editor wraps with an interaction shell. The client wraps with a runtime shell.</li>
+        <li><strong>Fixed editor canvas + client px2rem.</strong> The editor shows a 375 baseline. The client scales proportionally to the viewport.</li>
+      </ul>
+
+      <div class="sub-h">The render path</div>
+      <div class="flow" aria-label="Shared render path">
+        <span class="node">WidgetSchema(type/version/data)</span>
+        <span class="arrow">→</span>
+        <span class="node">getWidgetConfigByType()</span>
+        <span class="arrow">→</span>
+        <span class="node">WidgetClass.getWidgetContent()</span>
+        <span class="arrow">→</span>
+        <span class="node">WidgetContent</span>
+        <span class="arrow">→</span>
+        <span class="node accent">widgetConfig.onRender(ctx)</span>
+      </div>
+
+      <div class="sub-h">Engineering details worth calling out in an interview</div>
+      <ul class="bullets">
+        <li><strong>autoHeight widgets.</strong> Some widgets don't ship with a fixed height. The editor has to measure the real height and write it back into the model, otherwise selecting it later makes the height "jump."</li>
+        <li><strong>flow / normal consistency.</strong> It's not just widget content — the split rules between the two layout modes inside a container have to match on both sides.</li>
+        <li><strong>Runtime variables count as content too.</strong> Page titles, dynamic text, variables fed from data sources all have to work in SSR as well. They can't be a client-only story.</li>
+      </ul>
+
+      <div class="pitch">
+        <div class="pitch-label">How I'd say it in an interview</div>
+        <p>
+          "I don't think you can solve editor / client consistency with more testing. It has to be pushed into the code structure. What I did was force everything that should be identical into a shared layer: shared WidgetClass, shared WidgetContent, shared Container, shared <code>onRender</code>, shared styles. Each side only differs in its wrapper — the editor one handles drag and selection, the client one handles touch and hydrate."
+        </p>
+      </div>
+
+      <div class="qa" aria-label="Render convergence follow-up Q and A">
+        <details>
+          <summary>Why not just maintain two render code paths and optimize each for its environment?</summary>
+          <div class="answer">
+            Short term it feels faster. Long term it almost always goes sideways. The whole point of a low-code platform is that it keeps onboarding new widgets over time. If both sides have their own renderer, every new widget adds two places to keep aligned. The debugging cost passes the cost of shared design pretty quickly.
+          </div>
+        </details>
+        <details>
+          <summary>How did you handle widgets that "look right in the editor but render at the wrong height in production"?</summary>
+          <div class="answer">
+            Usually it's autoHeight widgets, rich text, or image aspect ratios. The fix was to keep height calculation in the shared layer and the editor wrapper. When needed, the editor measures the real height and writes it back into the model, so the visual size isn't only living in the DOM while the schema thinks something else.
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">04</span>Component platformization: a widget protocol with dynamic loading</h2>
+      <p class="challenge-lead">The platform can't ship a release every time a new business widget appears, but it also can't let external widgets break older campaign pages. So widgets had to become a real runtime system, with versions.</p>
+
+      <div class="sub-h">Why this was hard</div>
+      <p>
+        Component platformization usually runs into three conflicts at the same time:
+      </p>
+      <ul class="bullets">
+        <li>Business teams want to ship their own widgets without waiting on a platform release.</li>
+        <li>The platform still wants every new widget to automatically show up in the editor, the properties panel, the client runtime, and SSR.</li>
+        <li>Campaign pages that have already shipped are live in production, so upgrading a widget must never break an older page.</li>
+      </ul>
+
+      <div class="sub-h">Widget system layers</div>
+      <div class="diagram" aria-label="Widget system layered architecture">
+
+        <div class="layer">
+          <div class="layer-label">Built-in widgets</div>
+          <div class="block">
+            Image / RichText / NormalText
+            <span class="sub">High-frequency base widgets, bundled at build time</span>
+          </div>
+          <div class="block">
+            Container / DataContainer
+            <span class="sub">Core platform container capabilities</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Internal widgets</div>
+          <div class="block">
+            PageData.innerWidgets
+            <span class="sub">Platform-owned but loaded on demand</span>
+          </div>
+          <div class="block">
+            CDN index.js / index.css
+            <span class="sub">Fetched at runtime</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">External widgets</div>
+          <div class="block highlight">
+            PageData.installed
+            <span class="sub">The set of widgets the user has installed into this project</span>
+          </div>
+          <div class="block highlight">
+            type + version
+            <span class="sub">Version pinned inside the schema</span>
+          </div>
+          <div class="block">
+            god.__components__
+            <span class="sub">Runtime registry</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Unified entry</div>
+          <div class="block highlight">
+            WidgetConfigs
+            <span class="sub">All three categories roll up into one registry</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">The widget contract</div>
+<pre class="code-block"><span class="c-kw">export</span> <span class="c-kw">default</span> {
+  name: <span class="c-str">'CourseCard'</span>,
+  type: <span class="c-str">'CourseCard'</span>,
+  version: <span class="c-str">'1.2.0'</span>,
+  category: <span class="c-str">'widget'</span>,
+  data: {
+    title: <span class="c-str">''</span>,
+    image: <span class="c-str">''</span>,
+    jumpUrl: <span class="c-str">''</span>
+  },
+  config: {
+    title: { text: <span class="c-str">'Title'</span>, type: <span class="c-str">'Input'</span> },
+    image: { text: <span class="c-str">'Cover'</span>, type: <span class="c-str">'FilePicker'</span> },
+    jumpUrl: { text: <span class="c-str">'Jump URL'</span>, type: <span class="c-str">'Input'</span> }
+  },
+  methods: {},
+  listeners: {},
+  onRender(ctx) {
+    <span class="c-kw">return</span> &lt;<span class="c-prop">div</span>&gt;...&lt;/<span class="c-prop">div</span>&gt;
+  }
+}
+</pre>
+
+      <div class="sub-h">Why this contract matters</div>
+      <ul class="bullets">
+        <li><strong>data</strong> defines the default business data for a widget instance.</li>
+        <li><strong>config</strong> defines how the right-side properties panel is rendered. The platform doesn't have to hand-write a form for every widget.</li>
+        <li><strong>onRender</strong> is the one shared content output, used by both sides.</li>
+        <li><strong>methods / listeners</strong> give the widget reusable capabilities and runtime event handlers.</li>
+      </ul>
+
+      <div class="sub-h">Dynamic loading flow</div>
+      <div class="flow" aria-label="Dynamic widget loading">
+        <span class="node">Editor or preview sees widget.type / version</span>
+        <span class="arrow">→</span>
+        <span class="node">loadScript(CDN index.js)</span>
+        <span class="arrow">→</span>
+        <span class="node">loadStyle(CDN index.css)</span>
+        <span class="arrow">→</span>
+        <span class="node">Widget self-registers into god.__components__</span>
+        <span class="arrow">→</span>
+        <span class="node accent">It's merged into WidgetConfigs and used like any built-in</span>
+      </div>
+
+      <div class="sub-h">The two things I specifically wanted to get right</div>
+      <ul class="bullets">
+        <li><strong>Version stability.</strong> Historical campaign pages already have a <code>version</code> in their schema, so the runtime always fetches that exact version. A new widget release can't leak back and change an older page.</li>
+        <li><strong>Loading reliability.</strong> Script and style loading have caching, timeouts, retries, and error logging, so ops doesn't hit "widget randomly doesn't load" in production.</li>
+      </ul>
+
+      <div class="pitch">
+        <div class="pitch-label">How I'd say it in an interview</div>
+        <p>
+          "I made widgets a protocol-driven runtime registry. Widget authors don't touch the platform repo. They publish a bundle to the CDN following the <code>data / config / onRender</code> contract, and the platform picks it up as a first-class widget in both the editor and the runtime. And because the <code>version</code> is pinned inside the schema, historical campaign pages always pull the exact version they were published with. New releases can't accidentally overwrite older pages."
+        </p>
+      </div>
+
+      <div class="qa" aria-label="Component platformization follow-up Q and A">
+        <details>
+          <summary>Why runtime dynamic loading instead of bundling every widget into the main bundle?</summary>
+          <div class="answer">
+            Because in a platform, the widget count only grows. Bundling everything would keep making the editor and preview heavier, and every new widget would need a full platform release. The platform would become a bottleneck for every business team. Dynamic loading really just decouples widget releases from the platform release.
+          </div>
+        </details>
+        <details>
+          <summary>Why CDN + version instead of managing external widgets through npm?</summary>
+          <div class="answer">
+            npm is better for build-time dependencies. Here we have to decide at runtime which widget version to load, per campaign page. CDN + version fits the "one platform, many live historical pages" model much better, because each page can pin the exact version it was published with, and it doesn't need to move when the platform moves.
+          </div>
+        </details>
+      </div>
+
+
+      <h2 class="challenge-heading"><span class="num">05</span>Publish pipeline: SSR pre-render with graceful fallback</h2>
+      <p class="challenge-lead">The hard part wasn't <code>renderToString</code>. It was doing it on the server for schema-driven pages with external widgets, runtime variables, and template assembly — and keeping the publish itself rock solid.</p>
+
+      <div class="sub-h">Why this was hard</div>
+      <p>
+        Campaign pages care a lot about first-paint speed. Pure client-side render hurts here. But once you go down the SSR path, you hit a few problems fast:
+      </p>
+      <ul class="bullets">
+        <li>Campaign pages aren't a fixed site. They're a large number of schema-driven dynamic pages.</li>
+        <li>Widgets aren't all in the main repo. The server only knows which external widgets and versions to load after reading the schema.</li>
+        <li>Some widgets are SSR-safe. Others will crash the moment they touch a DOM API.</li>
+        <li>The publish flow can't fail just because one widget's SSR pass threw.</li>
+      </ul>
+
+      <div class="sub-h">Publish pipeline architecture</div>
+      <div class="diagram" aria-label="SSR publish architecture">
+
+        <div class="layer">
+          <div class="layer-label">Input</div>
+          <div class="block">
+            revisionData
+            <span class="sub">Snapshot of the project schema</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Server prep</div>
+          <div class="block">
+            jsdom + god + localStorage
+            <span class="sub">Simulated browser environment</span>
+          </div>
+          <div class="block">
+            Scan used widgets / triggers
+            <span class="sub">Figure out which runtime assets are actually needed</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">SSR preprocessing</div>
+          <div class="block highlight">
+            Fetch SSR-capable widget JS/CSS
+            <span class="sub">Pull by type/version from the CDN</span>
+          </div>
+          <div class="block">
+            new Function to register
+            <span class="sub">Inject external widgets into god.__components__</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">HTML generation</div>
+          <div class="block highlight">
+            renderToString(&lt;App /&gt;)
+            <span class="sub">Produces mainHTML</span>
+          </div>
+          <div class="block">
+            Handlebars template assembly
+            <span class="sub">mainHTML + PageData + scripts + styles</span>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label">Publish and fallback</div>
+          <div class="block">
+            Upload HTML / JSON / screenshot
+            <span class="sub">CDN publish</span>
+          </div>
+          <div class="block highlight">
+            needHydrate = false
+            <span class="sub">If SSR fails, client render takes over</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sub-h">Publish flow end-to-end</div>
+      <div class="flow" aria-label="SSR publish flow">
+        <span class="node">Save schema</span>
+        <span class="arrow">→</span>
+        <span class="node">Clone revisionData on the server</span>
+        <span class="arrow">→</span>
+        <span class="node">Boot jsdom environment</span>
+        <span class="arrow">→</span>
+        <span class="node">Collect widget scripts and styles</span>
+        <span class="arrow">→</span>
+        <span class="node">renderToString produces mainHTML</span>
+        <span class="arrow">→</span>
+        <span class="node">Template assembles HTML + PageData</span>
+        <span class="arrow">→</span>
+        <span class="node">Upload to CDN</span>
+        <span class="arrow">→</span>
+        <span class="node accent">Client hydrate or render</span>
+      </div>
+
+      <div class="sub-h">Graceful degradation</div>
+      <ul class="bullets">
+        <li><strong>Widget not SSR-safe:</strong> skip it on the server instead of blowing up the page.</li>
+        <li><strong>Preload step fails:</strong> set <code>needHydrate</code> to false directly.</li>
+        <li><strong>renderToString throws:</strong> still generate the page, just fall back to client render.</li>
+        <li><strong>Project in an odd state</strong> (not started or ended): also disable hydrate to avoid inconsistent takeover.</li>
+      </ul>
+
+      <div class="sub-h">The designs I'm most proud of in this pipeline</div>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">SSR is optional, not required</div>
+          <div class="mini-stat">Keeps publish success rate high</div>
+          <div class="mini-desc">SSR failing doesn't mean publish failing. Client render is always the safety net.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Preload by widget version</div>
+          <div class="mini-stat">No version drift</div>
+          <div class="mini-desc">Server and client both fetch assets by the schema's version field.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Clearing require.cache</div>
+          <div class="mini-stat">Isolated publish runs</div>
+          <div class="mini-desc">Prevents leftover modules from an earlier publish from polluting the next SSR pass.</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">HTML + JSON dual output</div>
+          <div class="mini-stat">Good for both runtime and debugging</div>
+          <div class="mini-desc">Production gets the first-screen HTML, and we keep the revisionData JSON for easy replay and diagnostics.</div>
+        </div>
+      </div>
+
+      <div class="pitch">
+        <div class="pitch-label">How I'd say it in an interview</div>
+        <p>
+          "On the publish side, I treated SSR as a first-paint booster, not the only path. The server scans the schema for the widgets and behaviors it actually uses, pulls the SSR-capable external widget bundles, registers them inside a jsdom environment, then runs <code>renderToString</code> to produce the main HTML. If that works, the client hydrates. If it doesn't, it falls back to client render. Either way, the publish itself stays stable."
+        </p>
+        <p>
+          "One thing I really cared about was module isolation. Node's <code>require</code> cache means it's easy to leak state between publishes if you don't clean it up. So before each SSR pass, I clear the relevant module cache, so a previous publish's widget code doesn't bleed into the next one."
+        </p>
+      </div>
+
+      <div class="qa" aria-label="SSR follow-up Q and A">
+        <details>
+          <summary>Why not use something like Next.js for SSR?</summary>
+          <div class="answer">
+            Because we weren't building a fixed site. We were building a publish service for a large number of schema-driven campaign pages with runtime-loaded widgets. We needed full control over widget scanning, external bundle injection, template assembly, CDN uploads, and failure fallback. Building on top of Koa + jsdom gave us more room than an all-in-one framework would have.
+          </div>
+        </details>
+        <details>
+          <summary>If SSR fails, why not block the publish?</summary>
+          <div class="answer">
+            Because publish success matters more than SSR. SSR is there to improve first paint, not to become a single point of failure. If one widget's SSR compatibility could block an entire campaign launch, the business would never accept it. My rule was: SSR is an enhancement, client render is the real safety net.
+          </div>
+        </details>
+        <details>
+          <summary>Why run external widget code on the server at all? What's the biggest risk?</summary>
+          <div class="answer">
+            Because without running the widget's registration, SSR has no <code>onRender</code> for it, and the page can't fully pre-render. The main risk is that widget code isn't always pure — some of it touches browser APIs or has heavy side effects. So we only SSR widgets that meet the constraints, and we keep a full fallback path so that this step can never become a single point of failure for publishing.
+          </div>
+        </details>
+      </div>
+
+      <footer class="pager" aria-label="Section navigation">
+        <a class="prev" href="./decisions.html">
+          <span class="dir">← Prev</span>
+          <span class="lbl">06 · Key Decisions</span>
+        </a>
+        <a class="next" href="./impact.html">
+          <span class="dir">Next →</span>
+          <span class="lbl">08 · Impact</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>

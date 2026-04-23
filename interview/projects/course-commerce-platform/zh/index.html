@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>概览 · 课程商业平台</title>
+<meta name="description" content="课程商业平台项目深度梳理 · 概览" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="sidebar" data-active="overview" aria-label="项目章节"></aside>
+
+    <main>
+
+      <header class="page-header">
+        <div class="page-eyebrow">项目深度梳理</div>
+        <h1 class="page-title">课程商业平台</h1>
+        <p class="page-lead">
+          一个面向内部运营团队的 B 端运营管理后台 —— 把课程业务下散落在多个老系统里的商品、营销、用户规则、落地页搭建等所有运营动作，收敛到同一个系统里。
+          底层是 <strong>Umi Max 的集中式路由 + 双层权限体系</strong> + <strong>可复用的 CRUD / 表单抽象</strong> + <strong>Swagger 自动生成的 API 契约</strong>，把 5 大业务域、20+ 二级页面做到一套交互、一套权限、一套数据口径。
+        </p>
+
+        <div class="meta-strip" aria-label="项目元信息">
+          <div class="cell"><div class="label">公司</div><div class="val">希望学</div></div>
+          <div class="cell"><div class="label">时间</div><div class="val">2022 — 2023</div></div>
+          <div class="cell"><div class="label">角色</div><div class="val">前端负责人 · 核心贡献者 · 3–5 人团队</div></div>
+          <div class="cell"><div class="label">前端栈</div><div class="val">Umi Max 4 · React 18 · TypeScript · Ant Design Pro</div></div>
+          <div class="cell"><div class="label">关键库</div><div class="val">Formily 2 · Redux Toolkit · ahooks · @dandelion/swagger</div></div>
+        </div>
+      </header>
+
+      <div class="section-eyebrow"><span class="num">01</span>项目概览</div>
+      <h2 class="section-title" style="font-size:26px;font-weight:800;letter-spacing:-0.015em;line-height:1.2;margin-bottom:18px;">一句话讲清楚这个项目</h2>
+
+      <p>
+        <strong class="em">一个面向内部运营团队的商业化中台</strong>，把课程业务下所有和"赚钱"相关的运营操作收敛到同一个后台里：
+        从商品定义（课程、盒子、优惠券）、营销工具（推广、渠道码、定制活动）、用户规则（限购、画像），到落地页的搭建与发布，形成一条完整的运营闭环。
+        前端底座用 Umi Max 约定式路由 + access 插件拉齐权限，用 Redux Toolkit 管全局状态、Formily 管复杂表单、ahooks 管异步与交互，<strong>API 契约由 Swagger 自动生成</strong>，保证前后端类型一致、口径一致。
+      </p>
+
+      <h3 class="sub">业务域一览</h3>
+      <div class="card-grid">
+        <div class="mini-card">
+          <div class="mini-title">项目中心</div>
+          <div class="mini-desc">课程项目 / 导航项目 / 模板中心 / 组件库 / 小程序，落地页搭建的入口。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">礼品中心</div>
+          <div class="mini-desc">课程商品（供应链 / 商品中心）、实物商品（课程盒子 / 实物盒子）、虚拟商品（优惠券）。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">小工具</div>
+          <div class="mini-desc">推广工具、定制活动、渠道活码、排查工具。营销运营的日常家伙事儿。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">用户画像</div>
+          <div class="mini-desc">用户限购、课程限购、课程关系，控制哪些用户能买哪些课。</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">工作台</div>
+          <div class="mini-desc">落地页搭建器（7 步向导 + Formily 表单 + 真机预览）。作为一个入口存在。</div>
+        </div>
+      </div>
+
+      <dl class="star" aria-label="STAR 总结">
+        <dt>背景（S）</dt>
+        <dd>
+          课程业务的运营链路散落在多个老后台里 —— 商品在一个系统、优惠券在一个系统、落地页要让前端手写、限购规则靠后端改代码。
+          运营每做一次活动都要跨 3–4 个系统协同，前端也疲于给各系统打补丁，数据口径和交互都不统一。
+        </dd>
+        <dt>目标（T）</dt>
+        <dd>
+          把这些散落的运营能力收敛进一个统一的后台，提供一致的交互、一致的权限、一致的数据口径，
+          并让非技术的运营同学能端到端自助完成大部分日常操作，前端团队从重复交付里抽出身来。
+        </dd>
+        <dt>动作（A）</dt>
+        <dd>
+          基于 <strong>Umi Max</strong> 搭建前端底座，约定式路由 + access 插件做<strong>菜单级 + 按钮级的双层权限</strong>；
+          业务分层为「业务模块 / 平台能力 / 基础设施」三层，<strong>CRUD 场景沉淀成 <code>useTableSearch</code> / <code>useTableSet</code> 等 Hook</strong>；
+          用 Redux Toolkit 管全局状态，<strong>Formily</strong> 管复杂嵌套表单，ahooks 统一异步与交互；
+          <strong><code>@dandelion/swagger</code> 自动生成 API 契约</strong>，axios 拦截器统一接管鉴权、错误和 toast。
+        </dd>
+        <dt>结果（R）</dt>
+        <dd>
+          一个后台覆盖 5 大业务域、20+ 二级页面；运营跨系统切换的成本大幅降低；
+          落地页从前端排期变成运营自助，前端团队从「做页面」转向「把平台做好」。
+        </dd>
+      </dl>
+
+      <h3 class="sub">让它真正跑起来的四个关键点</h3>
+      <ul class="bullets">
+        <li>
+          <strong>集中式路由 + access 驱动的双层权限。</strong>
+          一份 <code>routes.ts</code> 声明所有路由，每个节点带 <code>access</code> key，Umi Max 自动把「菜单渲染 / 路由拦截 / 按钮级鉴权」三件事一处配置、一处生效。
+          页面用 <code>&lt;Access&gt;</code>，按钮用 <code>useAuthCheck(authKey)</code>，<strong>菜单权限和功能权限明确分层</strong>，不会互相污染。
+        </li>
+        <li>
+          <strong>CRUD 场景抽象成 Hook，不再复制粘贴。</strong>
+          20+ 列表页只写 <code>columns</code> 和 <code>searchFn</code>，<strong>筛选 / 分页 / 排序 / 列持久化 / URL 同步</strong>由 <code>useTableSearch</code> + <code>useTableSet</code> 统一接管。
+          新列表页从 500+ 行压到 ~150 行，交互也天然一致。
+        </li>
+        <li>
+          <strong>Formily 扛住复杂嵌套表单。</strong>
+          优惠券、商品这类「深层嵌套 + 字段联动 + 大量校验」的场景，用 <strong>Formily schema 声明式描述</strong>，响应式联动由 Formily 接管，业务代码只专注数据结构本身。
+          避免了手写 <code>onChange</code> + 一堆 <code>if</code> 维护表单状态的经典坑。
+        </li>
+        <li>
+          <strong>Swagger 自动生成 + axios 拦截器统一收口。</strong>
+          前后端契约由 <code>@dandelion/swagger</code> 基于 OpenAPI 自动生成 TS 类型和请求函数，前端几乎<strong>不再手写接口层</strong>；
+          axios 拦截器把 401 自动登出 / 跳 SSO、业务码统一 toast、请求头注入全部做掉——<strong>业务代码只写 happy path</strong>。
+        </li>
+      </ul>
+
+      <h3 class="sub">几个容易被忽略、但其实很要紧的细节</h3>
+      <ul class="bullets">
+        <li>
+          <strong>权限模型明确分层。</strong>后端返回的权限列表里 <code>type=0/1</code> 是菜单权限、其它是功能权限；<strong>菜单权限驱动 access / 路由、功能权限驱动按钮</strong>，两层逻辑在前端入口就拆清楚，后面维护不串线。
+        </li>
+        <li>
+          <strong>多环境构建一套代码四份产物。</strong>用 <code>cross-env mode=dev|mock|gray|prod</code> 跑四种构建：mock 让前端脱离后端独立开发、gray 灰度验证、prod 上线。<strong>同一份源码、不同 mode 产出不同产物</strong>，无需维护多分支。
+        </li>
+        <li>
+          <strong>列表页交互策略统一定义。</strong>搜索重置 <code>current</code>、翻页保留筛选、重置清 <code>params</code>、列顺序 / 可见性 <strong>localStorage 持久化</strong>——这些「默认行为」全部集中在 Hook 内部，20+ 列表页开箱一致，业务开发不用再想一次。
+        </li>
+      </ul>
+
+      <p class="muted" style="margin-top:14px;font-size:13px;">
+        注：本项目的工作台模块里也包含一个低代码落地页搭建器，但团队另有专门的低代码平台作为亮点项目（见
+        <a href="../../low-code-platform/zh/">企业级低代码活动搭建平台</a>），这里只做概述、不做深挖。更多业务侧细节见「重点模块」页。
+      </p>
+
+      <footer class="pager" aria-label="章节导航">
+        <span></span>
+        <a class="next" href="./context.html">
+          <span class="dir">下一章 →</span>
+          <span class="lbl">02 · 背景与问题</span>
+        </a>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="../sidebar.js" defer></script>
+</body>
+</html>
